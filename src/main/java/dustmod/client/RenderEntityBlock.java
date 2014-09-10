@@ -4,7 +4,8 @@
  */
 package dustmod.client;
 
-import net.minecraft.client.renderer.entity.RenderFallingSand;
+import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.entity.RenderFallingBlock;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 
@@ -16,18 +17,19 @@ import dustmod.EntityBlock;
  *
  * @author billythegoat101
  */
-public class RenderEntityBlock extends RenderFallingSand
+public class RenderEntityBlock extends RenderFallingBlock
 {
 	
 	public RenderEntityBlock() {
     	this.setRenderManager(RenderManager.instance);
 	}
+	
     @Override
     public void doRender(Entity ent, double par2, double par4, double par6, float par8, float par9)
     {
         if (!((EntityBlock)ent).lingering) //dont want it to be visible if lingering
         {
-            if (((EntityBlock)ent).blockID != 0)
+            if (((EntityBlock)ent).func_145805_f().getMaterial() != Material.air)
             {
             	GL11.glPushMatrix();
             	GL11.glTranslated(0.5, -0.5, 0.5);

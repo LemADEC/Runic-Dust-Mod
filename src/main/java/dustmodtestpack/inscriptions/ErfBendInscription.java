@@ -4,19 +4,22 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockFluid;
+import net.minecraft.block.BlockFalling;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.BlockSand;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.EnumMovingObjectType;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
+import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.world.World;
 import dustmod.DustEvent;
 import dustmod.DustMod;
@@ -39,7 +42,7 @@ public class ErfBendInscription extends InscriptionEvent {
 	
 	@Override
 	public boolean callSacrifice(DustEvent rune, EntityDust e, ItemStack item) {
-		ItemStack[] req = rune.sacrifice(e, new ItemStack[] {new ItemStack(Block.blockSteel, 8, -1)});
+		ItemStack[] req = rune.sacrifice(e, new ItemStack[] {new ItemStack(Blocks.iron_block, 8, -1)});
 
         if (req[0].stackSize != 0)
         {
@@ -52,7 +55,7 @@ public class ErfBendInscription extends InscriptionEvent {
 		return true;
 	}
 	
-	public void onUpdate(EntityLiving wearer, ItemStack item, boolean[] buttons){
+	public void onUpdate(EntityLivingBase wearer, ItemStack item, boolean[] buttons){
 		if (((EntityPlayer)wearer).getCurrentEquippedItem() == null && wearer.isSneaking() && wearer.onGround) {
 			try{
 				Entity target = getLaunchEnt((EntityPlayer)wearer);
@@ -68,7 +71,7 @@ public class ErfBendInscription extends InscriptionEvent {
 					int r = 1;
 					int launch = 6;
 					
-					if((world.getBlockId(x,y,z) == 0 && world.getBlockId(x,y-1,z) == 0) || target.isInWater()) return;
+					if((world.isAirBlock(x,y,z) && world.isAirBlock(x,y-1,z)) || target.isInWater()) return;
 					if(buttons[0] && checkForEarth(target,r+1,launch) < 0.80) return;
 					
 					targetEntity(item,wearer,target,buttons[0] ? 0:1);
@@ -116,20 +119,20 @@ public class ErfBendInscription extends InscriptionEvent {
 //					world.setBlockWithNotify(cx, cy, cz, Block.brick.blockID);
 					
 					for(int i = 5; i >= -5; i--){
-						int bid = world.getBlockId(cx, cy+i, cz);
+						Block block = world.getBlock(cx, cy+i, cz);
 						int meta = world.getBlockMetadata(cx, cy+i, cz);
 						
-						if(bid == Block.grass.blockID) bid = Block.dirt.blockID;
-						int bidA = world.getBlockId(cx, cy+i+1, cz);
+						if(block == Blocks.grass) block = Blocks.dirt;
+						Block blockA = world.getBlock(cx, cy+i+1, cz);
 						int metaA = world.getBlockMetadata(cx, cy+i+1, cz);
-						if(isSolid(bid,meta) && !isSolid(bidA,metaA)){
+						if(isSolid(block,meta) && !isSolid(blockA,metaA)){
 //								cy += i;
 //							if(button == 0){
-//								world.setBlockAndMetadataWithNotify(cx,cy+i+1,cz,bid,meta);
+//								world.setBlock(cx,cy+i+1,cz,bid,meta);
 //								world.setBlockWithNotify(cx,cy+i,cz,getFillerMaterial(bid,meta));
-								DustMod.spawnParticles(wearer.worldObj, "tilecrack_" + bid + "_" + meta, cx, cy+i+1, cz, 0, 2, 0, 30, 0.5,0.1,0.5);
+								DustMod.spawnParticles(wearer.worldObj, "tilecrack_" + Block.getIdFromBlock(block) + "_" + meta, cx, cy+i+1, cz, 0, 2, 0, 30, 0.5,0.1,0.5);
 //							}else {
-////								world.setBlockAndMetadataWithNotify(cx,cy+i-1,cz,bid,meta);
+////								world.setBlock(cx,cy+i-1,cz,bid,meta);
 ////								world.setBlockWithNotify(cx,cy+i,cz,0);
 //								DustMod.spawnParticles(wearer.worldObj, "tilecrack_" + bid + "_" + meta, cx, cy+i, cz, 0, 1, 0, 5, 0.5,0.1,0.5);
 //							}
@@ -163,14 +166,14 @@ public class ErfBendInscription extends InscriptionEvent {
 		for(int i = -r; i <= r; i++){
 			for(int j = -r; j <= r; j++){
 				for(int k = 0; k > -launch; k--){
-					int bid = world.getBlockId(tx+i,ty+k,tz+j);
+					Block block = world.getBlock(tx+i,ty+k,tz+j);
 					int meta = world.getBlockMetadata(tx+i,ty+k,tz+j);
-					int toBid = world.getBlockId(tx+i,ty+k+launch,tz+j);
+					Block toBlock = world.getBlock(tx+i,ty+k+launch,tz+j);
 					int toMeta = world.getBlockMetadata(tx+i,ty+k+launch,tz+j);
-					if(bid == 0 && k != 0) bid = Block.cobblestone.blockID;
-					if(!isSolid(toBid,toMeta)/* && Block.blocksList[bid].isOpaqueCube()*/){
-						world.setBlockAndMetadataWithNotify(tx+i, ty+k+launch, tz+j, bid,meta,3);
-						world.setBlockAndMetadataWithNotify(tx+i, ty+k, tz+j, getFillerMaterial(bid,meta),0,3);
+					if(block.getMaterial() == Material.air && k != 0) block = Blocks.cobblestone;
+					if(!isSolid(toBlock,toMeta)/* && Block.blocksList[bid].isOpaqueCube()*/){
+						world.setBlock(tx+i, ty+k+launch, tz+j, block,meta,3);
+						world.setBlock(tx+i, ty+k, tz+j, getFillerMaterial(block,meta),0,3);
 					}
 				}
 			}
@@ -187,14 +190,14 @@ public class ErfBendInscription extends InscriptionEvent {
 		for(int i = -r; i <= r; i++){
 			for(int j = -r; j <= r; j++){
 				for(int k = 0; k > -launch; k--){
-					int bid = world.getBlockId(tx+i,ty+k,tz+j);
+					Block block = world.getBlock(tx+i,ty+k,tz+j);
 					int meta = world.getBlockMetadata(tx+i,ty+k,tz+j);
-					int toBid = world.getBlockId(tx+i,ty+k+launch,tz+j);
+					Block toBlock = world.getBlock(tx+i,ty+k+launch,tz+j);
 					int toMeta = world.getBlockMetadata(tx+i,ty+k+launch,tz+j);
-					if(bid == 0) continue;//bid = Block.cobblestone.blockID;
-					if(!isSolid(toBid,toMeta)/* && Block.blocksList[bid].isOpaqueCube()*/){
-						world.setBlockAndMetadataWithNotify(tx+i, ty+k-launch, tz+j, bid,meta,3);
-						world.setBlockAndMetadataWithNotify(tx+i, ty+k, tz+j, 0,0,3);
+					if(block.getMaterial() == Material.air) continue;//bid = Block.cobblestone.blockID;
+					if(!isSolid(toBlock,toMeta)/* && Block.blocksList[bid].isOpaqueCube()*/){
+						world.setBlock(tx+i, ty+k-launch, tz+j, block,meta,3);
+						world.setBlockToAir(tx+i, ty+k, tz+j);
 					}
 				}
 			}
@@ -226,7 +229,7 @@ public class ErfBendInscription extends InscriptionEvent {
 		tag.setInteger("tary", y);
 		tag.setInteger("tarz", z);
 		tag.setInteger("but",button);
-		tag.setInteger("entid", target.entityId);
+		tag.setInteger("entid", target.getEntityId());
 	}
 	
 	public boolean isAlreadyLaunching(ItemStack item){
@@ -263,11 +266,12 @@ public class ErfBendInscription extends InscriptionEvent {
 					if(y+k < 0){
 						continue;
 					}
-					int bid = world.getBlockId(x+i,y+k,z+j);
+					
+					Block block = world.getBlock(x+i,y+k,z+j);
 					int meta = world.getBlockMetadata(x+i,y+k,z+j);
 					
 					tot++;
-					if(isSolid(bid,meta)){
+					if(isSolid(block,meta)){
 						amt++;
 					}
 				}
@@ -277,52 +281,49 @@ public class ErfBendInscription extends InscriptionEvent {
 		return amt/tot;
 	}
 	
-	public boolean isSolid(int bid, int meta){
-		Block b = Block.blocksList[bid];
-		if(b == null) return false;
-		Material m = b.blockMaterial;
+	public boolean isSolid(Block block, int meta){
+		Material m = block.getMaterial();
 		if(m == Material.vine || m == Material.ice || m == Material.wood || m == Material.web) return false;
 		if(m == Material.snow) {
-			if(bid == Block.snow.blockID){
+			if(block == Blocks.snow){
 				return meta >= 8;
-			}else return b.isOpaqueCube();
+			}else return block.isOpaqueCube();
 		}
-		if(b instanceof BlockFluid) return false; 
+		if(block instanceof BlockLiquid) return false; 
 		return true;
 	}
 	
-	public int getCompressedMaterial(int blockID, int meta){
+	public Block getCompressedMaterial(Block block, int meta){
 //		final int sand=Block.sand.blockID, stone=Block.stone.blockID,dirt=Block.dirt.blockID,gravel=Block.gravel.blockID,netherbrick=Block.netherBrick.blockID;
 //		final int sandstone, cobblestone, netherrack;
 //		System.out.println("Get compressed " + blockID);
-		switch(blockID){
-		case 12:
-			return 24; //sandstone
-		case 1: case 2: case 3: case 13: case 82: case 43: case 44: case 98:
-			return 4; //cobble
-		case  88: case 112:
-			return 88; //netherrack
-		}
-		return blockID;
+		
+		if (block == Blocks.sand)
+			return Blocks.sandstone;
+		if (block == Blocks.stone || block == Blocks.grass || block == Blocks.dirt || block == Blocks.gravel || block == Blocks.double_stone_slab || block == Blocks.stone_slab || block == Blocks.mossy_cobblestone || block == Blocks.clay || block == Blocks.stonebrick)
+			return Blocks.cobblestone;
+		if (block == Blocks.netherrack || block == Blocks.nether_brick)
+			return Blocks.netherrack;
+
+		return block;
 	}
-	public int getFillerMaterial(int blockID, int meta){
-		switch(blockID){
-		case 12: case 24:
-			return 12; //sand
-		case 1: case 13: case 82: case 48: case 43: case 44: case 98:
-			return 4; //cobble
-		case  88: case 112:
-			return 88; //netherrack
-		}
-		return Block.dirt.blockID;
+	public Block getFillerMaterial(Block block, int meta){
+		if (block == Blocks.sand || block == Blocks.sandstone)
+			return Blocks.sand;
+		if (block == Blocks.stone || block == Blocks.gravel || block == Blocks.double_stone_slab || block == Blocks.stone_slab || block == Blocks.mossy_cobblestone || block == Blocks.clay || block == Blocks.stonebrick)
+			return Blocks.cobblestone;
+		if (block == Blocks.netherrack || block == Blocks.nether_brick)
+			return Blocks.netherrack;
+		
+		return Blocks.dirt;
 	}
-	public boolean isCompressedMaterial(int blockID){
-		int[] bids = new int[]{Block.sandStone.blockID, 
-				Block.cobblestone.blockID, 
-				Block.cobblestoneMossy.blockID, 
-				Block.netherrack.blockID};
-		for(int i: bids) 
-			if(i == blockID) return true;
+	public boolean isCompressedMaterial(Block block){
+		Block[] blocks = new Block[]{Blocks.sandstone, 
+				Blocks.cobblestone, 
+				Blocks.mossy_cobblestone, 
+				Blocks.netherrack};
+		for(Block testBlock: blocks) 
+			if(testBlock == block) return true;
 		return false;
 	}
 
@@ -376,9 +377,9 @@ public class ErfBendInscription extends InscriptionEvent {
 	}
 
 	
-	public synchronized void middleClickBlock(EntityLiving wearer, ItemStack item){
+	public synchronized void middleClickBlock(EntityLivingBase wearer, ItemStack item){
 		MovingObjectPosition click = DustMod.getWornInscription().getMovingObjectPositionFromPlayer(wearer.worldObj, (EntityPlayer)wearer, false);
-		if(click != null && click.typeOfHit == EnumMovingObjectType.TILE){
+		if(click != null && click.typeOfHit == MovingObjectType.BLOCK){
 			int tx = click.blockX;
 			int ty = click.blockY;
 			int tz = click.blockZ;
@@ -392,9 +393,9 @@ public class ErfBendInscription extends InscriptionEvent {
 				for(int i = 1; i >= -1; i--){
 					for(int j = 1; j >= -1; j--){
 						for(int k = 1; k >= -1; k--){
-							int bid = world.getBlockId(bPos[0]+i, bPos[1]+j, bPos[2]+k);
+							Block block = world.getBlock(bPos[0]+i, bPos[1]+j, bPos[2]+k);
 							int meta = world.getBlockMetadata(bPos[0]+i, bPos[1]+j, bPos[2]+k);
-							world.setBlockAndMetadataWithNotify(bPos[0]+i, bPos[1]+j, bPos[2]+k,getCompressedMaterial(bid,meta),0,3);
+							world.setBlock(bPos[0]+i, bPos[1]+j, bPos[2]+k,getCompressedMaterial(block,meta),0,3);
 						}
 					}
 				}
@@ -402,7 +403,7 @@ public class ErfBendInscription extends InscriptionEvent {
 		}
 	}
 	
-	public void fire(EntityLiving wearer, ItemStack item){
+	public void fire(EntityLivingBase wearer, ItemStack item){
 
 //		boolean hasTarget = false;
 //		double tx,ty,tz;
@@ -437,11 +438,11 @@ public class ErfBendInscription extends InscriptionEvent {
 //						continue;
 //					}
 					
-					int bid = world.getBlockId(x,y,z);
-					if(isCompressedMaterial(bid)){
+					Block block = world.getBlock(x,y,z);
+					if (isCompressedMaterial(block)) {
 						
 						
-						EntityArrow arrow = new EntityArrow(world,x+0.5, y+0.5, z+0.5);
+						//EntityArrow arrow = new EntityArrow(world,x+0.5, y+0.5, z+0.5);
 //						EntityFallingSand block = new EntityFallingSand(world,(double)x+0.5,(double)y+0.5,(double)z+0.5,bid);
 						Vec3 vel;
 						if(target == null){
@@ -458,10 +459,10 @@ public class ErfBendInscription extends InscriptionEvent {
 //						block.setVelocity(vel.xCoord/1,vel.yCoord/1,vel.zCoord/1);
 //						block.noClip = true;
 //						world.spawnEntityInWorld(block);
-						world.setBlockAndMetadataWithNotify(x,y,z,0,0,3);
+						world.setBlockToAir(x,y,z);
 						
 
-						EntityBlock eb = new EntityBlock(world,(double)x+0.5,(double)y+0.5,(double)z+0.5,bid);
+						EntityBlock eb = new EntityBlock(world,(double)x+0.5,(double)y+0.5,(double)z+0.5,block);
 						eb.setThrowing(true);
 //						eb.noClip = true;
 						eb.motionX = vel.xCoord/1;
@@ -476,9 +477,9 @@ public class ErfBendInscription extends InscriptionEvent {
 		}
 	}
 	
-	public synchronized void blockClick(EntityLiving wearer, ItemStack item){
+	public synchronized void blockClick(EntityLivingBase wearer, ItemStack item){
 		MovingObjectPosition click = DustMod.getWornInscription().getMovingObjectPositionFromPlayer(wearer.worldObj, (EntityPlayer)wearer, false);
-		if(click != null && click.typeOfHit == EnumMovingObjectType.TILE){
+		if(click != null && click.typeOfHit == MovingObjectType.BLOCK){
 			int tx = click.blockX;
 			int ty = click.blockY;
 			int tz = click.blockZ;
@@ -523,16 +524,16 @@ public class ErfBendInscription extends InscriptionEvent {
 					for(int i = 1+ax; i >= -1+ax; i--){
 						for(int j = 1+ay; j >= -1+ay; j--){
 							for(int k = 1+az; k >= -1+az; k--){
-								int bid = world.getBlockId(tx+i, ty+j, tz+k);
+								Block block = world.getBlock(tx+i, ty+j, tz+k);
 								int meta = world.getBlockMetadata(tx+i, ty+j, tz+k);
 								
-								if(j == -1+ay && Block.blocksList[bid] instanceof BlockSand){
-									bid = Block.sandStone.blockID;
+								if(j == -1+ay && block instanceof BlockFalling){
+									block = Blocks.sandstone;
 									meta = 0;
 								}
 								
-								world.setBlockAndMetadataWithNotify(tx+i+mx, ty+j+my, tz+k+mz,bid,meta,3);
-								world.setBlockAndMetadataWithNotify(tx+i, ty+j, tz+k,0,0,3);
+								world.setBlock(tx+i+mx, ty+j+my, tz+k+mz,block,meta,3);
+								world.setBlockToAir(tx+i, ty+j, tz+k);
 							}
 						}
 					}
@@ -632,28 +633,30 @@ public class ErfBendInscription extends InscriptionEvent {
 		
 		setMovingBlock(item,bPos[0] + ax, bPos[1] + ay, bPos[2] + az);
 
-		int[][][][] blocks = new int[3][3][3][2];
+		//XXX WTH
+		//int[][][][] blocks = new int[3][3][3][2];
 		for(int i = 1; i >= -1; i--){
 			for(int j = 1; j >= -1; j--){
 				for(int k = 1; k >= -1; k--){
-					int bid = world.getBlockId(bPos[0]+i, bPos[1]+j, bPos[2]+k);
+					Block block = world.getBlock(bPos[0]+i, bPos[1]+j, bPos[2]+k);
 					int meta = world.getBlockMetadata(bPos[0]+i, bPos[1]+j, bPos[2]+k);
-					blocks[i+1][j+1][k+1][0] = bid;
-					blocks[i+1][j+1][k+1][1] = meta;
-//					world.setBlockAndMetadataWithNotify(tx+i, ty+j+h, tz+k,bid,meta);
-					world.setBlockAndMetadataWithNotify(bPos[0]+i, bPos[1]+j, bPos[2]+k,0,0,3);
+					//blocks[i+1][j+1][k+1][0] = bid;
+					//blocks[i+1][j+1][k+1][1] = meta;
+//					world.setBlock(tx+i, ty+j+h, tz+k,bid,meta);
+					world.setBlockToAir(bPos[0]+i, bPos[1]+j, bPos[2]+k);
+					world.setBlock(bPos[0]+i+ax, bPos[1]+j+ay, bPos[2]+k+az,block,meta,3);
 				}
 			}
-		}
+		}/*
 		for(int i = 1; i >= -1; i--){
 			for(int j = 1; j >= -1; j--){
 				for(int k = 1; k >= -1; k--){
 					int bid = blocks[i+1][j+1][k+1][0];
 					int meta = blocks[i+1][j+1][k+1][1];
-					world.setBlockAndMetadataWithNotify(bPos[0]+i+ax, bPos[1]+j+ay, bPos[2]+k+az,bid,meta,3);
+					world.setBlock(bPos[0]+i+ax, bPos[1]+j+ay, bPos[2]+k+az,bid,meta,3);
 				}
 			}
-		}
+		}*/
 	}
 	public boolean mouseWasDownR(ItemStack item){
 		return item.getTagCompound().getBoolean("wasRDown");

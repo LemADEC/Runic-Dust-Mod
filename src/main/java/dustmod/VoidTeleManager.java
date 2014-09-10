@@ -142,12 +142,12 @@ public class VoidTeleManager {
                 }
                 catch (IOException ex)
                 {
-                	FMLLog.log(Level.SEVERE, null, ex);
+                	DustMod.logger.catching(ex);
                 }
             }
             catch (IOException ex)
             {
-            	FMLLog.log(Level.SEVERE, null, ex);
+            	DustMod.logger.catching(ex);
             }
         }
     }
@@ -174,7 +174,7 @@ public class VoidTeleManager {
             }
             catch (IOException ioexception)
             {
-                FMLLog.log(Level.SEVERE, null, ioexception);
+            	DustMod.logger.catching(ioexception);
             }
         }
         
@@ -231,7 +231,7 @@ public class VoidTeleManager {
         }
         catch (IOException ex)
         {
-            FMLLog.log(Level.SEVERE, null, ex);
+        	DustMod.logger.catching(ex);
         }
     }
 

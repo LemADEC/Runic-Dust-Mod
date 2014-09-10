@@ -14,6 +14,8 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import dustmod.EntityAIDustFollowBaitRune;
@@ -54,7 +56,7 @@ public class DEBait extends PoweredEvent
                 EntityItem ei = (EntityItem)o;
                 ItemStack item = ei.getEntityItem();
 
-                if (item.itemID == Item.monsterPlacer.itemID)
+                if (item.getItem() == Items.spawn_egg)
                 {
                     entClass = item.getItemDamage();
                     item.stackSize--;
@@ -68,7 +70,7 @@ public class DEBait extends PoweredEvent
             }
         }
 
-        ItemStack[] req = new ItemStack[] {new ItemStack(Block.blockGold, 1)};
+        ItemStack[] req = new ItemStack[] {new ItemStack(Blocks.gold_block, 1)};
         req = this.sacrifice(e, req);
 
         if (!checkSacrifice(req) || entClass == -1 || !takeXP(e, 5))
@@ -146,7 +148,7 @@ public class DEBait extends PoweredEvent
         for (ItemStack i: entdrops.keySet())
         {
 //            System.out.println("grr " + i.itemID + " " + i.stackSize + " " + i.getItemDamage());
-            if (i.itemID == is.itemID && i.getItemDamage() == is.getItemDamage())
+            if (i.getItem() == is.getItem() && i.getItemDamage() == is.getItemDamage())
             {
 //                System.out.println("ent found");
                 return entdrops.get(i);
@@ -161,26 +163,26 @@ public class DEBait extends PoweredEvent
 
     static
     {
-        entdrops.put(new ItemStack(Item.porkRaw.itemID, 0, 0), 90);
-        entdrops.put(new ItemStack(Item.beefRaw.itemID, 0, 0), 92);
-        entdrops.put(new ItemStack(Item.chickenRaw.itemID, 0, 0), 93);
-        entdrops.put(new ItemStack(Item.dyePowder.itemID, 0, 0), 94);
-        entdrops.put(new ItemStack(Item.leather.itemID, 0, 0), 95);
-        entdrops.put(new ItemStack(Block.mushroomRed.blockID, 0, 0), 96);
-        entdrops.put(new ItemStack(Block.pumpkin.blockID, 0, 0), 97);
-        entdrops.put(new ItemStack(Item.porkCooked.itemID, 0, 0), 57);
-        entdrops.put(new ItemStack(Item.gunpowder.itemID, 0, 0), 50);
-        entdrops.put(new ItemStack(Item.bone.itemID, 0, 0), 51);
-        entdrops.put(new ItemStack(Item.silk.itemID, 0, 0), 52);
-        entdrops.put(new ItemStack(Item.rottenFlesh.itemID, 0, 0), 54);
-        entdrops.put(new ItemStack(Item.slimeBall.itemID, 0, 0), 55);
-        entdrops.put(new ItemStack(Item.ghastTear.itemID, 0, 0), 56);
-        entdrops.put(new ItemStack(Item.enderPearl.itemID, 0, 0), 58);
-        entdrops.put(new ItemStack(Item.spiderEye.itemID, 0, 0), 59);
-        entdrops.put(new ItemStack(Block.stoneBrick.blockID, 0, 0), 60);
-        entdrops.put(new ItemStack(Item.blazeRod.itemID, 0, 0), 61);
-        entdrops.put(new ItemStack(Item.magmaCream.itemID, 0, 0), 62);
-        //entdrops.put(new ItemStack(Item.eyeOfEnder.itemID, 0, 0), 63);
+        entdrops.put(new ItemStack(Items.porkchop, 0, 0), 90);
+        entdrops.put(new ItemStack(Items.beef, 0, 0), 92);
+        entdrops.put(new ItemStack(Items.chicken, 0, 0), 93);
+        entdrops.put(new ItemStack(Items.dye, 0, 0), 94);
+        entdrops.put(new ItemStack(Items.leather, 0, 0), 95);
+        entdrops.put(new ItemStack(Blocks.red_mushroom, 0, 0), 96);
+        entdrops.put(new ItemStack(Blocks.pumpkin, 0, 0), 97);
+        entdrops.put(new ItemStack(Items.cooked_porkchop, 0, 0), 57);
+        entdrops.put(new ItemStack(Items.gunpowder, 0, 0), 50);
+        entdrops.put(new ItemStack(Items.bone, 0, 0), 51);
+        entdrops.put(new ItemStack(Items.string, 0, 0), 52);
+        entdrops.put(new ItemStack(Items.rotten_flesh, 0, 0), 54);
+        entdrops.put(new ItemStack(Items.slime_ball, 0, 0), 55);
+        entdrops.put(new ItemStack(Items.ghast_tear, 0, 0), 56);
+        entdrops.put(new ItemStack(Items.ender_pearl, 0, 0), 58);
+        entdrops.put(new ItemStack(Items.spider_eye, 0, 0), 59);
+        entdrops.put(new ItemStack(Blocks.stonebrick, 0, 0), 60);
+        entdrops.put(new ItemStack(Items.blaze_rod, 0, 0), 61);
+        entdrops.put(new ItemStack(Items.magma_cream, 0, 0), 62);
+        //entdrops.put(new ItemStack(Items.ender_eye, 0, 0), 63);
     }
 
     @Override

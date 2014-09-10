@@ -4,15 +4,16 @@
  */
 package dustmod;
 
-import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
+import java.util.UUID;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
-import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.config.Configuration;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
 /**
@@ -52,7 +53,7 @@ public class DustManager
         return events;
     }
     
-    public static EntityDust initiate(DustShape shape, String name, double x, double y, double z, World world, List<Integer[]> points, int[][] map, String username,int rot)
+    public static EntityDust initiate(DustShape shape, String name, double x, double y, double z, World world, List<Integer[]> points, int[][] map, UUID playerId,int rot)
     {
         DustEvent evt = events.get(name);
 
@@ -76,11 +77,11 @@ public class DustManager
         result.runeWidth = map[0].length/4;
         result.runeLength = map.length/4;
         result.rot = rot;
-        result.summonerUN = (username == null) ? "" : username;
+        result.setSummonerId(playerId);
 
         for (Integer[] pos: points)
         {
-            TileEntityDust ted = (TileEntityDust)world.getBlockTileEntity(pos[0], pos[1], pos[2]);
+            TileEntityDust ted = (TileEntityDust)world.getTileEntity(pos[0], pos[1], pos[2]);
             ted.setEntityDust(result);
         }
 
@@ -108,7 +109,7 @@ public class DustManager
         world.spawnEntityInWorld(result);
         
         
-        if (evt.canPlayerKnowRune(username) && evt.permaAllowed)
+        if (evt.canPlayerKnowRune(playerId) && evt.permaAllowed)
         {
             evt.initGraphics(result);
             evt.init(result);
@@ -116,12 +117,12 @@ public class DustManager
         }
         else
         {
-            EntityPlayer player = world.getPlayerEntityByName(username);
+            EntityPlayer player = world.func_152378_a(playerId);
             result.reanimate = true;
 
             if (player != null)
             {
-                player.addChatMessage("This rune is disabled on this server.");
+                player.addChatMessage(new ChatComponentText("This rune is disabled on this server."));
             }
         }
 
@@ -169,7 +170,7 @@ public class DustManager
      * 
      */
     public static void resetMultiplayerRunes(){
-		DustMod.log(Level.FINE, "Reseting remote runes.");
+		DustMod.logger.debug("Reseting remote runes.");
 //		System.out.println("[DustMod] Resetting remote runes.");
         namesRemote = new ArrayList<String>();
         shapesRemote = new ArrayList<DustShape>();
@@ -178,7 +179,7 @@ public class DustManager
     
     
     /**
-     * Register a new DustShape into the local system. The lexicon image will be 
+     * Register a new DustShape into the local system. The lexIIcon image will be 
      * generated automatically if missing.
      * 
      * @param shape The DustShape object that stores all the shape information
@@ -198,7 +199,7 @@ public class DustManager
             shape.isPower = true;
         }
 
-		DustMod.log(Level.FINER, "Registering rune: " + shape.name);
+		DustMod.logger.debug("Registering rune: {}", shape.name);
 //		System.out.println("[DustMod] Registering rune " + shape.name);
         
         if(config == null){
@@ -220,7 +221,7 @@ public class DustManager
             		eventInstance.permission = "NONE";
 
         		if(!eventInstance.permission.equals("ALL")){
-        			DustMod.log(Level.FINE, "Rune permission for " + eventInstance.name + " set to " + eventInstance.permission);
+        			DustMod.logger.debug("Rune permission for " + eventInstance.name + " set to " + eventInstance.permission);
 //        			System.out.println("[DustMod] Rune permission for " + eventInstance.name + " set to " + eventInstance.permission);
         		}
             }
@@ -244,7 +245,7 @@ public class DustManager
         shapesRemote.add(shape);
         namesRemote.add(shape.name);
         DustMod.proxy.checkRunePage(shape);
-		DustMod.log(Level.FINER, "Registering remote rune: " + shape.name);
+		DustMod.logger.debug("Registering remote rune: " + shape.name);
 //        System.out.println("[DustMod] Registering remote rune " + shape.name);
         LanguageRegistry.instance().addStringLocalization("tile.scroll" + shape.name + ".name", "en_US", shape.getRuneName() + " Placing Scroll");
         DustItemManager.reloadLanguage();
@@ -266,12 +267,12 @@ public class DustManager
 	 *            shapes of adjacent TileEntityDusts
 	 * @param points
 	 *            The list of all BlockDust blocks that contributed to the rune.
-	 * @param username
-	 *            The username of the player who called the rune. Null if called
+	 * @param playerId
+	 *            The Id of the GameProfile of the player who called the rune. Null if called
 	 *            by redstone.
 	 */
 	public static void callShape(World world, double i, double j, double k,
-			int[][] map, List<Integer[]> points, String username) {
+			int[][] map, List<Integer[]> points, UUID playerId) {
 		DustShape found = null;
 		// trim shape
 		ArrayList<ArrayList<Integer>> temp = new ArrayList<ArrayList<Integer>>();
@@ -336,15 +337,15 @@ public class DustManager
 				if (b == -2) {
 
 					for (Integer[] p : points) {
-						int id = world.getBlockId(p[0], p[1], p[2]);
+						Block block = world.getBlock(p[0], p[1], p[2]);
 
-						if (id == DustMod.dust.blockID) {
+						if (block == DustMod.dust) {
 							world.setBlockMetadataWithNotify(p[0], p[1], p[2],
 									BlockDust.DEAD_DUST,3);
 						}
 					}
 
-					DustMod.log(Level.FINER, "Left variable dust in rune.");
+					DustMod.logger.debug("Left variable dust in rune.");
 //					System.out.println("[DustMod] Left variable dust in rune.");
 					return;
 				}
@@ -365,20 +366,20 @@ public class DustManager
 		}
 
 		if (found != null) {
-			DustMod.log(Level.FINER, "Found rune: " + found.name);
+			DustMod.logger.debug("Found rune: " + found.name);
 			DustManager.initiate(found, found.name, i, j, k, world, points,
-					trim, username, rot);
+					trim, playerId, rot);
 		} else {
 
 			for (Integer[] p : points) {
-				int id = world.getBlockId(p[0], p[1], p[2]);
+				Block block = world.getBlock(p[0], p[1], p[2]);
 
-				if (id == DustMod.dust.blockID) {
+				if (block == DustMod.dust) {
 					world.setBlockMetadataWithNotify(p[0], p[1], p[2], BlockDust.DEAD_DUST,3);
 				}
 			}
 
-			DustMod.log(Level.FINER, "No rune found.");
+			DustMod.logger.debug("No rune found.");
 		}
 	}
     

@@ -1,11 +1,11 @@
 package dustmod;
 
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -14,12 +14,12 @@ public class ItemInscription extends DustModItem {
 
 	public static final int max = 3600*2;
 	
-	private Icon dryingIcon;
-	private Icon driedIcon;
-	private Icon blankIcon;
+	private IIcon dryingIIcon;
+	private IIcon driedIIcon;
+	private IIcon blankIIcon;
 	
-	protected ItemInscription(int par1) {
-		super(par1);
+	protected ItemInscription() {
+		super();
 		this.setMaxStackSize(1);
 		this.setMaxDamage(max);
 	}
@@ -30,12 +30,12 @@ public class ItemInscription extends DustModItem {
 	}
 //	@Override
 //	@SideOnly(Side.CLIENT)
-//	public int getIconFromDamage(int meta) {
+//	public int getIIconFromDamage(int meta) {
 //		// TODO Auto-generated method stub
 //		return 38;//meta == max ? 37 : 38;
 //	}
 //	@Override
-//	public int getIconIndex(ItemStack stack, int renderPass,
+//	public int getitemIcon(ItemStack stack, int renderPass,
 //			EntityPlayer player, ItemStack usingItem, int useRemaining) {
 //
 //		boolean isDried = isDried(stack);
@@ -117,7 +117,7 @@ public class ItemInscription extends DustModItem {
 				if(world.isRaining()){
 					amt = 1;
 				}
-		        if (world.getBiomeGenForCoords(x, z).getFloatTemperature() > 1.0F)
+		        if (world.getBiomeGenForCoords(x, z).temperature > 1.0F)
 		        {
 		            amt = 6;
 		        }
@@ -132,7 +132,7 @@ public class ItemInscription extends DustModItem {
 			if(event != null){
 				id = event.id;
 				InscriptionManager.onCreate((EntityPlayer)ent, item);
-				item.itemID = DustMod.getWornInscription().itemID;
+				item.func_150996_a(DustMod.getWornInscription());
 				item.setItemDamage(ItemInscription.max);
 			}else{
 				setDried(item);
@@ -178,20 +178,20 @@ public class ItemInscription extends DustModItem {
     }
     
     @Override
-    public Icon getIcon(ItemStack stack, int renderPass) {
+    public IIcon getIcon(ItemStack stack, int renderPass) {
     	int meta = stack.getItemDamage();
     	boolean isDried = isDried(stack);
     	int damage = stack.getItemDamage();
-    	if(isDried) return driedIcon;
-    	else if(damage != 0) return dryingIcon;
-    	else return blankIcon;
+    	if(isDried) return driedIIcon;
+    	else if(damage != 0) return dryingIIcon;
+    	else return blankIIcon;
     }
     
     @Override
     @SideOnly(Side.CLIENT)
-    public void func_94581_a(IconRegister iconRegister) {
-    	this.blankIcon = iconRegister.func_94245_a(DustMod.spritePath + "blankInscription");
-    	this.dryingIcon = iconRegister.func_94245_a(DustMod.spritePath + "dryingInscription");
-    	this.driedIcon = iconRegister.func_94245_a(DustMod.spritePath + "driedInscription");
+    public void registerIcons(IIconRegister IIconRegister) {
+    	this.blankIIcon = IIconRegister.registerIcon(DustMod.spritePath + "blankInscription");
+    	this.dryingIIcon = IIconRegister.registerIcon(DustMod.spritePath + "dryingInscription");
+    	this.driedIIcon = IIconRegister.registerIcon(DustMod.spritePath + "driedInscription");
     }
 }

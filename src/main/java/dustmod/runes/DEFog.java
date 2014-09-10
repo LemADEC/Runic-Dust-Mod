@@ -6,12 +6,12 @@ package dustmod.runes;
 
 import java.util.List;
 
-import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.EnumSkyBlock;
@@ -34,7 +34,7 @@ public class DEFog extends PoweredEvent
     public void onInit(EntityDust e)
     {
         super.onInit(e);
-        ItemStack[] req = new ItemStack[] {new ItemStack(Item.bucketWater, 1), new ItemStack(Block.mushroomRed, 1)};
+        ItemStack[] req = new ItemStack[] {new ItemStack(Items.water_bucket, 1), new ItemStack(Blocks.red_mushroom, 1)};
         req = this.sacrifice(e, req);
 
         if (!checkSacrifice(req) || !takeXP(e, 6))

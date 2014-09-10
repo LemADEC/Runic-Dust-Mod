@@ -5,6 +5,7 @@
 package dustmod.runes;
 
 import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import dustmod.EntityDust;
@@ -36,7 +37,7 @@ public class DEFireRain extends PoweredEvent
         super.onInit(e);
 		e.setRenderBeam(true);
         e.setColorBeam(255, 0, 0);
-        ItemStack[] req = new ItemStack[] {new ItemStack(Item.blazeRod, 2)};
+        ItemStack[] req = new ItemStack[] {new ItemStack(Items.blaze_rod, 2)};
         req = this.sacrifice(e, req);
 
         if (!checkSacrifice(req))

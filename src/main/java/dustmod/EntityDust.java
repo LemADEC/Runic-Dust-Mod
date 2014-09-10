@@ -8,8 +8,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
-import java.util.logging.Level;
+import java.util.UUID;
 
+import org.apache.logging.log4j.Level;
+
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -89,7 +92,7 @@ public class EntityDust extends Entity
     public List genericList;
     public long entityDustID;
     public int[] data;
-    public String summonerUN;
+    private UUID summonerUUID;
     public static final double yOffset = 0;//-1.5D;
     protected int runeWidth,runeLength;
 //    public int lifetime = -1;
@@ -266,7 +269,7 @@ public class EntityDust extends Entity
     public void setRenderFireOnRune(boolean b){
     	this.renderFlamesDust = b;
     	for(Integer[] i:dustPoints){
-    		TileEntity te = worldObj.getBlockTileEntity(i[0], i[1], i[2]);
+    		TileEntity te = worldObj.getTileEntity(i[0], i[1], i[2]);
     		if(te instanceof TileEntityDust){
         		TileEntityDust ted = (TileEntityDust)te;
         		ted.setRenderFlame(b, rf, gf, bf);
@@ -276,7 +279,7 @@ public class EntityDust extends Entity
     public void setRenderFireOnRuts(boolean b){
     	this.renderFlamesRut = b;
     	for(Integer[] i:rutPoints){
-    		TileEntity te = worldObj.getBlockTileEntity(i[0], i[1], i[2]);
+    		TileEntity te = worldObj.getTileEntity(i[0], i[1], i[2]);
     		if(te instanceof TileEntityRut){
         		TileEntityRut ter = (TileEntityRut)te;
         		ter.setRenderFlame(b, rf, gf, bf);
@@ -398,7 +401,7 @@ public class EntityDust extends Entity
         if (event == null)
         {
             reanimate = true;
-            DustMod.log(Level.INFO, "This rune has been updated! Reactivating...");
+            DustMod.logger.info("This rune has been updated! Reactivating...");
 //            System.out.println("[DustMod] This rune has been updated! Reactivating...");
         }
 
@@ -459,7 +462,7 @@ public class EntityDust extends Entity
 
         fade = tag.getBoolean("fade");
         follow = tag.getBoolean("follow");
-        summonerUN = tag.getString("summonerUN");
+        summonerUUID = UUID.fromString(tag.getString("summonerUN"));
         starScale = tag.getFloat("starScale");
         starScaleY = tag.getFloat("starScaleY");
         updateDataWatcher();
@@ -495,7 +498,7 @@ public class EntityDust extends Entity
         tag.setInteger("rot", rot);
         tag.setFloat("starScale", starScale);
         tag.setFloat("starScaleY", starScaleY);
-        tag.setString("summonerUN", summonerUN);
+        tag.setString("summonerUN", summonerUUID.toString());
         tag.setInteger("ri", ri);
         tag.setInteger("gi", gi);
         tag.setInteger("bi", bi);
@@ -592,9 +595,9 @@ public class EntityDust extends Entity
             {
                 for (Integer[] i : dustPoints)
                 {
-                    int id = worldObj.getBlockId(i[0], i[1], i[2]);
+                    Block block = worldObj.getBlock(i[0], i[1], i[2]);
 
-                    if (!DustMod.isDust(id))
+                    if (!DustMod.isDust(block))
                     {
 //                        System.out.println("Rune Broken!");
                         kill();
@@ -617,7 +620,7 @@ public class EntityDust extends Entity
             	this.updateDataWatcher();
             	ticksExisted = 0;
             	for(Integer[] loc:dustPoints){
-            		if(worldObj.getBlockId(loc[0],loc[1], loc[2]) == DustMod.dust.blockID)
+            		if(worldObj.getBlock(loc[0],loc[1], loc[2]) == DustMod.dust)
             			worldObj.setBlockMetadataWithNotify(loc[0], loc[1], loc[2], BlockDust.ACTIVE_DUST,3);
             	}
             }
@@ -637,7 +640,7 @@ public class EntityDust extends Entity
             {
                 for (Integer[] inPos : dustPoints)
                 {
-                    TileEntityDust ted = (TileEntityDust) worldObj.getBlockTileEntity(inPos[0], inPos[1], inPos[2]);
+                    TileEntityDust ted = (TileEntityDust) worldObj.getTileEntity(inPos[0], inPos[1], inPos[2]);
 
                     if (ted != null)
                     {
@@ -661,10 +664,9 @@ public class EntityDust extends Entity
 
                 for (Integer[] i : dustPoints)
                 {
-                    int id = worldObj.getBlockId(i[0], i[1], i[2]);
-                    int bid = 0;
+                    Block block = worldObj.getBlock(i[0], i[1], i[2]);
 
-                    if (DustMod.isDust(id))
+                    if (DustMod.isDust(block))
                     {
                         worldObj.setBlockMetadataWithNotify(i[0], i[1], i[2], BlockDust.UNUSED_DUST,3);
                     }
@@ -688,7 +690,8 @@ public class EntityDust extends Entity
 
                 if (tf == null)
                 {
-                    EntityPlayer player = worldObj.getPlayerEntityByName(summonerUN);
+                	
+                    EntityPlayer player = worldObj.func_152378_a(summonerUUID);
 
 //                    if (true/*!worldObj.multiplayerWorld*/)
 //                    {
@@ -743,19 +746,19 @@ public class EntityDust extends Entity
 			for(int k = -1; k <= 1; k++){
 				if(hasDustPoint(x+i,y,z+k)) continue;
 				
-				int blockID = worldObj.getBlockId(x+i, y, z+k);
+				Block block = worldObj.getBlock(x+i, y, z+k);
 				int meta = worldObj.getBlockMetadata(x+i, y, z+k);
 				
-				if(blockID == DustMod.dust.blockID && (meta == BlockDust.ACTIVE_DUST || meta == BlockDust.ACTIVATING_DUST)){
-					TileEntityDust ted = (TileEntityDust)worldObj.getBlockTileEntity(x+i, y, z+k);
+				if(block == DustMod.dust && (meta == BlockDust.ACTIVE_DUST || meta == BlockDust.ACTIVATING_DUST)){
+					TileEntityDust ted = (TileEntityDust)worldObj.getTileEntity(x+i, y, z+k);
 					
-					if(ted.dustEntID == this.entityId){
+					if(ted.dustEntID == this.getEntityId()){
 						dustPoints.add(new Integer[]{x+i,y,z+k});
 						checkConnections(x+i,y,z+k);
 					}
-				} else if(blockID == DustMod.rutBlock.blockID){
-					TileEntityRut ter = (TileEntityRut)worldObj.getBlockTileEntity(x+i, y, z+k);
-					if(ter.dustEntID == this.entityId){
+				} else if(block == DustMod.rutBlock){
+					TileEntityRut ter = (TileEntityRut)worldObj.getTileEntity(x+i, y, z+k);
+					if(ter.dustEntID == this.getEntityId()){
 						rutPoints.add(new Integer[]{x+i,y,z+k});
 						checkConnections(x+i,y,z+k);
 					}
@@ -771,7 +774,7 @@ public class EntityDust extends Entity
      */
     public boolean isPowered(){
     	for(Integer[] i:dustPoints){
-    		TileEntityDust ted = (TileEntityDust)worldObj.getBlockTileEntity(i[0], i[1], i[2]);
+    		TileEntityDust ted = (TileEntityDust)worldObj.getTileEntity(i[0], i[1], i[2]);
     		if(ted.isPowered()) return true;
     	}
     	return false;
@@ -897,7 +900,7 @@ public class EntityDust extends Entity
     public boolean canAlterBlock(int x, int y, int z){
 
     	
-    	EntityPlayer p = worldObj.getPlayerEntityByName(summonerUN);
+    	EntityPlayer p = worldObj.func_152378_a(summonerUUID);
     	if(p != null && !worldObj.canMineBlock(p, x, y, z)){
     		return false;
     	}
@@ -926,10 +929,9 @@ public class EntityDust extends Entity
 
         for (Integer[] i : dustPoints)
         {
-            int id = worldObj.getBlockId(i[0], i[1], i[2]);
-            int bid = 0;
+            Block block = worldObj.getBlock(i[0], i[1], i[2]);
 
-            if (DustMod.isDust(id))
+            if (DustMod.isDust(block))
             {
                 worldObj.setBlockMetadataWithNotify(i[0], i[1], i[2], BlockDust.DEAD_DUST,3);
             }
@@ -1003,5 +1005,21 @@ public class EntityDust extends Entity
     public int getBrightnessForRender(float par1)
     {
         return 15728880;
+    }
+    
+    public EntityPlayer getSummoner() {
+    	return summonerUUID != null ? worldObj.func_152378_a(summonerUUID) : null;
+    }
+    
+    public boolean isSummoner(EntityPlayer player) {
+    	return player != null && summonerUUID != null && player.getUniqueID().equals(summonerUUID);
+    }
+    
+    public void setSummonerId(UUID playerId) {
+    	this.summonerUUID = playerId;
+    }
+    
+    public UUID getSummonerId() {
+    	return summonerUUID;
     }
 }

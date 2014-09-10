@@ -1,15 +1,16 @@
 package dustmod.inscriptions;
 
-import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MathHelper;
 import dustmod.DustEvent;
-import dustmod.DustMod;
 import dustmod.EntityDust;
 import dustmod.InscriptionEvent;
 
@@ -29,14 +30,15 @@ public class RespawnInscription extends InscriptionEvent {
 	
 	@Override
 	public boolean callSacrifice(DustEvent rune, EntityDust e, ItemStack item) {
-		ItemStack[] req = new ItemStack[]{new ItemStack(Block.field_94339_ct,1), new ItemStack(Item.enderPearl, 2)};
+		ItemStack[] req = new ItemStack[]{new ItemStack(Blocks.quartz_block,1), new ItemStack(Items.ender_pearl, 2)};
 		req = rune.sacrifice(e, req);
 		if(!rune.checkSacrifice(req)) return false;
 		item.setItemDamage(0);
 		return true;
 	}
 	
-	public void onUpdate(EntityLiving wearer, ItemStack item, boolean[] buttons){
+	@Override
+	public void onUpdate(EntityLivingBase wearer, ItemStack item, boolean[] buttons){
 //		wearer.setPositionAndUpdate(wearer.posX,  wearer.posY+2, wearer.posZ);
 
 		NBTTagCompound tag = item.getTagCompound();
@@ -85,7 +87,7 @@ public class RespawnInscription extends InscriptionEvent {
 		
 		item.getTagCompound().setString("description", "Set to [" + x + "x, " + y + "y, " + z + "z]");
 		if(dist > 1)
-			wearer.sendChatToPlayer("Set return point to [" + x + "x, " + y + "y, " + z + "z]");
+			wearer.addChatMessage(new ChatComponentText("Set return point to [" + x + "x, " + y + "y, " + z + "z]"));
 		bullshit = wearer.worldObj.getTotalWorldTime();
 		return item;
 	}
@@ -95,7 +97,7 @@ public class RespawnInscription extends InscriptionEvent {
 	 * @param wearer
 	 * @param item
 	 */
-	public void respawn(EntityLiving wearer, ItemStack item){
+	public void respawn(EntityLivingBase wearer, ItemStack item){
 		NBTTagCompound tag = item.getTagCompound();
 		double x = 0,y = 128,z = 0;
 		if(wearer instanceof EntityPlayer){

@@ -6,9 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Properties;
-import java.util.logging.Level;
-
-import cpw.mods.fml.common.FMLLog;
 
 public class EntityDustManager {
 
@@ -21,7 +18,7 @@ public class EntityDustManager {
 	public static Long getNextDustEntityID() {
 		nextDustEntID++;
 		if (propGeneral == null) {
-			DustMod.log(Level.WARNING, "General property file is null!");
+			DustMod.logger.warn("General property file is null!");
 //			System.out.println("[DustMod] General property file is null!");
 		}
 		propGeneral.setProperty("entDustNID", "" + nextDustEntID);
@@ -30,8 +27,7 @@ public class EntityDustManager {
 			propGeneral.store(new FileOutputStream(generalFS),
 					null);
 		} catch (Exception e) {
-			FMLLog.log(Level.SEVERE, e,
-					"[DustMod] : Error loading world properties.");
+			DustMod.logger.error("Error loading world properties.", e);
 		}
 
 		return nextDustEntID - 1;
@@ -71,7 +67,7 @@ public class EntityDustManager {
             }
             catch (IOException ioexception)
             {
-                FMLLog.log(Level.SEVERE, null, ioexception);
+            	DustMod.logger.catching(ioexception);
             }
         }
 
@@ -83,7 +79,7 @@ public class EntityDustManager {
         }
         catch (IOException ex)
         {
-        	FMLLog.log(Level.SEVERE, null, ex);
+        	DustMod.logger.catching(ex);
         }
         catch (NumberFormatException ex)
         {

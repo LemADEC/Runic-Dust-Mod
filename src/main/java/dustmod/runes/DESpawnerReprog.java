@@ -104,7 +104,7 @@ public class DESpawnerReprog extends DustEvent
 
             if (true || e.worldObj.getBlockId(fin[0], fin[1], fin[2]) == Block.mobSpawner.blockID)
             {
-                TileEntityMobSpawner tems = ((TileEntityMobSpawner)e.worldObj.getBlockTileEntity(fin[0], fin[1], fin[2]));
+                TileEntityMobSpawner tems = ((TileEntityMobSpawner)e.worldObj.getTileEntity(fin[0], fin[1], fin[2]));
                 tems.func_98049_a().func_98272_a(mob);
                 tems.validate();
                 
@@ -144,7 +144,7 @@ public class DESpawnerReprog extends DustEvent
             fin[0] /= 8;
             fin[1] /= 8;
             fin[2] /= 8;
-            TileEntityMobSpawner tems = ((TileEntityMobSpawner)e.worldObj.getBlockTileEntity(fin[0], fin[1], fin[2]));
+            TileEntityMobSpawner tems = ((TileEntityMobSpawner)e.worldObj.getTileEntity(fin[0], fin[1], fin[2]));
             tems.func_98049_a().field_98287_c = 0;
         }
     }

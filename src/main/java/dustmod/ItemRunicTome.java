@@ -15,13 +15,10 @@ import net.minecraft.world.World;
  */
 public class ItemRunicTome  extends DustModItem
 {
-    private int blockID;
-    private int tex;
 
-    public ItemRunicTome(int i)
+    public ItemRunicTome()
     {
-        super(i);
-        blockID = DustMod.dust.blockID;
+        super();
         this.setMaxStackSize(1);
     }
 
@@ -51,11 +48,11 @@ public class ItemRunicTome  extends DustModItem
         DustShape ds = DustManager.getShape(page - 1);
         int r = (MathHelper.floor_double((double)(p.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3);
 
-        if (DustMod.isDust(world.getBlockId(i, j, k)))
+        if (DustMod.isDust(world.getBlock(i, j, k)))
         {
             if (world.getBlockMetadata(i, j, k) == DustMod.DustMetaUsed)
             {
-                world.setBlockAndMetadataWithNotify(i, j, k, 0,0,3);
+                world.setBlockToAir(i, j, k);
                 j--;
             }
             else

@@ -10,6 +10,8 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import dustmod.EntityDust;
@@ -42,7 +44,7 @@ public class DEFireSprite extends PoweredEvent
 		e.setRenderStar(true);
         e.setFollow(true);
         e.setColorStarInner(255, 0, 0);
-        ItemStack[] sacrifice = new ItemStack[] {new ItemStack(Item.ghastTear, 1), new ItemStack(Item.fireballCharge, 2)};
+        ItemStack[] sacrifice = new ItemStack[] {new ItemStack(Items.ghast_tear, 1), new ItemStack(Items.fire_charge, 2)};
         this.sacrifice(e, sacrifice);
 
         if (!checkSacrifice(sacrifice) || !takeXP(e, 22))
@@ -57,7 +59,7 @@ public class DEFireSprite extends PoweredEvent
         super.onTick(e);
         e.setColorStarOuter(255, 0, 0);
         
-        EntityPlayer player = e.worldObj.getPlayerEntityByName(e.summonerUN);
+        EntityPlayer player = e.getSummoner();
 
 //        if (true/*!e.worldObj.multiplayerWorld*/)
 //        {
@@ -104,9 +106,9 @@ public class DEFireSprite extends PoweredEvent
                 {
                     for (int z = -rad; z <= rad && !ignited; z++)
                     {
-                        if (e.worldObj.getBlockId(ex + x, ey + y - 1, ez + z) != 0 && e.worldObj.getBlockId(ex + x, ey + y, ez + z) == 0 && Math.random() < 0.05D)
+                        if (!e.worldObj.isAirBlock(ex + x, ey + y - 1, ez + z) && e.worldObj.isAirBlock(ex + x, ey + y, ez + z) && Math.random() < 0.05D)
                         {
-                            e.worldObj.setBlockAndMetadataWithNotify(ex + x, ey + y, ez + z, Block.fire.blockID,0,3);
+                            e.worldObj.setBlock(ex + x, ey + y, ez + z, Blocks.fire,0,3);
                             ignited = true;
                         }
                     }

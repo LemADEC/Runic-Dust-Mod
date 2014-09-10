@@ -7,22 +7,27 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.logging.Level;
 
 import net.minecraft.item.ItemStack;
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 public class VoidStorageManager {
 
     public static Properties propInv;
     public static File invFS;
-    public static HashMap<String, ArrayList<ItemStack>> voidInventory;
+    public static HashMap<UUID, ArrayList<ItemStack>> voidInventory;
     
     
     public static void updateVoidInventory()
     {
+    	//TODO complete rewrite
+    	/*
         try
         {
+        	
             propInv.load(new FileInputStream(invFS));
 
             if (propInv != null)
@@ -35,12 +40,14 @@ public class VoidStorageManager {
                     propInv.setProperty(key, "");
                 }
 
-                for (String key:voidInventory.keySet())
+                for (UUID key:voidInventory.keySet())
                 {
                     ArrayList<ItemStack> items = voidInventory.get(key);
                     if(items != null)
                         for(ItemStack is:items){
-                            propInv.setProperty(key, "[" + is.itemID + "," + is.stackSize + "," + is.getItemDamage() + "]");
+                        	// TODO ensure we only take items with a unique identifier
+                        	String itemName = GameRegistry.findUniqueIdentifierFor(is.getItem()).toString();
+                            propInv.setProperty(key, "[" + itemName + "," + is.stackSize + "," + is.getItemDamage() + "]");
                         }
                 }
 
@@ -52,33 +59,39 @@ public class VoidStorageManager {
                 }
                 catch (IOException ex)
                 {
-                    FMLLog.log(Level.SEVERE, null, ex);
+                	DustMod.logger.catching(ex);
                 }
             }
-        }
+    	}
         catch (IOException ex)
         {
-        	FMLLog.log(Level.SEVERE, null, ex);
-        }
+        	DustMod.logger.catching(ex);
+        }*/
     }
-    public static void addItemToVoidInventory(EntityDust e, ItemStack is){
-        addItemToVoidInventory(e.summonerUN,is);
-    }
-    public static void addItemToVoidInventory(String player, ItemStack is){
-        if(voidInventory.get(player) == null){
-            voidInventory.put(player, new ArrayList<ItemStack>());
-        }
-        voidInventory.get(player).add(is);
-                
-    }
-    public static ArrayList<ItemStack> getVoidInventory(EntityDust e){
-        return voidInventory.get(e.summonerUN);
-    }
-    public static void clearVoidInventory(EntityDust e){
-        voidInventory.put(e.summonerUN, null);
-    }
+
+	public static void addItemToVoidInventory(EntityDust e, ItemStack is) {
+		addItemToVoidInventory(e.getSummonerId(), is);
+	}
+
+	public static void addItemToVoidInventory(UUID playerId, ItemStack is) {
+		if (voidInventory.get(playerId) == null) {
+			voidInventory.put(playerId, new ArrayList<ItemStack>());
+		}
+		
+		voidInventory.get(playerId).add(is);
+	}
+
+	public static ArrayList<ItemStack> getVoidInventory(EntityDust e) {
+		return voidInventory.get(e.getSummonerId());
+	}
+
+	public static void clearVoidInventory(EntityDust e) {
+		voidInventory.put(e.getSummonerId(), null);
+	}
     
-    public static void load(String savePath){
+    public static void load(String savePath) {
+    	// TODO complete rewrite
+    	/*
         voidInventory = new HashMap<String, ArrayList<ItemStack>>();
         propInv = new Properties();
         
@@ -148,5 +161,6 @@ public class VoidStorageManager {
         } catch (IOException e){
             FMLLog.log(Level.SEVERE, null, e);
         }
+        */
     }
 }

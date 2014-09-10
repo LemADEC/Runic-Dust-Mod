@@ -3,10 +3,8 @@ package dustmod.client;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.util.Icon;
+import net.minecraft.init.Blocks;
 import net.minecraft.world.IBlockAccess;
-
-import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import dustmod.BlockDust;
@@ -56,9 +54,9 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
             return false;
         }
 	}
-
+	
 	@Override
-	public boolean shouldRender3DInInventory() {
+	public boolean shouldRender3DInInventory(int modelId) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -84,7 +82,7 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
         float px = 1F / 16F;
         float cellWidth = 1F / size;
         float h = 0.025F;
-        TileEntityDust ted = (TileEntityDust)iblock.getBlockTileEntity(i, j, k);
+        TileEntityDust ted = (TileEntityDust)iblock.getTileEntity(i, j, k);
         float t = 0.02F;
 //        int light = Block.lightValue[block.blockID];
 //        Block.lightValue[block.blockID] = 15;
@@ -297,42 +295,42 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
 
     public boolean renderRut(RenderBlocks rb, IBlockAccess iblock, int i, int j, int k, Block block)
     {
-        int size = TileEntityDust.size;
-        TileEntityRut ter = (TileEntityRut)iblock.getBlockTileEntity(i, j, k);
-        int[][][] rut = ter.ruts;
+        //int size = TileEntityDust.size;
+        TileEntityRut ter = (TileEntityRut)iblock.getTileEntity(i, j, k);
+        int[] rut = ter.ruts;
         if(rut == null) return false;
-        float t = 0.02F;
+        //float t = 0.02F;
 //        int light = Block.lightValue[rutBlock.blockID];
 //        Block.lightValue[rutBlock.blockID] = 15;
         Tessellator tessellator = Tessellator.instance;
         tessellator.setBrightness(block.getMixedBrightnessForBlock(iblock, i, j, k));
-        block = Block.blocksList[ter.maskBlock];
+        block = ter.maskBlock;
         if(block == null) return false;
-        Block fluid = Block.blocksList[ter.fluid];
+        Block fluid = ter.fluid;
         float bi = 2F / 16F; //baseInset
         float fi = 1F / 16F; //fluidInset
         float cw = 6F / 16F; //cornerWidth
         float rw = 4F / 16F; //rutWidth
         int rendered = 0;
-        boolean isGrass = block == Block.grass;
+        boolean isGrass = block == Blocks.grass;
 
         ///the top of stuff
         //y
-        if (rut[1][0][1] == 0 && rut[1][2][1] == 0)
+        if (rut[1*9 + 0*3 + 1] == 0 && rut[1*9 + 2*3 + 1] == 0)
         {
             block.setBlockBounds(cw, 0, cw, cw + rw, 1F, cw + rw);
             rb.setRenderBoundsFromBlock(block);
             rb.renderStandardBlock(block, i, j, k);
             rendered++;
         }
-        else if (rut[1][0][1] == 0)
+        else if (rut[1*9 + 0*3 + 1] == 0)
         {
             block.setBlockBounds(cw, 0, cw, cw + rw, bi, cw + rw);
             rb.setRenderBoundsFromBlock(block);
             rb.renderStandardBlock(block, i, j, k);
             rendered++;
         }
-        else if (rut[1][2][1] == 0)
+        else if (rut[1*9 + 2*3 + 1] == 0)
         {
             block.setBlockBounds(cw, 1F - bi, cw, cw + rw, 1F, cw + rw);
             rb.setRenderBoundsFromBlock(block);
@@ -359,7 +357,7 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
 
         //Top
         //n
-        if (rut[1][2][2] == 0)
+        if (rut[1*9 + 2*3 + 2] == 0)
         {
             block.setBlockBounds(cw, 1f - cw, 1f - cw, cw + rw, 1f, 1f);
             rb.setRenderBoundsFromBlock(block);
@@ -370,11 +368,11 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
         if (isGrass)
         {
             block.setBlockBounds(0, 0, 0, 1, 1, 1);
-            block = Block.grass;
+            block = Blocks.grass;
         }
 
         //s
-        if (rut[1][2][0] == 0)
+        if (rut[1*9 + 2*3 + 0] == 0)
         {
             block.setBlockBounds(cw, 1f - cw, 0F, cw + rw, 1f, cw);
             rb.setRenderBoundsFromBlock(block);
@@ -385,11 +383,11 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
         if (isGrass)
         {
             block.setBlockBounds(0, 0, 0, 1, 1, 1);
-            block = Block.grass;
+            block = Blocks.grass;
         }
 
         //e
-        if (rut[2][2][1] == 0)
+        if (rut[2*9 + 2*3 + 1] == 0)
         {
             block.setBlockBounds(1f - cw, 1f - cw, cw, 1f, 1f, cw + rw);
             rb.setRenderBoundsFromBlock(block);
@@ -400,11 +398,11 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
         if (isGrass)
         {
             block.setBlockBounds(0, 0, 0, 1, 1, 1);
-            block = Block.grass;
+            block = Blocks.grass;
         }
 
         //w
-        if (rut[0][2][1] == 0)
+        if (rut[0*9 + 2*3 + 1] == 0)
         {
             block.setBlockBounds(0F, 1f - cw, cw, cw, 1f, cw + rw);
             rb.setRenderBoundsFromBlock(block);
@@ -415,7 +413,7 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
         if (isGrass)
         {
             block.setBlockBounds(0, 0, 0, 1, 1, 1);
-            block = Block.dirt;
+            block = Blocks.dirt;
         }
 
         //corners
@@ -532,21 +530,21 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
         //Centers
 
         //x
-        if (rut[0][1][1] == 0 && rut[2][1][1] == 0)
+        if (rut[0*9 + 1*3 + 1] == 0 && rut[2*9 + 1*3 + 1] == 0)
         {
             block.setBlockBounds(0, cw, cw, 1F, cw + rw, cw + rw);
             rb.setRenderBoundsFromBlock(block);
             rb.renderStandardBlock(block, i, j, k);
             rendered++;
         }
-        else if (rut[0][1][1] == 0)
+        else if (rut[0*9 + 1*3 + 1] == 0)
         {
             block.setBlockBounds(0, cw, cw, bi, cw + rw, cw + rw);
             rb.setRenderBoundsFromBlock(block);
             rb.renderStandardBlock(block, i, j, k);
             rendered++;
         }
-        else if (rut[2][1][1] == 0)
+        else if (rut[2*9 + 1*3 + 1] == 0)
         {
             block.setBlockBounds(1F - bi, cw, cw, 1F, cw + rw, cw + rw);
             rb.setRenderBoundsFromBlock(block);
@@ -555,21 +553,21 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
         }
 
         //z
-        if (rut[1][1][0] == 0 && rut[1][1][2] == 0)
+        if (rut[1*9 + 1*3 + 0] == 0 && rut[1*9 + 1*3 + 2] == 0)
         {
             block.setBlockBounds(cw, cw, 0F, cw + rw, cw + rw, 1F);
             rb.setRenderBoundsFromBlock(block);
             rb.renderStandardBlock(block, i, j, k);
             rendered++;
         }
-        else if (rut[1][1][0] == 0)
+        else if (rut[1*9 + 1*3 + 0] == 0)
         {
             block.setBlockBounds(cw, cw, 0F, cw + rw, cw + rw, bi);
             rb.setRenderBoundsFromBlock(block);
             rb.renderStandardBlock(block, i, j, k);
             rendered++;
         }
-        else if (rut[1][1][2] == 0)
+        else if (rut[1*9 + 1*3 + 2] == 0)
         {
             block.setBlockBounds(cw, cw, 1F - bi, cw + rw, cw + rw, 1F);
             rb.setRenderBoundsFromBlock(block);
@@ -585,7 +583,7 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
 
         //Bottom
         //n
-        if (rut[1][0][2] == 0)
+        if (rut[1*9 + 0*3 + 2] == 0)
         {
             block.setBlockBounds(cw, 0, 1f - cw, cw + rw, cw, 1f);
             rb.setRenderBoundsFromBlock(block);
@@ -594,7 +592,7 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
         }
 
         //s
-        if (rut[1][0][0] == 0)
+        if (rut[1*9 + 0*3 + 0] == 0)
         {
             block.setBlockBounds(cw, 0, 0F, cw + rw, cw, cw);
             rb.setRenderBoundsFromBlock(block);
@@ -603,7 +601,7 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
         }
 
         //e
-        if (rut[2][0][1] == 0)
+        if (rut[2*9 + 0*3 + 1] == 0)
         {
             block.setBlockBounds(1f - cw, 0, cw, 1f, cw, cw + rw);
             rb.setRenderBoundsFromBlock(block);
@@ -612,7 +610,7 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
         }
 
         //w
-        if (rut[0][0][1] == 0)
+        if (rut[0*9 + 0*3 + 1] == 0)
         {
             block.setBlockBounds(0F, 0, cw, cw, cw, cw + rw);
             rb.setRenderBoundsFromBlock(block);
@@ -622,7 +620,7 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
 
         //Middle
         //nw
-        if (rut[0][1][2] == 0)
+        if (rut[0*9 + 1*3 + 2] == 0)
         {
             block.setBlockBounds(0F, cw, 1f - cw, cw, cw + rw, 1f);
             rb.setRenderBoundsFromBlock(block);
@@ -631,7 +629,7 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
         }
 
         //ne
-        if (rut[2][1][2] == 0)
+        if (rut[2*9 + 1*3 + 2] == 0)
         {
             block.setBlockBounds(1f - cw, cw, 1f - cw, 1f, cw + rw, 1f);
             rb.setRenderBoundsFromBlock(block);
@@ -640,7 +638,7 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
         }
 
         //sw
-        if (rut[0][1][0] == 0)
+        if (rut[0*9 + 1*3 + 0] == 0)
         {
             block.setBlockBounds(0, cw, 0f, cw, cw + rw, cw);
             rb.setRenderBoundsFromBlock(block);
@@ -649,7 +647,7 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
         }
 
         //se
-        if (rut[2][1][0] == 0)
+        if (rut[2*9 + 1*3 + 0] == 0)
         {
             block.setBlockBounds(1f - cw, cw, 0f, 1f, cw + rw, cw);
             rb.setRenderBoundsFromBlock(block);
@@ -734,7 +732,7 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
 //    /*
 //    * Renders the given texture to the east (z-negative) face of the block.  Args: block, x, y, z, texture
 //    */
-//   public void renderEastFace(RenderBlocks rb, int height, Block par1Block, double par2, double par4, double par6, Icon par8)
+//   public void renderEastFace(RenderBlocks rb, int height, Block par1Block, double par2, double par4, double par6, IIcon par8)
 //   {
 //       Tessellator var9 = Tessellator.instance;
 //

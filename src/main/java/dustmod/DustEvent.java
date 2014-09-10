@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package dustmod;
 
 import java.util.ArrayList;
@@ -9,7 +5,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
+import com.mojang.authlib.GameProfile;
+
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -17,6 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.ServerConfigurationManager;
+import net.minecraft.server.management.UserListOps;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
@@ -127,7 +128,7 @@ public abstract class DustEvent {
 				// world.setBlockWithNotify(i[0], i[1], i[2],
 				// Block.melon.blockID);
 				TileEntityRut ter = (TileEntityRut) e.worldObj
-						.getBlockTileEntity(i[0], i[1], i[2]);
+						.getTileEntity(i[0], i[1], i[2]);
 
 				if (ter != null) {
 					ter.isBeingUsed = false;
@@ -143,17 +144,29 @@ public abstract class DustEvent {
 	 *            the player
 	 * @return true if can see, false otherwise
 	 */
-	public boolean canPlayerKnowRune(String player) {
+	public boolean canPlayerKnowRune(UUID playerId) {
 		boolean isOP = false;
-		if(player != null && !player.isEmpty())
+		
+		if (playerId != null) {
 			try {
 				MinecraftServer server = MinecraftServer.getServer();
 				ServerConfigurationManager manager = server.getConfigurationManager();
-				Set ops = manager.getOps();
-				isOP = (ops == null || ops.contains(player.toLowerCase()));
+				UserListOps ops = manager.func_152603_m();
+				// TODO optimize this?
+				if (ops != null) {
+					GameProfile[] profiles = manager.func_152600_g();
+					for (GameProfile profile: profiles) {
+						if (profile.getId() != null && profile.getId().equals(playerId)) {
+							isOP = (ops.func_152700_a(profile.getName()) != null);
+							break;
+						}
+					}
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		}
+		
 		return permaAllowed
 				&& (this.permission.equals("ALL") || (this.permission
 						.equals("OPS") && isOP));
@@ -263,6 +276,7 @@ public abstract class DustEvent {
 		return true;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public List getEntities(World world, double x, double y, double z) {
 		return getEntities(world, x, y, z, 1D);
 	}
@@ -275,6 +289,7 @@ public abstract class DustEvent {
 	 * @return A list of all entities within 1 block of the given entity's
 	 *         position (including the entity itself)
 	 */
+	@SuppressWarnings("rawtypes")
 	public List getEntities(Entity e) {
 		return getEntities(e.worldObj, e.posX, e.posY - e.yOffset, e.posZ, 1D);
 	}
@@ -289,6 +304,7 @@ public abstract class DustEvent {
 	 * @return A list containing all entities within the radius of the given
 	 *         Entity's position (including the entity itself)
 	 */
+	@SuppressWarnings("rawtypes")
 	public List getEntities(Entity e, double r) {
 		return getEntities(e.worldObj, e.posX, e.posY - e.yOffset, e.posZ, r);
 	}
@@ -309,6 +325,7 @@ public abstract class DustEvent {
 	 * @return A list containing all entities within the radius of the
 	 *         coordinates
 	 */
+	@SuppressWarnings("rawtypes")
 	public List getEntities(World world, double x, double y, double z,
 			double radius) {
 		List l = world.getEntitiesWithinAABBExcludingEntity(
@@ -318,6 +335,7 @@ public abstract class DustEvent {
 		return l;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public List getEntities(World world, Class entType, double x, double y,
 			double z, double radius) {
 		List l = world.getEntitiesWithinAABB(
@@ -330,6 +348,7 @@ public abstract class DustEvent {
 		return l;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public List getEntitiesExcluding(World world, Entity e, double x, double y,
 			double z, double radius) {
 		List l = world.getEntitiesWithinAABBExcludingEntity(
@@ -362,9 +381,10 @@ public abstract class DustEvent {
 	 *            The radius in which to check for dropped items
 	 * @return A List<EntityItem> of all nearby dropped items.
 	 */
+	@SuppressWarnings("rawtypes")
 	public final List<EntityItem> getItems(EntityDust e, double radius) {
 		ArrayList<EntityItem> itemstacks = new ArrayList<EntityItem>();
-		List l = getEntities(e.worldObj, e.posX, e.posY - e.yOffset, e.posZ,
+		List l = getEntities(e.worldObj, e.posX, e.posY - EntityDust.yOffset, e.posZ,
 				radius);
 
 		for (Object o : l) {
@@ -393,11 +413,11 @@ public abstract class DustEvent {
 		for (EntityItem i : sacrifice) {
 			for (ItemStack item : items) {
 				ItemStack is = i.getEntityItem();
-				if (is.itemID == DustMod.negateSacrifice.itemID) {
+				if (is.getItem() == DustMod.negateSacrifice) {
 					return true;
 				}
 
-				if (is.itemID == item.itemID
+				if (is.getItem() == item.getItem()
 						&& (item.getItemDamage() == -1 || i.getEntityItem()
 								.getItemDamage() == item.getItemDamage())) {
 					if (is.stackSize <= item.stackSize
@@ -431,13 +451,13 @@ public abstract class DustEvent {
 		for (EntityItem i : sacrifice) {
 			ItemStack is = i.getEntityItem();
 
-			if (is.itemID == DustMod.negateSacrifice.itemID) {
+			if (is.getItem() == DustMod.negateSacrifice) {
 				negate = true;
 				break;
 			}
 
 			for (ItemStack c : req) {
-				if (c.itemID == is.itemID
+				if (c.getItem() == is.getItem()
 						&& (c.getItemDamage() == -1 || c.getItemDamage() == is
 								.getItemDamage())) {
 					DustMod.log("check1");
@@ -450,6 +470,10 @@ public abstract class DustEvent {
 							match = c.getTagCompound().equals(is.getTagCompound());
 							NBTTagCompound cTag = c.getTagCompound();
 							NBTTagCompound isTag = is.getTagCompound();
+							if (!cTag.equals(isTag)) {
+								match = false;
+							}
+							/*
 							if(cTag.getTags().size() == isTag.getTags().size()){
 								DustMod.log("check4");
 								match = true;
@@ -464,7 +488,7 @@ public abstract class DustEvent {
 								}
 							}else{
 								DustMod.log("wat",cTag.getTags().size(),isTag.getTags().size());
-							}
+							}*/
 						}else{
 							match = true;
 						}
@@ -520,7 +544,7 @@ public abstract class DustEvent {
 			}
 
 			if (ei != null
-					&& ei.getEntityItem().itemID == DustMod.negateSacrifice.itemID) {
+					&& ei.getEntityItem().getItem() == DustMod.negateSacrifice) {
 				negate = true;
 				break;
 			}
@@ -599,7 +623,7 @@ public abstract class DustEvent {
 		e.rutPoints = ruts;
 	}
 
-	protected final void findRuts(EntityDust e, int fluidID) {
+	protected final void findRuts(EntityDust e, Block fluid) {
 		World w = e.worldObj;
 		// int ix = e.getX();
 		// int iy = e.getY();
@@ -610,7 +634,7 @@ public abstract class DustEvent {
 
 		for (Integer[] i : e.dustPoints) {
 			ruts.add(new Integer[] { i[0], i[1] - 1, i[2] });
-			checkNeighbors(w, ruts, i[0], i[1] - 1, i[2], fluidID);
+			checkNeighbors(w, ruts, i[0], i[1] - 1, i[2], fluid);
 		}
 
 		e.rutPoints = ruts;
@@ -862,7 +886,7 @@ public abstract class DustEvent {
 		return true;
 	}
 
-	protected final boolean findRutArea(EntityDust e, int fluidID) {
+	protected final boolean findRutArea(EntityDust e, Block fluid) {
 		World w = e.worldObj;
 		List<Integer[]> horiz = new ArrayList<Integer[]>();
 		List<Integer[]> length = new ArrayList<Integer[]>();
@@ -871,7 +895,7 @@ public abstract class DustEvent {
 		List<Integer[]> ruts = e.rutPoints;
 
 		if (ruts == null) {
-			findRuts(e, fluidID);
+			findRuts(e, fluid);
 			ruts = e.rutPoints;
 
 			if (ruts == null) {
@@ -1104,7 +1128,7 @@ public abstract class DustEvent {
 		return true;
 	}
 
-	protected final boolean findRutAreaFlat(EntityDust e, int fluidID) {
+	protected final boolean findRutAreaFlat(EntityDust e, Block fluid) {
 		World w = e.worldObj;
 		List<Integer[]> horiz = new ArrayList<Integer[]>();
 		List<Integer[]> length = new ArrayList<Integer[]>();
@@ -1113,7 +1137,7 @@ public abstract class DustEvent {
 		List<Integer[]> ruts = e.rutPoints;
 
 		if (ruts == null) {
-			findRuts(e, fluidID);
+			findRuts(e, fluid);
 			ruts = e.rutPoints;
 
 			if (ruts == null) {
@@ -1245,26 +1269,22 @@ public abstract class DustEvent {
 		return true;
 	}
 
-	private final void checkNeighbors(World w, ArrayList<Integer[]> ruts,
-			int x, int y, int z) {
+	private final void checkNeighbors(World w, ArrayList<Integer[]> ruts, int x, int y, int z) {
 		for (int i = -1; i <= 1; i++) {
 			for (int j = -1; j <= 1; j++) {
 				for (int k = -1; k <= 1; k++) {
-					if ((i == 0 || i == 2) && i == j && (k == 0 || k == 2)
-							&& j != 0) {
+					if ((i == 0 || i == 2) && i == j && (k == 0 || k == 2) && j != 0) {
 						continue;
 					}
 
-					if ((i == 0 || i == 2) && (j == 0 || j == 2) && i != j
-							&& (k == 0 || k == 2) && j != 0) {
+					if ((i == 0 || i == 2) && (j == 0 || j == 2) && i != j && (k == 0 || k == 2) && j != 0) {
 						continue;
 					}
 
-					int bid = w.getBlockId(x + i, y + j, z + k);
+					Block block = w.getBlock(x + i, y + j, z + k);
 
-					if (bid == DustMod.rutBlock.blockID) {
-						TileEntityRut ter = (TileEntityRut) w
-								.getBlockTileEntity(x + i, y + j, z + k);
+					if (block == DustMod.rutBlock) {
+						TileEntityRut ter = (TileEntityRut) w.getTileEntity(x + i, y + j, z + k);
 
 						if (!ter.isBeingUsed) {
 							ter.isBeingUsed = true;
@@ -1277,32 +1297,27 @@ public abstract class DustEvent {
 		}
 	}
 
-	private final void checkNeighborsWithDistance(World w,
-			ArrayList<Integer[]> ruts, int x, int y, int z, int distance) {
+	private final void checkNeighborsWithDistance(World w, ArrayList<Integer[]> ruts, int x, int y, int z, int distance) {
 		for (int i = -1; i <= 1; i++) {
 			for (int j = -1; j <= 1; j++) {
 				for (int k = -1; k <= 1; k++) {
-					if ((i == 0 || i == 2) && i == j && (k == 0 || k == 2)
-							&& j != 0) {
+					if ((i == 0 || i == 2) && i == j && (k == 0 || k == 2) && j != 0) {
 						continue;
 					}
 
-					if ((i == 0 || i == 2) && (j == 0 || j == 2) && i != j
-							&& (k == 0 || k == 2) && j != 0) {
+					if ((i == 0 || i == 2) && (j == 0 || j == 2) && i != j && (k == 0 || k == 2) && j != 0) {
 						continue;
 					}
 
-					int bid = w.getBlockId(x + i, y + j, z + k);
+					Block block = w.getBlock(x + i, y + j, z + k);
 
-					if (bid == DustMod.rutBlock.blockID) {
-						TileEntityRut ter = (TileEntityRut) w
-								.getBlockTileEntity(x + i, y + j, z + k);
+					if (block == DustMod.rutBlock) {
+						TileEntityRut ter = (TileEntityRut) w.getTileEntity(x + i, y + j, z + k);
 
 						if (!ter.isBeingUsed && distance > 0) {
 							ter.isBeingUsed = true;
 							ruts.add(new Integer[] { x + i, y + j, z + k });
-							checkNeighborsWithDistance(w, ruts, x + i, y + j, z
-									+ k, distance - 1);
+							checkNeighborsWithDistance(w, ruts, x + i, y + j, z + k, distance - 1);
 						}
 					}
 				}
@@ -1310,8 +1325,7 @@ public abstract class DustEvent {
 		}
 	}
 
-	private final void checkNeighbors(World w, ArrayList<Integer[]> ruts,
-			int x, int y, int z, int fluidID) {
+	private final void checkNeighbors(World w, ArrayList<Integer[]> ruts, int x, int y, int z, Block fluid) {
 		for (int i = -1; i <= 1; i++) {
 			for (int j = -1; j <= 1; j++) {
 				for (int k = -1; k <= 1; k++) {
@@ -1319,18 +1333,16 @@ public abstract class DustEvent {
 						continue;
 					}
 
-					if ((i == 0 || i == 2) && (j == 0 || j == 2) && i != j
-							&& (k == 0 || k == 2)) {
+					if ((i == 0 || i == 2) && (j == 0 || j == 2) && i != j && (k == 0 || k == 2)) {
 						continue;
 					}
 
-					int bid = w.getBlockId(x + i, y + j, z + k);
+					Block block = w.getBlock(x + i, y + j, z + k);
 
-					if (bid == DustMod.rutBlock.blockID) {
-						TileEntityRut ter = (TileEntityRut) w
-								.getBlockTileEntity(x + i, y + j, z + k);
+					if (block == DustMod.rutBlock) {
+						TileEntityRut ter = (TileEntityRut) w.getTileEntity(x + i, y + j, z + k);
 
-						if (!ter.isBeingUsed && ter.fluid == fluidID) {
+						if (!ter.isBeingUsed && ter.fluid == fluid) {
 							ter.isBeingUsed = true;
 							ruts.add(new Integer[] { x + i, y + j, z + k });
 							checkNeighbors(w, ruts, x + i, y + j, z + k);

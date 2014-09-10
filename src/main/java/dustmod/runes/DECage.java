@@ -10,6 +10,8 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -38,7 +40,7 @@ public class DECage extends DETrap
     public void onInit(EntityDust e)
     {
         e.setRenderStar(true);
-        ItemStack[] req = new ItemStack[] {new ItemStack(Item.ingotIron, 6), new ItemStack(Item.redstone, 2)};
+        ItemStack[] req = new ItemStack[] {new ItemStack(Items.iron_ingot, 6), new ItemStack(Items.redstone, 2)};
         req = this.sacrifice(e, req);
 
         if (!checkSacrifice(req))
@@ -81,9 +83,9 @@ public class DECage extends DETrap
             if (k instanceof EntityLiving)
             {
                 
-                if(k instanceof EntityPlayer){
+                if(k instanceof EntityPlayer && e.getSummonerId() != null){
                     EntityPlayer ep = (EntityPlayer)k;
-                    if(ep.username.equals(e.summonerUN)){
+                    if(ep.getGameProfile().getId().equals(e.getSummonerId())) {
                         continue;
                     }
                 }
@@ -104,21 +106,21 @@ public class DECage extends DETrap
                                 continue;
                             }
 
-                            world.setBlockAndMetadataWithNotify(x + ix, y + iy, z + iz, 0,0,3);
-                            world.setBlockAndMetadataWithNotify(x + ix, y + iy, z + iz, Block.fenceIron.blockID,0,3);
+                            world.setBlockToAir(x + ix, y + iy, z + iz);
+                            world.setBlock(x + ix, y + iy, z + iz, Blocks.iron_bars,0,3);
                         }
 
-                if (world.getBlockId(x, y - 1, z) == 0)
+                if (world.isAirBlock(x, y - 1, z))
                 {
                     for (Integer[] p: e.dustPoints)
                     {
-                        TileEntityDust ted = (TileEntityDust)world.getBlockTileEntity(p[0], p[1], p[2]);
+                        TileEntityDust ted = (TileEntityDust)world.getTileEntity(p[0], p[1], p[2]);
 
                         if (ted.getDusts()[3])
                         {
-                            int id = world.getBlockId(p[0], p[1] - 1, p[2]);
-                            world.setBlockAndMetadataWithNotify(p[0], p[1] - 1, p[2], 0,0,3);
-                            world.setBlockAndMetadataWithNotify(x, y - 1, z, id,0,3);
+                            Block block = world.getBlock(p[0], p[1] - 1, p[2]);
+                            world.setBlockToAir(p[0], p[1] - 1, p[2]);
+                            world.setBlock(x, y - 1, z, block,0,3);
                         }
                     }
                 }

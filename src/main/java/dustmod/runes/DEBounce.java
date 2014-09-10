@@ -8,6 +8,8 @@ import java.util.List;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import dustmod.DustEvent;
@@ -35,7 +37,7 @@ public class DEBounce extends DustEvent
     {
         ItemStack[] req = new ItemStack[]
         {
-            new ItemStack(Item.slimeBall, 4, -1)
+            new ItemStack(Items.slime_ball, 4, -1)
         };
         sacrifice(e, req);
 
@@ -54,17 +56,17 @@ public class DEBounce extends DustEvent
 //        System.out.println("Dicks " + entities.size());
         for (Entity i: entities)
         {
-            if (i instanceof EntityLiving)
+            if (i instanceof EntityLivingBase)
             {
-                EntityLiving el = (EntityLiving)i;
+                EntityLivingBase el = (EntityLivingBase)i;
                 double cons = 0;//0.0784000015258789;
                 double yVel = i.motionY + cons;
                 double diff = e.posY - el.prevPosY;
 //                System.out.println("i.motion " + mod_DustMod.getMoveForward(el) + " " + mod_DustMod.getMoveSpeed(el));
-                if (!el.onGround && !el.isJumping && yVel < 0.7D)
+                // TODO isJumping
+                if (!el.onGround /*&& !el.isJumping*/ && yVel < 0.7D)
                 {
-                    el.getJumpHelper().setJumping();
-                    el.getJumpHelper().doJump();
+                    el.setJumping(true);
 //                    el.setMoveForward(mod_DustMod.getMoveSpeed(el)*2);
 //                    i.motionY = 1D;
 //                    i.motionX *= 2;
@@ -85,9 +87,9 @@ public class DEBounce extends DustEvent
 
         for (Entity i: entities)
         {
-            if (i instanceof EntityLiving)
+            if (i instanceof EntityLivingBase)
             {
-                EntityLiving el = (EntityLiving)i;
+            	EntityLivingBase el = (EntityLivingBase)i;
                 if (!el.onGround /*i.motionY < 0*/)
                 {
                     i.fallDistance = 0;

@@ -1,13 +1,16 @@
 package dustmod.inscriptions;
 
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumMovingObjectType;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
+import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import dustmod.DustEvent;
 import dustmod.DustMod;
 import dustmod.EntityDust;
@@ -33,9 +36,9 @@ public class BlinkerInscription extends InscriptionEvent {
 		ItemStack[] req = new ItemStack[0];
 		int xp = 10;
 		
-		ItemStack blinkI = new ItemStack(DustMod.wornInscription.itemID, 1, 0);
+		ItemStack blinkI = new ItemStack(DustMod.wornInscription, 1, 0);
 		InscriptionManager.setEvent(blinkI, "leapI");
-		req = new ItemStack[]{blinkI, new ItemStack(Item.enderPearl, 8)};
+		req = new ItemStack[]{blinkI, new ItemStack(Items.ender_pearl, 8)};
 		
 		req = rune.sacrifice(e, req);
 		if(!rune.checkSacrifice(req)) return false;
@@ -45,7 +48,7 @@ public class BlinkerInscription extends InscriptionEvent {
 	}
 	
 	@Override
-	public void onUpdate(EntityLiving wearer, ItemStack item, boolean[] buttons) {
+	public void onUpdate(EntityLivingBase wearer, ItemStack item, boolean[] buttons) {
 		super.onUpdate(wearer, item, buttons);
 		
 //		System.out.println("huh " + wasFalling(item) +  " " + wearer.posY + " " + wearer.isCollidedVertically + " " + wearer.onGround);
@@ -86,16 +89,16 @@ public class BlinkerInscription extends InscriptionEvent {
 			}
 
 			double newY = testLoc[1];
-			if(wearer.worldObj.getBlockId((int)testLoc[0], (int)testLoc[1], (int)testLoc[2]) != 0){
+			if(wearer.worldObj.getBlock((int)testLoc[0], (int)testLoc[1], (int)testLoc[2]).getMaterial() != Material.air){
 				for(int i = 0; i < 3; i++){
-					if(wearer.worldObj.getBlockId((int)testLoc[0], (int)Math.floor(testLoc[1])+i, (int)testLoc[2]) == 0){
+					if(wearer.worldObj.getBlock((int)testLoc[0], (int)Math.floor(testLoc[1])+i, (int)testLoc[2]).getMaterial() == Material.air){
 						newY = Math.floor(testLoc[1])+i;
 						break;
 					}
 				}
 			}else{
 				for(int i = 0; i < 64; i++){
-					if(wearer.worldObj.getBlockId((int)testLoc[0], (int)Math.floor(testLoc[1])-i, (int)testLoc[2]) != 0){
+					if(wearer.worldObj.getBlock((int)testLoc[0], (int)Math.floor(testLoc[1])-i, (int)testLoc[2]).getMaterial() != Material.air){
 						newY = Math.floor(testLoc[1])-i+1;
 						break;
 					}
@@ -139,10 +142,10 @@ public class BlinkerInscription extends InscriptionEvent {
 		}
 	}
 	
-	private void onTele(ItemStack item, EntityLiving wearer){
+	private void onTele(ItemStack item, EntityLivingBase wearer){
 		item.getTagCompound().setInteger("lastTele", wearer.ticksExisted);
 	}
-	private boolean canTele(ItemStack item, EntityLiving wearer){
+	private boolean canTele(ItemStack item, EntityLivingBase wearer){
 		int last = 0;
 		if(item.getTagCompound().hasKey("mouse"))
 			last = item.getTagCompound().getInteger("lastTele");
@@ -179,7 +182,7 @@ public class BlinkerInscription extends InscriptionEvent {
 	
 	public int[] getClickedBlock(Entity wearer, ItemStack item){
 		MovingObjectPosition click = DustMod.getWornInscription().getMovingObjectPositionFromPlayer(wearer.worldObj, (EntityPlayer)wearer, false);
-		if(click != null && click.typeOfHit == EnumMovingObjectType.TILE){
+		if(click != null && click.typeOfHit == MovingObjectType.BLOCK){
 			int tx = click.blockX;
 			int ty = click.blockY;
 			int tz = click.blockZ;

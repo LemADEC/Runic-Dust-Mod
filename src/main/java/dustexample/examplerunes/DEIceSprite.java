@@ -6,7 +6,8 @@ package dustexample.examplerunes;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import dustmod.EntityDust;
@@ -60,7 +61,7 @@ public class DEIceSprite extends PoweredEvent
         /**SACRIFICES**/
         
         //If these items have not been sacrificed
-        if(!this.takeItems(e, new ItemStack(Block.snow, 1, -1), new ItemStack(Item.ghastTear, 1))){
+        if(!this.takeItems(e, new ItemStack(Blocks.snow, 1, -1), new ItemStack(Items.ghast_tear, 1))){
             //Then kill the rune.
             e.fizzle();
             return;
@@ -84,7 +85,7 @@ public class DEIceSprite extends PoweredEvent
         e.setColorStarOuter(0,255,255);
         
         //Find the player who created this rune
-        EntityPlayer player = e.worldObj.getPlayerEntityByName(e.summonerUN);
+        EntityPlayer player = e.getSummoner();
         
         if(player == null){ 
             //******IMPORTANT TO NOTE: Since the summoner player is found based on the username, 
@@ -121,30 +122,22 @@ public class DEIceSprite extends PoweredEvent
                     for(int k = -rad; k <= rad; k++){
                         
                         //Find the block at the checked location and the block one above it
-                        int blockID = world.getBlockId(x+i, y+j, z+k);
-                        int blockAbove = world.getBlockId(x+i, y+j+1, z+k);
+                        Block block = world.getBlock(x+i, y+j, z+k);
+                        Block blockAbove = world.getBlock(x+i, y+j+1, z+k);
                         
                         //Check if the checked block is water and the block above it is not
                         //(That way you are not freezing anything but the surface)
-                        if(isWater(blockID) && !isWater(blockAbove) && blockAbove != Block.ice.blockID){
-                            world.setBlockAndMetadataWithNotify(x+i,y+j,z+k,Block.ice.blockID,0,3);
+                        if(block == Blocks.water && blockAbove != Blocks.water && blockAbove != Blocks.ice){
+                            world.setBlock(x+i,y+j,z+k,Blocks.ice,0,3);
                         }
                         //Same for lava, but change to obsidian
-                        if(isLava(blockID) && !isLava(blockAbove) && blockAbove != Block.obsidian.blockID){
-                            world.setBlockAndMetadataWithNotify(x+i,y+j,z+k,Block.obsidian.blockID,0,3);
+                        if(block == Blocks.lava && blockAbove != Blocks.lava && blockAbove != Blocks.obsidian){
+                            world.setBlock(x+i,y+j,z+k,Blocks.obsidian,0,3);
                         }
                     }
                 }
             }
         }
-    }
-    
-    //Checks if the BlockID checked is made of water
-    public boolean isWater(int id){
-        return id == Block.waterMoving.blockID || id == Block.waterStill.blockID;
-    }
-    public boolean isLava(int id){
-        return id == Block.lavaMoving.blockID || id == Block.lavaStill.blockID;
     }
     
     @Override

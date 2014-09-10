@@ -110,8 +110,8 @@ public class DEObelisk extends DustEvent
                         return;
                     }
 
-                    world.setBlockAndMetadataWithNotify(x, y + c + 1, z, b, m,3);
-                    world.setBlockAndMetadataWithNotify(x, y + c, z, 0,0,3);
+                    world.setBlock(x, y + c + 1, z, b, m,3);
+                    world.setBlock(x, y + c, z, 0,0,3);
                 }
             }
             else
@@ -136,8 +136,8 @@ public class DEObelisk extends DustEvent
                         return;
                     }
 
-                    world.setBlockAndMetadataWithNotify(x, y - t + e.data[0] + e.data[1], z, b, m,3);
-                    world.setBlockAndMetadataWithNotify(x, y - t + e.data[0], z, 0,0,3);
+                    world.setBlock(x, y - t + e.data[0] + e.data[1], z, b, m,3);
+                    world.setBlock(x, y - t + e.data[0], z, 0,0,3);
                 }
             }
 

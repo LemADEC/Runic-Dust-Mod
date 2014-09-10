@@ -7,6 +7,7 @@ package dustmod.runes;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import dustmod.DustEvent;
@@ -38,7 +39,7 @@ public class DEEggifier extends DustEvent
     public void onInit(EntityDust e)
     {
         super.onInit(e);
-        ItemStack[] req = new ItemStack[] {new ItemStack(Item.egg, 1)};
+        ItemStack[] req = new ItemStack[] {new ItemStack(Items.egg, 1)};
         req = this.sacrifice(e, req);
 
         if (!checkSacrifice(req) || !takeXP(e, 5))
@@ -70,7 +71,7 @@ public class DEEggifier extends DustEvent
     	} else if (e.ticksExisted > 120)
         {
             EntityItem en = null;
-            en = new EntityItem(e.worldObj, e.posX, e.posY, e.posZ, new ItemStack(Item.monsterPlacer, 1, e.data[15]));
+            en = new EntityItem(e.worldObj, e.posX, e.posY, e.posZ, new ItemStack(Items.spawn_egg, 1, e.data[15]));
 
             if (en != null)
             {

@@ -5,10 +5,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.IGuiHandler;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.TickRegistry;
-import cpw.mods.fml.relauncher.Side;
 
 public class CommonProxy implements IGuiHandler{
 
@@ -49,12 +47,10 @@ public class CommonProxy implements IGuiHandler{
 	public void registerEventHandlers() {
 //		System.out.println("Register");
 		TickHandler tick = new TickHandler();
-		TickRegistry.registerTickHandler(tick, Side.CLIENT);
-		TickRegistry.registerTickHandler(tick, Side.SERVER);
-		GenericHandler handler = new GenericHandler();
+		FMLCommonHandler.instance().bus().register(tick);
 		
-		GameRegistry.registerCraftingHandler(handler);
-		MinecraftForge.EVENT_BUS.register(handler);
+		// TODO GameRegistry.registerCraftingHandler(handler);
+		MinecraftForge.EVENT_BUS.register(new PlayerEventHandler());
 	}
 
 

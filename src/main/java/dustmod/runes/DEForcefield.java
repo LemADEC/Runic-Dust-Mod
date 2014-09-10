@@ -8,6 +8,7 @@ import java.util.List;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.IMob;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
@@ -44,7 +45,7 @@ public class DEForcefield extends PoweredEvent
         int d = e.dusts[6][6];
         int dustStrength = a;
 
-        ItemStack[] req = new ItemStack[] {new ItemStack(Item.monsterPlacer, 1, 120 /*testificate*/)};
+        ItemStack[] req = new ItemStack[] {new ItemStack(Items.spawn_egg, 1, 120 /*testificate*/)};
         req = this.sacrifice(e, req);
         if (!checkSacrifice(req) || a != b || b != c || c != d || !takeXP(e, 15))
         {

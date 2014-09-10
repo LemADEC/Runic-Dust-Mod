@@ -6,6 +6,7 @@ package dustmod;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
@@ -17,9 +18,9 @@ public class ItemChisel extends DustModItem
 {
     private int tex;
 
-    public ItemChisel(int i)
+    public ItemChisel()
     {
-        super(i);
+        super();
         
         setMaxStackSize(1);
         setMaxDamage(238);
@@ -31,31 +32,30 @@ public class ItemChisel extends DustModItem
 
 		if(!world.canMineBlock(p, i, j, k)) return false;
     	
-        int blockId = world.getBlockId(i, j, k);
+        Block block = world.getBlock(i, j, k);
         int meta = world.getBlockMetadata(i, j, k);
-        Block b = Block.blocksList[blockId];
-        if(b == DustMod.dust){
+
+        if(block == DustMod.dust){
         	j--;
-            blockId = world.getBlockId(i, j, k);
+        	block = world.getBlock(i, j, k);
             meta = world.getBlockMetadata(i, j, k);
-            b = Block.blocksList[blockId];
         }
         
-        if (b == DustMod.rutBlock)
+        if (block == DustMod.rutBlock)
         {
             itemstack.damageItem(1, p);
         }
 
-        if (b == null)
+        if (block == null)
         {
             return false;
         }
 
-        if ((b.getBlockHardness(world,i,j,k) > Block.wood.getBlockHardness(world,i,j,k) && !DustMod.Enable_Decorative_Ruts) || b == Block.bedrock)
+        if ((block.getBlockHardness(world,i,j,k) > Blocks.log.getBlockHardness(world,i,j,k) && !DustMod.Enable_Decorative_Ruts) || block == Blocks.bedrock)
         {
             return false;
         }
-        else if (!b.isOpaqueCube() || b.getRenderType() != 0 || !b.renderAsNormalBlock())
+        else if (!block.isOpaqueCube() || block.getRenderType() != 0 || !block.renderAsNormalBlock())
         {
             return false;
         }
@@ -64,9 +64,9 @@ public class ItemChisel extends DustModItem
 
 //        if (!world.isRemote)
 //        {
-            world.setBlockAndMetadataWithNotify(i, j, k, DustMod.rutBlock.blockID, meta,3);
-            TileEntityRut ter = (TileEntityRut)world.getBlockTileEntity(i, j, k);
-            ter.maskBlock = blockId;
+            world.setBlock(i, j, k, DustMod.rutBlock, meta,3);
+            TileEntityRut ter = (TileEntityRut)world.getTileEntity(i, j, k);
+            ter.maskBlock = block;
             ter.maskMeta = meta;
             DustMod.rutBlock.onBlockActivated(world, i, j, k, p,face,x,y,z);
 //            System.out.println("Set");

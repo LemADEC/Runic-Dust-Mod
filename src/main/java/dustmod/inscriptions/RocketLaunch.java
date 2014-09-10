@@ -1,8 +1,8 @@
 package dustmod.inscriptions;
 
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Vec3;
 import dustmod.DustEvent;
@@ -49,12 +49,12 @@ public int level;
 		ItemStack[] req = new ItemStack[0];
 		int xp = 0;
 		if(level == 1){
-			req = new ItemStack[]{new ItemStack(Item.feather,4), new ItemStack(Item.firework.itemID, 1, -1)};
+			req = new ItemStack[]{new ItemStack(Items.feather,4), new ItemStack(Items.firework_charge, 1, -1)};
 			xp = 5;
 		}else if(level == 2){
-			ItemStack leapI = new ItemStack(DustMod.wornInscription.itemID, 1, 0);
+			ItemStack leapI = new ItemStack(DustMod.wornInscription, 1, 0);
 			InscriptionManager.setEvent(leapI, "leapI");
-			req = new ItemStack[]{leapI, new ItemStack(Item.monsterPlacer.itemID, 1, 55)};
+			req = new ItemStack[]{leapI, new ItemStack(Items.spawn_egg, 1, 55)};
 			xp = 7;
 		}
 		req = rune.sacrifice(e, req);
@@ -65,7 +65,7 @@ public int level;
 	}
 	
 	@Override
-	public void onUpdate(EntityLiving wearer, ItemStack item, boolean[] buttons) {
+	public void onUpdate(EntityLivingBase wearer, ItemStack item, boolean[] buttons) {
 		super.onUpdate(wearer, item, buttons);
 
 		if(wasFalling(item) && wearer.ticksExisted - item.getTagCompound().getInteger("lastTele") > 20){
@@ -119,7 +119,7 @@ public int level;
 		}
 	}
 	
-	private void onLaunch(ItemStack item, EntityLiving wearer){
+	private void onLaunch(ItemStack item, EntityLivingBase wearer){
 		item.getTagCompound().setInteger("lastTele", wearer.ticksExisted);
 	}
 	

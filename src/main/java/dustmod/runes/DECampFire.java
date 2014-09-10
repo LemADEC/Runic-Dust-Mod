@@ -7,13 +7,16 @@ package dustmod.runes;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import dustmod.EntityDust;
 import dustmod.PoweredEvent;
 import dustmod.TileEntityDust;
@@ -41,7 +44,7 @@ public class DECampFire extends PoweredEvent
     public void onInit(EntityDust e)
     {
         super.onInit(e);
-        ItemStack[] sac = new ItemStack[] {new ItemStack(Item.rottenFlesh, 1), new ItemStack(Block.wood, 8, -1)};
+        ItemStack[] sac = new ItemStack[] {new ItemStack(Items.rotten_flesh, 1), new ItemStack(Blocks.log, 8, -1)};
         sac = this.sacrifice(e, sac);
 
         if (sac[0].stackSize > 0 || sac[1].stackSize > 0)
@@ -51,15 +54,15 @@ public class DECampFire extends PoweredEvent
         }
 
         e.data[0] = 2400;
-        int block = e.worldObj.getBlockId(e.getX(), e.getY(), e.getZ());
+        Block block = e.worldObj.getBlock(e.getX(), e.getY(), e.getZ());
 
-        if (block != Block.fire.blockID)
+        if (block != Blocks.fire)
         {
-            int under = e.worldObj.getBlockId(e.getX(), e.getY() - 1, e.getZ());
+            Block under = e.worldObj.getBlock(e.getX(), e.getY() - 1, e.getZ());
 
-            if (block == 0 && under != 0 && Block.blocksList[under].isBlockSolidOnSide(e.worldObj, e.getX(), e.getY() - 1, e.getZ(), ForgeDirection.UP))
+            if (block.getMaterial() == Material.air && under.getMaterial() != Material.air && under.isSideSolid(e.worldObj, e.getX(), e.getY() - 1, e.getZ(), ForgeDirection.UP))
             {
-                e.worldObj.setBlockAndMetadataWithNotify(e.getX(), e.getY(), e.getZ(), Block.fire.blockID,0,3);
+                e.worldObj.setBlock(e.getX(), e.getY(), e.getZ(), Blocks.fire,0,3);
             }
         }
         e.posY += 0.65d;
@@ -80,9 +83,9 @@ public class DECampFire extends PoweredEvent
 //        else if(!e.isFueledExternally()){
 //            e.renderFlamesDust = false;
 //        }
-        int block = e.worldObj.getBlockId(e.getX(), e.getY(), e.getZ());
+        Block block = e.worldObj.getBlock(e.getX(), e.getY(), e.getZ());
 
-        if (block != Block.fire.blockID)
+        if (block != Blocks.fire)
         {
             if (e.worldObj.isRaining() && e.worldObj.canBlockSeeTheSky(e.getX(), e.getY(), e.getZ()))
             {
@@ -91,11 +94,11 @@ public class DECampFire extends PoweredEvent
                 return;
             }
 
-            int under = e.worldObj.getBlockId(e.getX(), e.getY() - 1, e.getZ());
+            Block under = e.worldObj.getBlock(e.getX(), e.getY() - 1, e.getZ());
 
-            if (block == 0 && under != 0 && Block.blocksList[under].isBlockSolidOnSide(e.worldObj, e.getX(), e.getY() - 1, e.getZ(), ForgeDirection.UP))
+            if (block.getMaterial() == Material.air && under.getMaterial() != Material.air && under.isSideSolid(e.worldObj, e.getX(), e.getY() - 1, e.getZ(), ForgeDirection.UP))
             {
-                e.worldObj.setBlockAndMetadataWithNotify(e.getX(), e.getY(), e.getZ(), Block.fire.blockID,0,3);
+                e.worldObj.setBlock(e.getX(), e.getY(), e.getZ(), Blocks.fire,0,3);
             }
             else
             {
@@ -133,7 +136,7 @@ public class DECampFire extends PoweredEvent
                     {
                         if (result != null)
                         {
-                            is.itemID = result.itemID;
+                            is.func_150996_a(result.getItem());
                             is.stackSize *= result.stackSize *  + ((Math.random() > 0.85) ? 2:1);
                             is.setItemDamage(result.getItemDamage());
                             

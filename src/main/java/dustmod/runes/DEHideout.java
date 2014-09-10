@@ -7,11 +7,12 @@ package dustmod.runes;
 import java.util.List;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockFluid;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.BlockSand;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import dustmod.DustEvent;
 import dustmod.EntityDust;
@@ -59,15 +60,15 @@ public class DEHideout extends DustEvent
         int r = 1;
         int h = 3;
 
-        Block b = Block.blocksList[world.getBlockId(x, y - h - thick - 1, z)];
+        Block b = world.getBlock(x, y - h - thick - 1, z);
 
         
-        if(world.getBlockId(x,y-thick-1,z) == 0){
+        if(world.isAirBlock(x,y-thick-1,z)){
             doCheck(e);
 //            if (b != null && !(b instanceof BlockFluid))
 //            {
-                world.setBlockAndMetadataWithNotify(x, y - h - thick - 1, z, Block.cobblestone.blockID,0,0);
-                world.setBlockAndMetadataWithNotify(x, y - h - thick, z, Block.torchWood.blockID,0,0);
+                world.setBlock(x, y - h - thick - 1, z, Blocks.cobblestone,0,0);
+                world.setBlock(x, y - h - thick, z, Blocks.torch,0,0);
 //            }
             return;
         }
@@ -98,11 +99,11 @@ public class DEHideout extends DustEvent
                 {
                     if (j == -thick)
                     {
-                        Block above = Block.blocksList[world.getBlockId(x + i, y + j + 1, z + k)];
+                        Block above = world.getBlock(x + i, y + j + 1, z + k);
 
                         if (above != null && above instanceof BlockSand)
                         {
-                            world.setBlockAndMetadataWithNotify(x + i, y + j, z + k, Block.sandStone.blockID,0,3);
+                            world.setBlock(x + i, y + j, z + k, Blocks.sandstone,0,3);
                         }
 
 //                            world.setBlockWithNotify(x+i, y+j, z+k, Block.brick.blockID);
@@ -111,7 +112,7 @@ public class DEHideout extends DustEvent
                     }
                     else if(canBreakBlock(e, x + i, y + j, z + k))
                     {
-                        world.setBlockAndMetadataWithNotify(x + i, y + j, z + k, 0,0,3);
+                        world.setBlockToAir(x + i, y + j, z + k);
                     }
                 }
             }
@@ -121,10 +122,10 @@ public class DEHideout extends DustEvent
 
 //        Block b = Block.blocksList[world.getBlockId(x, y - h - thick - 1, z)];
 //
-        if (b != null && !(b instanceof BlockFluid))
+        if (b != null && !(b instanceof BlockLiquid))
         {
-            world.setBlockAndMetadataWithNotify(x, y - h - thick - 1, z, Block.cobblestone.blockID,0,0);
-            world.setBlockAndMetadataWithNotify(x, y - h - thick, z, Block.torchWood.blockID,0,0);
+            world.setBlock(x, y - h - thick - 1, z, Blocks.cobblestone,0,0);
+            world.setBlock(x, y - h - thick, z, Blocks.torch,0,0);
         }
 
         doCheck(e);
@@ -185,13 +186,12 @@ public class DEHideout extends DustEvent
     	
     	if(!e.canAlterBlock(x, y, z)) return false;
     	
-    	int id = e.worldObj.getBlockId(x, y, z);
-    	Block b = Block.blocksList[id];
-    	if(b == null) return false;
+    	Block b = e.worldObj.getBlock(x, y, z);
+    	if(b.getMaterial() == Material.air) return false;
     	
-    	if(b.getBlockHardness(e.worldObj, x, y, z) >= Block.obsidian.getBlockHardness(e.worldObj, x, y, z)){
+    	if(b.getBlockHardness(e.worldObj, x, y, z) >= Blocks.obsidian.getBlockHardness(e.worldObj, x, y, z)){
     		return false;
-    	}else if(b == Block.bedrock){
+    	}else if(b == Blocks.bedrock){
         	return false;
     	}
     	return true;
@@ -203,16 +203,14 @@ public class DEHideout extends DustEvent
         int y = e.data[0];
         int z = e.getZ();
         World w = e.worldObj;
-        int id1 = w.getBlockId(x, y, z);
-        int id2 =  w.getBlockId(x, y + 1, z);
-        Block b1 = Block.blocksList[id1];
-        Block b2 = Block.blocksList[id2];
+        Block b1 = w.getBlock(x, y, z);
+        Block b2 = w.getBlock(x, y + 1, z);
 
-        if ((b1 != null && !b1.isOpaqueCube()) || b1 == null)
+        if (!b1.isOpaqueCube() || b1.getMaterial() == Material.air)
         {
             doCheck(e);
         }
-        else if (b2 != null && b2.isOpaqueCube())
+        else if (b2.isOpaqueCube())
         {
             doCheck(e);
         }
@@ -223,10 +221,9 @@ public class DEHideout extends DustEvent
 
         for (y = e.getY() - 1 - thick; y > 3 && y > e.getY() - 1 - thick - 64; y--)
         {
-            int id = e.worldObj.getBlockId(e.getX(), y, e.getZ());
-            Block block = Block.blocksList[id];
+            Block block = e.worldObj.getBlock(e.getX(), y, e.getZ());
 
-            if (block != null && (/*block.isCollidable() || */block.isOpaqueCube()))
+            if (block.isOpaqueCube())
             {
                 break;
             }

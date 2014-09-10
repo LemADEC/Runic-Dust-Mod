@@ -8,6 +8,8 @@ import java.util.ArrayList;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
@@ -46,8 +48,8 @@ public class DEEarthSprite  extends PoweredEvent
         e.setRenderBeam(true);
         e.setColorStarInner(255, 0, 0);
         e.setColorStarOuter(255, 0, 0);
-        ItemStack[] req = new ItemStack[] {new ItemStack(Block.glass.blockID, 16, 0),
-                      new ItemStack(Item.ghastTear.itemID, 1, 0)
+        ItemStack[] req = new ItemStack[] {new ItemStack(Blocks.glass, 16, 0),
+                      new ItemStack(Items.ghast_tear, 1, 0)
         };
         req = this.sacrifice(e, req);
 
@@ -59,7 +61,7 @@ public class DEEarthSprite  extends PoweredEvent
 
         for (int i = 0; i < 8; i++)
         {
-            EntityBlock eb = new EntityBlock(e.worldObj, e.getX(), e.getY() + 2, e.getZ(), Block.glass.blockID);
+            EntityBlock eb = new EntityBlock(e.worldObj, e.getX(), e.getY() + 2, e.getZ(), Blocks.glass);
             eb.setParent(e);
             registerFollower(e, eb);
             eb.updateDataWatcher();
@@ -75,7 +77,7 @@ public class DEEarthSprite  extends PoweredEvent
 		e.setRenderBeam(false);
         e.setFollow(true);
         World worldObj = e.worldObj;
-        EntityPlayer p = e.worldObj.getPlayerEntityByName(e.summonerUN);
+        EntityPlayer p = e.worldObj.func_152378_a(e.getSummonerId());
 
 //        if(/*!e.worldObj.multiplayerWorld*/true) p = ModLoader.getMinecraftInstance().thePlayer;
         if (p == null)
@@ -93,7 +95,7 @@ public class DEEarthSprite  extends PoweredEvent
             int ind = 0;
 //            Vec3D v = Vec3D.createVector(p.motionX, p.motionY, p.motionZ);
 //            double vel = v.lengthVector();
-            float vel = p.getMoveHelper().getSpeed();//DustModBouncer.getMoveForward(p);
+            float vel = p.moveForward;//DustModBouncer.getMoveForward(p);
             boolean wasSneaking = e.data[2] == 1;
             boolean wasProtect = e.data[3] == 1;
             boolean protect = (vel == 0) && p.isSneaking() && Math.abs(p.motionY) < 0.08D && p.onGround;
@@ -110,7 +112,7 @@ public class DEEarthSprite  extends PoweredEvent
 //                p.posY = py + p.yOffset+0.1D;
 //                p.posZ = pz+0.5D;
                 if(p.isSneaking() && !wasSneaking) p.setPositionAndUpdate((double)px + 0.5D, (double)py + p.yOffset, (double)pz + 0.5D);
-                p.setMoveForward(0);
+                p.moveForward = 0;
 //                p.setVelocity(0,0,0);
             }
             if(!protect && wasProtect){
@@ -189,7 +191,7 @@ public class DEEarthSprite  extends PoweredEvent
 
             for (int i = y; i >= 0; i--)
             {
-                if (e.worldObj.getBlockId((int)eb.posX, i, (int)eb.posZ) != 0)
+                if (!e.worldObj.isAirBlock((int)eb.posX, i, (int)eb.posZ))
                 {
                     y = i + 1;
                     break;

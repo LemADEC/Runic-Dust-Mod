@@ -2,18 +2,16 @@ package dustmod;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
 import java.util.logging.Level;
 
-import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.Vec3;
-import net.minecraft.world.World;
-import net.minecraftforge.common.Configuration;
-import cpw.mods.fml.common.network.Player;
+import net.minecraftforge.common.config.Configuration;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
 public class InscriptionManager {
@@ -26,7 +24,7 @@ public class InscriptionManager {
 	public static ArrayList<InscriptionEvent> events = new ArrayList<InscriptionEvent>();
 	public static ArrayList<InscriptionEvent> eventsRemote = new ArrayList<InscriptionEvent>();
 
-	public static HashMap<String, ItemStack> lastArmor = new HashMap<String, ItemStack>();
+	public static HashMap<UUID, ItemStack> lastArmor = new HashMap<UUID, ItemStack>();
 
     public static Configuration config;
 	public static void registerInscriptionEvent(InscriptionEvent evt) {
@@ -36,7 +34,7 @@ public class InscriptionManager {
 		}
 		events.add(evt);
 		
-		DustMod.log(Level.FINER,"Registering inscription " + evt.idName);
+		DustMod.logger.debug("Registering inscription " + evt.idName);
 //		System.out.println("[DustMod] Registering inscription " + evt.idName);
 		if(config == null){
             config = new Configuration(DustMod.suggestedConfig);
@@ -53,7 +51,7 @@ public class InscriptionManager {
             	}else
             		evt.permission = "NONE";
         		if(!evt.permission.equals("ALL")){
-        			DustMod.log(Level.FINE, "Inscription permission for " + evt.idName + " set to " + evt.permission);
+        			DustMod.logger.debug("Inscription permission for " + evt.idName + " set to " + evt.permission);
 //        			System.out.println("[DustMod] Inscription permission for " + evt.idName + " set to " + evt.permission);
         		}
             }
@@ -63,7 +61,7 @@ public class InscriptionManager {
 
 	public static void registerRemoteInscriptionEvent(InscriptionEvent evt) {
 		eventsRemote.add(evt);
-		DustMod.log(Level.FINER, "Registering remote inscription " + evt.idName);
+		DustMod.logger.debug("Registering remote inscription " + evt.idName);
 //		System.out.println("[DustMod] Registering remote inscription " + evt.idName);
 		LanguageRegistry.instance().addStringLocalization(
 				"insc." + evt.idName + ".name", "en_US",
@@ -74,58 +72,60 @@ public class InscriptionManager {
 	}
 
 	public static void resetRemoteInscriptions() {
-		DustMod.log(Level.FINE,"Reseting remote inscriptions.");
+		DustMod.logger.debug("Reseting remote inscriptions.");
 //		System.out.println("[DustMod] Reseting remote inscriptions.");
 		
 		eventsRemote = new ArrayList<InscriptionEvent>();
 	}
 
-	public static void tickInscription(Player p, boolean[] buttons, ItemStack item) {
-		if(((EntityPlayer)p).worldObj.isRemote) return;
+	public static void tickInscription(EntityPlayer p, boolean[] buttons, ItemStack item) {
+		if(p.worldObj.isRemote) return;
 		
 //		tick(p, buttons, item);
 		if(item == null || item.getItemDamage() == ItemInscription.max){
 			return;
 		}
 		InscriptionEvent event = getEvent(p);
-		ItemStack last = lastArmor.get(DustMod.getUsername(p));
-		boolean equal = (item != null && last != null && item.itemID == last.itemID && item.getTagCompound().equals(last.getTagCompound()));
+		ItemStack last = lastArmor.get(p.getGameProfile().getId());
+		boolean equal = (item != null && last != null && item.getItem() == last.getItem() && item.getTagCompound().equals(last.getTagCompound()));
 		if(event != null && equal) {
-			event.onUpdate((EntityPlayer) p, item, buttons);
+			event.onUpdate(p, item, buttons);
 		}
 //		lastArmor.put(DustMod.getUsername(p), item);
 	}
 	
-	public static void tick(Player p, boolean[] buttons, ItemStack item){
+	public static void tick(EntityPlayer p, boolean[] buttons, ItemStack item){
 		if(item == null || item.getItemDamage() == ItemInscription.max){
 			return;
 		}
 		InscriptionEvent event = getEvent(item);
-		ItemStack last = lastArmor.get(DustMod.getUsername(p));
+		ItemStack last = lastArmor.get(p.getGameProfile().getId());
 //		ItemStack item = ((EntityPlayer) p).inventory.getStackInSlot(38);
-		boolean equal = (item != null && last != null && item.itemID == last.itemID && item.hasTagCompound() && item.getTagCompound().equals(last.getTagCompound()));
+		boolean equal = (item != null && last != null && item.getItem() == last.getItem() && item.hasTagCompound() && item.getTagCompound().equals(last.getTagCompound()));
 //		System.out.println("yo wtf "+ ((EntityPlayer)p).worldObj.getWorldTime() + " "  + event + " " + equal + " " + getEvent(last) + " " + item);
 
 		if (getEvent(last) != null && !equal) {
 			getEvent(last).onRemoval((EntityPlayer) p, last);
 		}
 		
-		
 		if (event != null) {
 			if (!equal) {
 				event.onEquip((EntityPlayer) p, item);
 			}
 		}
-		lastArmor.put(DustMod.getUsername(p), item);
+		
+		lastArmor.put(p.getGameProfile().getId(), item);
 	}
 
-	public static InscriptionEvent getEvent(Player p) {
-		EntityPlayer ep = (EntityPlayer) p;
-		ItemStack item = ep.inventory.getStackInSlot(38);
-		if (item == null || item.itemID != DustMod.getWornInscription().itemID)
+	public static InscriptionEvent getEvent(EntityPlayer p) {
+		ItemStack item = p.inventory.getStackInSlot(38);
+		
+		if (item == null || item.getItem() != DustMod.getWornInscription())
 			return null;
+		
 		if (item.getItemDamage() >= item.getMaxDamage() - 1)
 			return null;
+		
 		return getEvent(item);
 	}
 
@@ -173,7 +173,7 @@ public class InscriptionManager {
 				}
 
 				if (event != null) {
-					DustMod.log(Level.FINER, "Inscription Identified: " + event.idName);
+					DustMod.logger.debug("Inscription Identified: " + event.idName);
 //					System.out.println("[DustMod] Inscription Identified: " + event.idName);
 					tag = new NBTTagCompound();
 					item.setTagCompound(tag);
@@ -230,7 +230,7 @@ public class InscriptionManager {
 		return event.getArmorPoints(player, item);
 	}
 
-	public static void onDamage(EntityLiving entity, ItemStack item,
+	public static void onDamage(EntityLivingBase entity, ItemStack item,
 			DamageSource source, int damage) {
 		if(entity.worldObj.isRemote) return;
 
@@ -240,7 +240,7 @@ public class InscriptionManager {
 		event.onDamage(entity, item, source, damage);
 	}
 
-	public static int getPreventedDamage(EntityLiving entity, ItemStack item,
+	public static int getPreventedDamage(EntityLivingBase entity, ItemStack item,
 			DamageSource source, int damage) {
 		if(entity.worldObj.isRemote) return damage;
 
@@ -277,10 +277,10 @@ public class InscriptionManager {
 
 	public static ItemStack onItemPickup(EntityPlayer player, ItemStack item) {
 		if(player.worldObj.isRemote) return item;
-		Player p = (Player) player;
-		InscriptionEvent event = getEvent(p);
-		InscriptionEvent last = getEvent(lastArmor.get(p));
-		ItemStack insc = ((EntityPlayer) p).inventory.getStackInSlot(38);
+
+		InscriptionEvent event = getEvent(player);
+		//InscriptionEvent last = getEvent(lastArmor.get(player.getGameProfile().getId()));
+		ItemStack insc = player.inventory.getStackInSlot(38);
 		if (event == null)
 			return item;
 		return event.onItemPickup(player, insc, item);

@@ -1,10 +1,9 @@
 package dustmod;
 
 import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.Mod.PostInit;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.network.NetworkMod;
 import dustmod.inscriptions.BlinkerInscription;
 import dustmod.inscriptions.BounceInscription;
 import dustmod.inscriptions.EnderInscription;
@@ -64,13 +63,12 @@ import dustmod.runes.DEXPStore;
  * 
  */
 @Mod(modid = "DustModDefaults", name = "Dust mod default Rune Pack", version = "1.6.1", dependencies = "after:DustMod")
-@NetworkMod(clientSideRequired = false, serverSideRequired = false)
 public class DustModDefaults {
 
 	@Instance("DustModDefaults")
 	public static DustModDefaults instance;
 
-	@PostInit
+	@EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
 		registerDusts();
 		registerRunes();
@@ -171,7 +169,7 @@ public class DustModDefaults {
 
 		// last id used: 46
 		// notes for reanimation:
-		// all numbers are cut off at the end of the name to preserve lexicon
+		// all numbers are cut off at the end of the name to preserve lexIIcon
 		// page picture names
 
 	}

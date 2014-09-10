@@ -5,30 +5,30 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 public class BlockDustTable extends BlockContainer 
 {
 
-	private Icon topTex;
-	private Icon sideTex;
-	private Icon botTex;
-    public BlockDustTable(int i)
+	private IIcon topTex;
+	private IIcon sideTex;
+	private IIcon botTex;
+    public BlockDustTable()
     {
-        super(i, Material.wood);
+        super(Material.wood);
         setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.75F, 1.0F);
         setLightOpacity(0);
         this.setHardness(3F);
         this.setHardness(2.5F);
-        this.setStepSound(Block.soundWoodFootstep);
+        this.setStepSound(Block.soundTypeWood);
     }
 
     public boolean renderAsNormalBlock()
@@ -68,33 +68,33 @@ public class BlockDustTable extends BlockContainer
 //    }
 
     @Override
-    public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving, ItemStack item)
+    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityliving, ItemStack item)
     {
     	int l = MathHelper.floor_double((double)(entityliving.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
 
         if (l == 0)
         {
-            world.setBlockMetadataWithNotify(i, j, k, 3, 2);
+            world.setBlockMetadataWithNotify(x, y, z, 3, 2);
         }
 
         if (l == 1)
         {
-            world.setBlockMetadataWithNotify(i, j, k, 0, 2);
+            world.setBlockMetadataWithNotify(x, y, z, 0, 2);
         }
 
         if (l == 2)
         {
-            world.setBlockMetadataWithNotify(i, j, k, 1, 2);
+            world.setBlockMetadataWithNotify(x, y, z, 1, 2);
         }
 
         if (l == 3)
         {
-            world.setBlockMetadataWithNotify(i, j, k, 2, 2);
+            world.setBlockMetadataWithNotify(x, y, z, 2, 2);
         }
 
         if (item.hasDisplayName())
         {
-            ((TileEntityFurnace)world.getBlockTileEntity(i, j, k)).func_94129_a(item.getDisplayName());
+            ((TileEntityFurnace)world.getTileEntity(x, y, z)).func_145951_a(item.getDisplayName());
         }
     }
 
@@ -103,14 +103,14 @@ public class BlockDustTable extends BlockContainer
         return false;
     }
 
-    public Icon getBlockTextureFromSideAndMetadata(int i, int meta)
+    public IIcon getBlockTextureFromSideAndMetadata(int side, int meta)
     {
-        if (i == 1)
+        if (side == 1)
         {
             return topTex;
         }
 
-        if (i == 0)
+        if (side == 0)
         {
             return botTex;
         }
@@ -119,15 +119,15 @@ public class BlockDustTable extends BlockContainer
     }
 
     @Override
-    public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer player,int dir, float x, float y, float z)
+    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player,int dir, float cx, float cy, float cz)
     {
-        if (/*world.multiplayerWorld*/false)
+        if (/*world.isRemote*/false)
         {
             return true;
         }
-        else if (player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().itemID == DustMod.runicPaper.itemID)
+        else if (player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() == DustMod.runicPaper)
         {
-            int page = (((TileEntityDustTable)world.getBlockTileEntity(i, j, k)).page - 1);
+            int page = (((TileEntityDustTable)world.getTileEntity(x, y, z)).page - 1);
 
             if (page == -1)
             {
@@ -140,8 +140,7 @@ public class BlockDustTable extends BlockContainer
 
             if (cur.stackSize == 1)
             {
-                cur.itemID = DustMod.dustScroll.itemID;
-                cur.setItemDamage(to.getItemDamage());
+            	player.setCurrentItemOrArmor(0, new ItemStack(DustMod.dustScroll, 1, to.getItemDamage()));
             }
             else
             {
@@ -149,18 +148,17 @@ public class BlockDustTable extends BlockContainer
                 cur.stackSize--;
             }
 
-//            cur.itemID =
             return true;
         }
         else
         {
             if (player.isSneaking())
             {
-                onBlockClicked(world, i, j, k, player);
+                onBlockClicked(world, x, y, z, player);
                 return true;
             }
 
-            TileEntityDustTable tedt = (TileEntityDustTable)world.getBlockTileEntity(i, j, k);
+            TileEntityDustTable tedt = (TileEntityDustTable)world.getTileEntity(x, y, z);
             tedt.page --;
 
             if (tedt.page < 0)
@@ -181,7 +179,7 @@ public class BlockDustTable extends BlockContainer
         }
         else
         {
-            TileEntityDustTable tedt = (TileEntityDustTable)world.getBlockTileEntity(i, j, k);
+            TileEntityDustTable tedt = (TileEntityDustTable)world.getTileEntity(i, j, k);
             tedt.page++;
 
             if (tedt.page >= DustManager.getNames().size() - DustMod.numSec + 1)
@@ -192,15 +190,15 @@ public class BlockDustTable extends BlockContainer
     }
 
 	@Override
-	public TileEntity createNewTileEntity(World var1) {
+	public TileEntity createNewTileEntity(World world, int par2) {
         return new TileEntityDustTable();
 	}
 
     @SideOnly(Side.CLIENT)
-    public void func_94332_a(IconRegister par1IconRegister)
+    public void func_94332_a(IIconRegister iconRegister)
     {
-        this.topTex = par1IconRegister.func_94245_a(DustMod.spritePath + "table_top");
-        this.sideTex = par1IconRegister.func_94245_a(DustMod.spritePath + "table_side");
-        this.botTex = par1IconRegister.func_94245_a(DustMod.spritePath + "table_bottom");
+        this.topTex = iconRegister.registerIcon(DustMod.spritePath + "table_top");
+        this.sideTex = iconRegister.registerIcon(DustMod.spritePath + "table_side");
+        this.botTex = iconRegister.registerIcon(DustMod.spritePath + "table_bottom");
     }
 }

@@ -6,6 +6,8 @@ package dustmod.runes;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.material.Material;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import dustmod.DustEvent;
@@ -43,7 +45,7 @@ public class DEFlatten extends DustEvent
             return;
         }
 
-        ItemStack[] sac = new ItemStack[] {new ItemStack(Block.oreIron, 20)};
+        ItemStack[] sac = new ItemStack[] {new ItemStack(Blocks.iron_ore, 20)};
         sac = this.sacrifice(e, sac);
         int xp = 0;
 
@@ -131,37 +133,37 @@ public class DEFlatten extends DustEvent
 
                     for (int y = height - 1; y >= 0; y--)
                     {
-                        int id = world.getBlockId(ix + x, iy + y, iz + z);
-                        int meta = world.getBlockId(ix + x, iy + y, iz + z);
+                        Block block = world.getBlock(ix + x, iy + y, iz + z);
+                        int meta = world.getBlockMetadata(ix + x, iy + y, iz + z);
 
-                        if (id != 0 && !DustMod.isDust(id))
+                        if (!DustMod.isDust(block))
                         {
-                            if (Block.blocksList[id] instanceof BlockContainer)
+                            if (block instanceof BlockContainer)
                             {
                                 continue;
                             }
 
-                            int bidu = world.getBlockId(ix + x, iy + y + 1, iz + z);
-                            int bidd = world.getBlockId(ix + x, iy + y - 1, iz + z);
+                            Block bidu = world.getBlock(ix + x, iy + y + 1, iz + z);
+                            Block bidd = world.getBlock(ix + x, iy + y - 1, iz + z);
 
-                            if (id == Block.waterMoving.blockID || id == Block.waterStill.blockID)
+                            if (block == Blocks.flowing_water || block == Blocks.water)
                             {
-                                world.setBlockAndMetadataWithNotify(ix + x, iy + y, iz + z, Block.cobblestone.blockID,0,3);
-                                id = 0;
+                                world.setBlock(ix + x, iy + y, iz + z, Blocks.cobblestone,0,3);
+                                block = Blocks.air;
                                 meta = 0;
                             }
 
-                            if (bidu == Block.waterMoving.blockID || bidu == Block.waterStill.blockID)
+                            if (bidu == Blocks.flowing_water || bidu == Blocks.water)
                             {
-                                world.setBlockAndMetadataWithNotify(ix + x, iy + y + 1, iz + z, Block.cobblestone.blockID,0,3);
+                                world.setBlock(ix + x, iy + y + 1, iz + z, Blocks.cobblestone,0,3);
                             }
 
-                            if (bidd == 0)
+                            if (bidd.getMaterial() == Material.air)
                             {
-                                world.setBlockAndMetadataWithNotify(ix + x, iy + y - 1, iz + z, id, meta,3);
+                                world.setBlock(ix + x, iy + y - 1, iz + z, block, meta,3);
                             }
 
-                            world.setBlockAndMetadataWithNotify(ix + x, iy + y, iz + z, 0,0,3);
+                            world.setBlockToAir(ix + x, iy + y, iz + z);
                             break next;
                         }
                     }

@@ -1,7 +1,9 @@
 package dustmodtestpack.inscriptions;
 
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import dustmod.DustEvent;
@@ -46,7 +48,7 @@ public class GlideInscription extends InscriptionEvent {
 		// TODO Auto-generated method stub
 		
 		if(power == 1){
-			ItemStack[] req = new ItemStack[]{new ItemStack(Item.feather,2)};
+			ItemStack[] req = new ItemStack[]{new ItemStack(Items.feather,2)};
 			rune.sacrifice(e, req);
 			
 			if(!rune.checkSacrifice(req) || !rune.takeXP(e, 5)){
@@ -55,7 +57,7 @@ public class GlideInscription extends InscriptionEvent {
 			item.setItemDamage(0);
 			return true;
 		}else if(power == 2){
-			ItemStack[] req = new ItemStack[]{new ItemStack(Item.feather,2), new ItemStack(Item.ingotGold,1)};
+			ItemStack[] req = new ItemStack[]{new ItemStack(Items.feather,2), new ItemStack(Items.gold_ingot,1)};
 			rune.sacrifice(e, req);
 			
 			if(!rune.checkSacrifice(req) || !rune.takeXP(e, 7)){
@@ -68,7 +70,7 @@ public class GlideInscription extends InscriptionEvent {
 	}
 	
 	@Override
-	public void onUpdate(EntityLiving wearer, ItemStack item, boolean[] buttons) {
+	public void onUpdate(EntityLivingBase wearer, ItemStack item, boolean[] buttons) {
 		super.onUpdate(wearer, item, buttons);
 		
 		EntityPlayer player = (EntityPlayer)wearer;

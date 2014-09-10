@@ -2,10 +2,12 @@ package dustmodtestpack.inscriptions;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumMovingObjectType;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import dustmod.DustEvent;
 import dustmod.DustMod;
 import dustmod.EntityDust;
@@ -26,7 +28,7 @@ public class MountainCutterInscription extends InscriptionEvent {
 	
 	@Override
 	public boolean callSacrifice(DustEvent rune, EntityDust e, ItemStack item) {
-		ItemStack[] req = rune.sacrifice(e, new ItemStack[] {new ItemStack(Block.blockSteel, 8, -1)});
+		ItemStack[] req = rune.sacrifice(e, new ItemStack[] {new ItemStack(Blocks.iron_block, 8, -1)});
 
         if (req[0].stackSize != 0)
         {
@@ -39,7 +41,7 @@ public class MountainCutterInscription extends InscriptionEvent {
 		return true;
 	}
 	
-	public void onUpdate(EntityLiving wearer, ItemStack item, boolean[] buttons){
+	public void onUpdate(EntityLivingBase wearer, ItemStack item, boolean[] buttons){
 //		wearer.setPositionAndUpdate(wearer.posX,  wearer.posY+2, wearer.posZ);
 		if(wearer.isSneaking() && buttons[0]){
 			chopChop((EntityPlayer)wearer);
@@ -57,7 +59,7 @@ public class MountainCutterInscription extends InscriptionEvent {
 			try {
 				MovingObjectPosition click = DustMod.getWornInscription().getMovingObjectPositionFromPlayer(ep.worldObj, ep, true);
 				
-				if(click != null && click.typeOfHit == EnumMovingObjectType.TILE){
+				if (click != null && click.typeOfHit == MovingObjectType.BLOCK) {
 
 					int x, y, z;
 					x = click.blockX;
@@ -67,8 +69,7 @@ public class MountainCutterInscription extends InscriptionEvent {
 					for (int i = -r; i <= r; i++) {
 						for (int j = -r; j <= r; j++) {
 							for (int k = -r; k <= r; k++) {
-								ep.worldObj.setBlockAndMetadataWithNotify(x + i, y + j, z
-										+ k, 0,0,3);
+								ep.worldObj.setBlockToAir(x + i, y + j, z + k);
 							}
 						}
 					}

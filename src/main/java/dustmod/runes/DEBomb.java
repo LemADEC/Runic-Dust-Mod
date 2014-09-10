@@ -7,6 +7,7 @@ package dustmod.runes;
 import java.util.List;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import dustmod.DustEvent;
@@ -36,7 +37,7 @@ public class DEBomb extends DustEvent
     @Override
     public void onInit(EntityDust e)
     {
-        ItemStack[] sac = new ItemStack[] {new ItemStack(Item.gunpowder, 2)};
+        ItemStack[] sac = new ItemStack[] {new ItemStack(Items.gunpowder, 2)};
         sac = this.sacrifice(e, sac);
 
         if (sac[0].stackSize > 0)

@@ -8,6 +8,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 
@@ -50,7 +51,7 @@ public class Sacrifice
         {
             ItemStack in = ((EntityItem)ent).getEntityItem();
 
-            if (in.itemID == itemType.itemID && itemType.stackSize > 0 &&
+            if (in.getItem() == itemType.getItem() && itemType.stackSize > 0 &&
                     (in.getItemDamage() == itemType.getItemDamage() || itemType.getItemDamage() == -1))
             {
                 int amt = in.stackSize;
@@ -68,7 +69,8 @@ public class Sacrifice
                     itemType.stackSize = 0;
                 }
 
-                e.data[15] = in.itemID;
+                // XXX
+                e.data[15] = Item.getIdFromItem(in.getItem());
                 ((EntityItem)ent).setEntityItemStack(in);
                 return true;
             }
@@ -103,7 +105,7 @@ public class Sacrifice
         {
             ItemStack in = ((EntityItem)ent).getEntityItem();
 
-            if (in.itemID == itemType.itemID &&
+            if (in.getItem() == itemType.getItem() &&
                     (in.getItemDamage() == itemType.getItemDamage() || itemType.getItemDamage() == -1))
             {
                 return true;
@@ -130,7 +132,7 @@ public class Sacrifice
 
         if (itemType != null)
         {
-            rtn = new Sacrifice(new ItemStack(itemType.itemID, itemType.stackSize, itemType.getItemDamage()));
+            rtn = new Sacrifice(new ItemStack(itemType.getItem(), itemType.stackSize, itemType.getItemDamage()));
         }
         else
         {

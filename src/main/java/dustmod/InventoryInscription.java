@@ -85,7 +85,7 @@ public class InventoryInscription implements IInventory {
 	
 	
 	@Override
-	public String getInvName() {
+	public String getInventoryName() {
 		return "RunicInscription";
 	}
 
@@ -95,7 +95,7 @@ public class InventoryInscription implements IInventory {
 	}
 
 	@Override
-	public void onInventoryChanged() {
+	public void markDirty() {
 	}
 
 	@Override
@@ -104,23 +104,23 @@ public class InventoryInscription implements IInventory {
 	}
 
 	@Override
-	public void openChest() {
+	public void openInventory() {
 
 	}
 
 	@Override
-	public void closeChest() {
+	public void closeInventory() {
 
 	}
-
+	
 	@Override
-	public boolean func_94042_c() {
+	public boolean hasCustomInventoryName() {
 		// TODO Auto-generated method stub
 		return false;
 	}
-
+	
 	@Override
-	public boolean func_94041_b(int i, ItemStack itemstack) {
+	public boolean isItemValidForSlot(int p_94041_1_, ItemStack p_94041_2_) {
 		// TODO Auto-generated method stub
 		return false;
 	}

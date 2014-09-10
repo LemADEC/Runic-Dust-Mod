@@ -212,7 +212,7 @@ public class DELiftTerrain extends DustEvent
                         {
 //                            System.out.println("IS CONTAINER************************");
                             isContainer = true;
-                            te = world.getBlockTileEntity(x, y + c, z);
+                            te = world.getTileEntity(x, y + c, z);
                             tag = new NBTTagCompound();
                             te.writeToNBT(tag);
 //                            world.removeBlockTileEntity(x, y+c, z);
@@ -221,7 +221,7 @@ public class DELiftTerrain extends DustEvent
                             //                        Chunk chunk = e.worldObj.getChunkFromBlockCoords(e.getX(), e.getZ());
                             //                        chunk.setChunkBlockTileEntity(x & 0xf, y-t+e.gb, z & 0xf, null);
                             //                        chunk.chunkTileEntityMap.put(new ChunkPosition(x&0xf,y+c,z&0xf), null);
-//                            System.out.println("Rawr " + world.getBlockTileEntity(x,y+c,z));
+//                            System.out.println("Rawr " + world.getTileEntity(x,y+c,z));
                         }
 
                         //                    else if(nB != null && (nB instanceof BlockContainer)){
@@ -229,13 +229,13 @@ public class DELiftTerrain extends DustEvent
                         //                        e.fade();
                         //                        return;
                         //                    }
-                        world.setBlockAndMetadataWithNotify(x, y + c + 1, z, 0, 0,3);
-                        world.setBlockAndMetadataWithNotify(x, y + c + 1, z, b, m,3);
-                        world.setBlockAndMetadataWithNotify(x, y + c, z, Block.stone.blockID,0,3);
+                        world.setBlock(x, y + c + 1, z, 0, 0,3);
+                        world.setBlock(x, y + c + 1, z, b, m,3);
+                        world.setBlock(x, y + c, z, Block.stone.blockID,0,3);
 
                         if (isContainer)
                         {
-                            TileEntity tet = world.getBlockTileEntity(x, y + c + 1, z);
+                            TileEntity tet = world.getTileEntity(x, y + c + 1, z);
 
 //                            System.out.println("Fucker " + world.getBlockId(x, y + c + 1, z));
 //                            System.out.println("grah " + Block.blocksList[world.getBlockId(x,y+c+1,z)].getBlockName());
@@ -259,19 +259,19 @@ public class DELiftTerrain extends DustEvent
 //                            world.setBlockTileEntity(x,y+c+1,z,te);
 //                            chunk.setChunkBlockTileEntity(x & 0xf, y+c+1, z & 0xf, te);
 //                            chunk.chunkTileEntityMap.put(new ChunkPosition(x&0xf,y+c+1,z&0xf), te);
-//                            System.out.println("Validating " + (world.getBlockTileEntity(x,y+c+1,z)==te));
+//                            System.out.println("Validating " + (world.getTileEntity(x,y+c+1,z)==te));
                         }
 
                         world.setBlockMetadataWithNotify(x, y + c + 1, z, m,3);
                     }
                     else
                     {
-//                        if(world.getBlockTileEntity(x, y+c, z) != null)
-//                            world.getBlockTileEntity(x, y+c, z).validate();
+//                        if(world.getTileEntity(x, y+c, z) != null)
+//                            world.getTileEntity(x, y+c, z).validate();
 //                        world.notifyBlockChange(x, y+c, z, 0);
                     }
 
-//                    TileEntity FUCKER = world.getBlockTileEntity(x,y+c,z);
+//                    TileEntity FUCKER = world.getTileEntity(x,y+c,z);
 //                    int BITCH = world.getBlockId(x,y+c,z);
 //                    if(FUCKER != null){
 //                        if(FUCKER.blockType.blockID == BITCH)
@@ -342,7 +342,7 @@ public class DELiftTerrain extends DustEvent
                 if (rand > 15)
                 {
 //                world.setBlockWithNotify(i[0], i[1], i[2], Block.melon.blockID);
-                    TileEntityRut ter = (TileEntityRut) e.worldObj.getBlockTileEntity(i[0], i[1], i[2]);
+                    TileEntityRut ter = (TileEntityRut) e.worldObj.getTileEntity(i[0], i[1], i[2]);
 
                     if (ter != null)
                     {

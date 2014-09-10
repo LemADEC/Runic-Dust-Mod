@@ -59,7 +59,7 @@ public class DETeleportation extends PoweredEvent
         System.out.println("Check");
         for (Integer[] i : e.dustPoints)
         {
-            TileEntity te = world.getBlockTileEntity(i[0], i[1], i[2]);
+            TileEntity te = world.getTileEntity(i[0], i[1], i[2]);
 
             if (te != null && te instanceof TileEntityDust)
             {
@@ -108,7 +108,7 @@ public class DETeleportation extends PoweredEvent
                 {
                     if (DustMod.isDust(world.getBlockId(fnd[0] + x, fnd[1], fnd[2] + z)))
                     {
-                        TileEntityDust ted = (TileEntityDust) world.getBlockTileEntity(x + fnd[0], fnd[1], fnd[2] + z);
+                        TileEntityDust ted = (TileEntityDust) world.getTileEntity(x + fnd[0], fnd[1], fnd[2] + z);
                         int gamt = 4;
                         int bamt = 4;
 

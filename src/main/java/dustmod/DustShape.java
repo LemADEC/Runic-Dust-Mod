@@ -9,8 +9,10 @@ import java.util.Random;
 import java.util.logging.Level;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -34,7 +36,7 @@ public class DustShape {
 	private String author = "";
 	protected String desc = "";
 	public int[][][] data;
-	protected boolean isRemote = false;
+	public boolean isRemote = false;
 
 	public int[] rotationMatrix = new int[8];
 	private int[] setPos = new int[] { 0, 0, 0 };
@@ -196,7 +198,7 @@ public class DustShape {
 		if (!allowedVariable.isEmpty()) {
 			desc += "\n----\nAllowed Variable Dusts:\n";
 			for (int i : allowedVariable) {
-				desc += DustItemManager.getNames()[i] + "\n";
+				desc += DustItemManager.getName(i) + "\n";
 			}
 		}
 		return this;
@@ -600,9 +602,9 @@ public class DustShape {
 
 		for (ItemStack is : p.inventory.mainInventory) {
 			if (is != null) {
-				if (is.itemID == DustMod.idust.itemID) {
+				if (is.getItem() == DustMod.idust) {
 					pDustAmount[is.getItemDamage()] += is.stackSize;
-				} else if (is.itemID == DustMod.pouch.itemID) {
+				} else if (is.getItem() == DustMod.pouch) {
 					int dustID = ItemPouch.getValue(is);
 					int amt = ItemPouch.getDustAmount(is);
 					pDustAmount[dustID] += amt;
@@ -629,14 +631,14 @@ public class DustShape {
 					continue;
 				}
 
-				int blockID = w.getBlockId(si + x, j, sk + z);
+				Block otherBlock = w.getBlock(si + x, j, sk + z);
 				int meta = w.getBlockMetadata(si + x, j, sk + z);
-				if (blockID != 0 && !(DustMod.isDust(blockID)/* && meta == 2 */)
-						&& blockID != Block.tallGrass.blockID) {
+				if (otherBlock.getMaterial() != Material.air && !(DustMod.isDust(otherBlock)/* && meta == 2 */)
+						&& otherBlock != Blocks.tallgrass) {
 					continue;
 				}
 
-				if (w.getBlockId(si + x, j - 1, sk + z) == 0) {
+				if (w.getBlock(si + x, j - 1, sk + z).getMaterial() == Material.air) {
 					continue;
 				}
 
@@ -644,18 +646,18 @@ public class DustShape {
 					continue;
 				}
 
-				if (blockID != DustMod.dust.blockID) {
-					w.setBlockAndMetadataWithNotify(si + x, j, sk + z,
-							DustMod.dust.blockID, 0, 2);
+				if (otherBlock != DustMod.dust) {
+					w.setBlock(si + x, j, sk + z,
+							DustMod.dust, 0, 2);
 				}
 				TileEntityDust ted;
-				TileEntity te = w.getBlockTileEntity(si + x, j, sk + z);
+				TileEntity te = w.getTileEntity(si + x, j, sk + z);
 
 				if (te != null && te instanceof TileEntityDust) {
 					ted = (TileEntityDust) te;
 				} else {
 					ted = new TileEntityDust();
-					w.setBlockTileEntity(si + i, j, sk + k, ted);
+					w.setTileEntity(si + i, j, sk + k, ted);
 				}
 
 				// ted.empty();
@@ -682,13 +684,12 @@ public class DustShape {
 
 		for (int x = 0; x < tblocks.size(); x++) {
 			for (int z = 0; z < tblocks.get(0).size(); z++) {
-				if (DustMod.isDust(w.getBlockId(si + x, j, sk + z))) {
-					TileEntityDust ted = (TileEntityDust) w.getBlockTileEntity(
+				if (DustMod.isDust(w.getBlock(si + x, j, sk + z))) {
+					TileEntityDust ted = (TileEntityDust) w.getTileEntity(
 							si + x, j, sk + z);
 
 					if (ted.isEmpty()) {
-						w.setBlockAndMetadataWithNotify(si + x, j, sk + z, 0,
-								0, 3);
+						w.setBlockToAir(si + x, j, sk + z);
 					} else {
 						w.markBlockForUpdate(si + x, j, sk + z);
 					}
@@ -702,7 +703,7 @@ public class DustShape {
 					ItemStack is = p.inventory.mainInventory[sind];
 
 					if (is != null && reduceDustAmount[id] > 0) {
-						if (is.itemID == DustMod.idust.itemID
+						if (is.getItem() == DustMod.idust
 								&& is.getItemDamage() == id) {
 							while (reduceDustAmount[id] > 0 && is.stackSize > 0) {
 								is.stackSize--;
@@ -713,7 +714,7 @@ public class DustShape {
 
 								reduceDustAmount[id]--;
 							}
-						} else if (is.itemID == DustMod.pouch.itemID) {
+						} else if (is.getItem() == DustMod.pouch) {
 							int did = ItemPouch.getValue(is);
 							if (did == id) {
 								while (reduceDustAmount[id] > 0
@@ -803,9 +804,9 @@ public class DustShape {
 
 		for (ItemStack is : p.inventory.mainInventory) {
 			if (is != null) {
-				if (is.itemID == DustMod.idust.itemID) {
+				if (is.getItem() == DustMod.idust) {
 					pDustAmount[is.getItemDamage()] += is.stackSize;
-				} else if (is.itemID == DustMod.pouch.itemID) {
+				} else if (is.getItem() == DustMod.pouch) {
 					int dustID = ItemPouch.getValue(is);
 					int amt = ItemPouch.getDustAmount(is);
 					pDustAmount[dustID] += amt;
@@ -835,14 +836,14 @@ public class DustShape {
 				continue;
 			}
 
-			int blockID = w.getBlockId(si + x, j, sk + z);
+			Block otherBlock = w.getBlock(si + x, j, sk + z);
 			int meta = w.getBlockMetadata(si + x, j, sk + z);
-			if (blockID != 0 && !(DustMod.isDust(blockID)/* && meta == 2 */)
-					&& blockID != Block.tallGrass.blockID) {
+			if (otherBlock.getMaterial() != Material.air && !(DustMod.isDust(otherBlock)/* && meta == 2 */)
+					&& otherBlock != Blocks.tallgrass) {
 				continue;
 			}
 
-			if (w.getBlockId(si + x, j - 1, sk + z) == 0) {
+			if (w.getBlock(si + x, j - 1, sk + z).getMaterial() == Material.air) {
 				continue;
 			}
 
@@ -850,25 +851,25 @@ public class DustShape {
 				continue;
 			}
 
-			if (blockID != DustMod.dust.blockID) {
-				w.setBlockAndMetadataWithNotify(si + x, j, sk + z,
-						DustMod.dust.blockID, 0, 2);
+			if (otherBlock != DustMod.dust) {
+				w.setBlock(si + x, j, sk + z,
+						DustMod.dust, 0, 2);
 			}else if(meta == BlockDust.DEAD_DUST){
-				w.setBlockAndMetadataWithNotify(si + x, j, sk + z,
-						0, 0, 2);
-				w.setBlockAndMetadataWithNotify(si + x, j, sk + z,
-						DustMod.dust.blockID, 0, 2);
+				w.setBlock(si + x, j, sk + z,
+						Blocks.air, 0, 2);
+				w.setBlock(si + x, j, sk + z,
+						DustMod.dust, 0, 2);
 			}else if(meta != BlockDust.UNUSED_DUST){
 				continue;
 			}
 			TileEntityDust ted;
-			TileEntity te = w.getBlockTileEntity(si + x, j, sk + z);
+			TileEntity te = w.getTileEntity(si + x, j, sk + z);
 
 			if (te != null && te instanceof TileEntityDust) {
 				ted = (TileEntityDust) te;
 			} else {
 				ted = new TileEntityDust();
-				w.setBlockTileEntity(si + i, j, sk + k, ted);
+				w.setTileEntity(si + i, j, sk + k, ted);
 			}
 
 			// ted.empty();
@@ -903,13 +904,12 @@ public class DustShape {
 
 		for (int x = 0; x < tblocks.size(); x++) {
 			for (int z = 0; z < tblocks.get(0).size(); z++) {
-				if (DustMod.isDust(w.getBlockId(si + x, j, sk + z))) {
-					TileEntityDust ted = (TileEntityDust) w.getBlockTileEntity(
+				if (DustMod.isDust(w.getBlock(si + x, j, sk + z))) {
+					TileEntityDust ted = (TileEntityDust) w.getTileEntity(
 							si + x, j, sk + z);
 
 					if (ted.isEmpty()) {
-						w.setBlockAndMetadataWithNotify(si + x, j, sk + z, 0,
-								0, 3);
+						w.setBlockToAir(si + x, j, sk + z);
 					} else {
 						w.markBlockForUpdate(si + x, j, sk + z);
 					}
@@ -923,7 +923,7 @@ public class DustShape {
 					ItemStack is = p.inventory.mainInventory[sind];
 
 					if (is != null && reduceDustAmount[id] > 0) {
-						if (is.itemID == DustMod.idust.itemID
+						if (is.getItem() == DustMod.idust
 								&& is.getItemDamage() == id) {
 							while (reduceDustAmount[id] > 0 && is.stackSize > 0) {
 								is.stackSize--;
@@ -934,7 +934,7 @@ public class DustShape {
 
 								reduceDustAmount[id]--;
 							}
-						} else if (is.itemID == DustMod.pouch.itemID) {
+						} else if (is.getItem() == DustMod.pouch) {
 							int did = ItemPouch.getValue(is);
 							if (did == id) {
 								while (reduceDustAmount[id] > 0
@@ -975,7 +975,7 @@ public class DustShape {
 	public boolean hasEnough(int[] dust) {
 		for (int i = 1; i < 1000; i++) {
 			if (dust[i] < dustAmt[i]) {
-				DustMod.log(Level.FINER, "Not enough dust: " + i);
+				DustMod.logger.debug("Not enough dust: " + i);
 				// System.out.println("[DustMod] Not enough dust:" + i);
 				return false;
 			}

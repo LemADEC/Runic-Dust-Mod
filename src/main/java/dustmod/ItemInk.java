@@ -2,12 +2,13 @@ package dustmod;
 
 import java.util.List;
 
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -15,13 +16,13 @@ public class ItemInk extends DustModItem {
 	
 	public static final int maxAmount = 32;
 	
-	private Icon bottle;
-	private Icon[] main;
-	private Icon[] sub;
+	private IIcon bottle;
+	private IIcon[] main;
+	private IIcon[] sub;
 	
-	public ItemInk(int i)
+	public ItemInk()
     {
-        super(i);
+        super();
         setHasSubtypes(true);
         
         //[non-forge]
@@ -47,7 +48,7 @@ public class ItemInk extends DustModItem {
     {
         for (int i = 5; i < 1000; ++i) //i > 4 for migration from old system
         {
-        	if(DustItemManager.getColors()[i] != null){
+        	if(DustItemManager.hasDust(i)){
                 par3List.add(getInk(i));
         	}
         }
@@ -58,10 +59,7 @@ public class ItemInk extends DustModItem {
     public String getUnlocalizedName(ItemStack itemstack)
     {
     	int dustID = getDustID(itemstack);
-    	String id = DustItemManager.getIDS()[dustID];
-    	if(id != null) return "tile.ink." + DustItemManager.idsRemote[dustID];
-
-        return "tile.ink";
+    	return DustItemManager.hasDust(dustID) ? "tile.ink." + DustItemManager.getId(dustID) : "tile.ink";
     }
 
     @Override
@@ -83,9 +81,9 @@ public class ItemInk extends DustModItem {
     @SideOnly(Side.CLIENT)
 
     /**
-     * Gets an icon index based on an item's damage value and the given render pass
+     * Gets an IIcon index based on an item's damage value and the given render pass
      */
-    public Icon getIconFromDamageForRenderPass(int meta, int rend)
+    public IIcon getIIconFromDamageForRenderPass(int meta, int rend)
     {
     	if(rend == 0) return bottle;
     	
@@ -100,7 +98,7 @@ public class ItemInk extends DustModItem {
     }
     
     public static ItemStack getInk(int dustID){
-    	return new ItemStack(DustMod.ink.itemID, 1, dustID*maxAmount + maxAmount-1);
+    	return new ItemStack(DustMod.ink, 1, dustID*maxAmount + maxAmount-1);
     }
     
     public static int getDustID(ItemStack item){
@@ -117,7 +115,7 @@ public class ItemInk extends DustModItem {
     	if(fill < amt) return false;
     	fill -= amt;
     	if(fill == 0) {
-    		item.itemID = Item.glassBottle.itemID;
+    		item.func_150996_a(Items.glass_bottle);
     		item.setItemDamage(0);
     	}else
     		item.setItemDamage(level + fill);
@@ -126,13 +124,13 @@ public class ItemInk extends DustModItem {
     
     @Override
     @SideOnly(Side.CLIENT)
-    public void func_94581_a(IconRegister iconRegister) {
-    	this.bottle = iconRegister.func_94245_a(DustMod.spritePath + "inkBottle");
-    	main = new Icon[8];
-    	sub = new Icon[8];
+    public void registerIcons(IIconRegister IIconRegister) {
+    	this.bottle = IIconRegister.registerIcon(DustMod.spritePath + "inkBottle");
+    	main = new IIcon[8];
+    	sub = new IIcon[8];
     	for(int i = 0; i < main.length; i++){
-    		main[i] = iconRegister.func_94245_a(DustMod.spritePath + "ink_main_" + i);
-    		sub[i] = iconRegister.func_94245_a(DustMod.spritePath + "ink_sub_" + i); 
+    		main[i] = IIconRegister.registerIcon(DustMod.spritePath + "ink_main_" + i);
+    		sub[i] = IIconRegister.registerIcon(DustMod.spritePath + "ink_sub_" + i); 
     	}
     }
 

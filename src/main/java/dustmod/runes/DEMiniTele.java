@@ -54,7 +54,7 @@ public class DEMiniTele extends DustEvent
 //
 //        for (Integer[] i : e.dustPoints)
 //        {
-//            TileEntity te = world.getBlockTileEntity(i[0], i[1], i[2]);
+//            TileEntity te = world.getTileEntity(i[0], i[1], i[2]);
 //
 //            if (te != null && te instanceof TileEntityDust)
 //            {
@@ -106,7 +106,7 @@ public class DEMiniTele extends DustEvent
 //            for (int z = -1; z <= 1; z++) {
 //                if (x == 0 || z == 0) {
 //                    if (world.getBlockId(fnd[0] + x, fnd[1], fnd[2] + z) == mod_DustMod.dust.blockID) {
-//                        TileEntityDust ted = (TileEntityDust) world.getBlockTileEntity(x + fnd[0], fnd[1], fnd[2] + z);
+//                        TileEntityDust ted = (TileEntityDust) world.getTileEntity(x + fnd[0], fnd[1], fnd[2] + z);
 //                        int gamt = 4;
 //                        int bamt = 4;
 //                        for (int i = 0; i < 4; i++) {

@@ -8,6 +8,8 @@ import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import dustmod.EntityDust;
@@ -22,7 +24,7 @@ public class DEFireTrap extends DETrap
     public void onInit(EntityDust e)
     {
         super.onInit(e);
-        ItemStack[] sac = new ItemStack[] {new ItemStack(Item.flint, 3)};
+        ItemStack[] sac = new ItemStack[] {new ItemStack(Items.flint, 3)};
         sac = this.sacrifice(e, sac);
 
         if (sac[0].stackSize > 0)
@@ -81,9 +83,9 @@ public class DEFireTrap extends DETrap
             {
                 for (int z = -rad; z <= rad; z++)
                 {
-                    if (e.worldObj.getBlockId(ex + x, ey + y - 1, ez + z) != 0 && e.worldObj.getBlockId(ex + x, ey + y, ez + z) == 0 && Math.random() < firerand)
+                    if (!e.worldObj.isAirBlock(ex + x, ey + y - 1, ez + z) && e.worldObj.isAirBlock(ex + x, ey + y, ez + z) && Math.random() < firerand)
                     {
-                        e.worldObj.setBlockAndMetadataWithNotify(ex + x, ey + y, ez + z, Block.fire.blockID,0,3);
+                        e.worldObj.setBlock(ex + x, ey + y, ez + z, Blocks.fire,0,3);
                     }
                 }
             }

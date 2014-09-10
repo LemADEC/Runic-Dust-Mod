@@ -1,6 +1,8 @@
 package dustmodtestpack.inscriptions;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -28,7 +30,7 @@ public class WaterAffinity extends InscriptionEvent {
 	}
 
 	@Override
-	public void onUpdate(EntityLiving wearer, ItemStack item, boolean[] buttons) {
+	public void onUpdate(EntityLivingBase wearer, ItemStack item, boolean[] buttons) {
 //		super.onUpdate(wearer, item, buttons);
 		EntityPlayer player = (EntityPlayer)wearer;
 //		player.jumpMovementFactor = 0.02f;
@@ -37,10 +39,10 @@ public class WaterAffinity extends InscriptionEvent {
 
 		Side side = FMLCommonHandler.instance().getSide();
 		boolean isServer = side == Side.SERVER;
-		int headBID = player.worldObj.getBlockId((int)player.posX, (int)player.posY + 2, (int) player.posZ);
+		boolean headBlocked = !player.worldObj.isAirBlock((int)player.posX, (int)player.posY + 2, (int) player.posZ);
 		boolean inWater = player.isInWater();
 		
-		boolean wasInWater = (item.getTagCompound().hasKey("inWater") ? item.getTagCompound().getBoolean("inWater"):false) || headBID != 0;
+		boolean wasInWater = (item.getTagCompound().hasKey("inWater") ? item.getTagCompound().getBoolean("inWater"):false) || headBlocked;
 		item.getTagCompound().setBoolean("inWater", player.isInWater());
 		
 		if((wearer.onGround || player.capabilities.isFlying) && isTriggered(item)){
@@ -65,7 +67,7 @@ public class WaterAffinity extends InscriptionEvent {
 	}
 	
 	@Override
-	public ItemStack onItemPickup(EntityLiving wearer, ItemStack insc,
+	public ItemStack onItemPickup(EntityLivingBase wearer, ItemStack insc,
 			ItemStack pickedup) {
 //		VoidStorageManager.addItemToVoidInventory(
 //				((EntityPlayer) wearer).username, pickedup);

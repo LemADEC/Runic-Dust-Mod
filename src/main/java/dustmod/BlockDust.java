@@ -1,30 +1,27 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package dustmod;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -33,31 +30,31 @@ import cpw.mods.fml.relauncher.SideOnly;
  * @author billythegoat101
  */
 public class BlockDust extends BlockContainer {
-	
+
 	public static final int UNUSED_DUST = 0;
 	public static final int ACTIVE_DUST = 1;
 	public static final int DEAD_DUST = 2;
 	public static final int ACTIVATING_DUST = 3;
 
-	private Icon topTexture;
-	private Icon sideTexture;
-	public BlockDust(int i) {
-		super(i, Material.circuits);
+	private IIcon topTexture;
+	private IIcon sideTexture;
+
+	public BlockDust() {
+		super(Material.circuits);
 		setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.0625F, 1.0F);
 		this.setHardness(0.2F);
-		this.setStepSound(Block.soundGrassFootstep);
+		this.setStepSound(Block.soundTypeGrass);
 		this.disableStats();
 	}
 
 	@Override
-	public Icon getBlockTextureFromSideAndMetadata(int i, int j) {
-		
-		return (i==1 ? topTexture:sideTexture);
+	public IIcon getIcon(int side, int meta) {
+
+		return (side == 1 ? topTexture : sideTexture);
 	}
 
 	@Override
-	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int i,
-			int j, int k) {
+	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z) {
 		return null;
 	}
 
@@ -70,18 +67,18 @@ public class BlockDust extends BlockContainer {
 	public boolean renderAsNormalBlock() {
 		return false;
 	}
-    /**
-     * Returns which pass should this block be rendered on. 0 for solids and 1 for alpha
-     */
-    public int getRenderBlockPass()
-    {
-        return 1;
-    }
+
+	/**
+	 * Returns which pass should this block be rendered on. 0 for solids and 1
+	 * for alpha
+	 */
+	public int getRenderBlockPass() {
+		return 1;
+	}
 
 	@Override
-	public void onEntityCollidedWithBlock(World world, int i, int j, int k,
-			Entity entity) {
-		int meta = world.getBlockMetadata(i,j,k);
+	public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity) {
+		int meta = world.getBlockMetadata(x, y, z);
 		// if(world.isRemote) return;
 		if (entity instanceof EntityItem && meta != DEAD_DUST) {
 			EntityItem ei = (EntityItem) entity;
@@ -93,14 +90,14 @@ public class BlockDust extends BlockContainer {
 				return;
 			}
 
-			double dist = p.getDistanceToEntity(ei);
+			//double dist = p.getDistanceToEntity(ei);
 
-//			if (dist < 0.2 && ei.delayBeforeCanPickup > 5) {
-//				System.out.println("Drop " + dist);
-//				ei.delayBeforeCanPickup = 5;
-//			} else {
-////				System.out.println("Grab " + dist);
-//			}
+			// if (dist < 0.2 && ei.delayBeforeCanPickup > 5) {
+			// System.out.println("Drop " + dist);
+			// ei.delayBeforeCanPickup = 5;
+			// } else {
+			// // System.out.println("Grab " + dist);
+			// }
 		}
 
 		if (entity instanceof EntityXPOrb && meta != DEAD_DUST) {
@@ -116,32 +113,30 @@ public class BlockDust extends BlockContainer {
 	}
 
 	@Override
-	public void onBlockPlacedBy(World world, int i, int j, int k,
-			EntityLiving entityliving, ItemStack item) {
-		super.onBlockPlacedBy(world, i, j, k, entityliving, item);
-//		this.onBlockActivated(world, i, j, k, (EntityPlayer) entityliving, 0,
-//				0, 0, 0);
+	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLiving, ItemStack item) {
+		super.onBlockPlacedBy(world, x, y, z, entityLiving, item);
+		// this.onBlockActivated(world, i, j, k, (EntityPlayer) entityliving, 0,
+		// 0, 0, 0);
 
-		ItemStack equipped = ((EntityPlayer) entityliving).getCurrentEquippedItem();
-		if (equipped != null) {
-			if(equipped.itemID != DustMod.pouch.itemID)
+		// XXX WTH?
+		if (entityLiving instanceof EntityPlayer) {
+			ItemStack equipped = ((EntityPlayer) entityLiving).getCurrentEquippedItem();
+			if (equipped != null && equipped.getItem() != DustMod.pouch) {
 				equipped.stackSize++;
+			}
 		}
 	}
 
 	@Override
-	public boolean canPlaceBlockAt(World world, int i, int j, int k) {
-		Block block = Block.blocksList[world.getBlockId(i, j - 1, k)];
+	public boolean canPlaceBlockAt(World world, int x, int y, int z) {
+
+		Block block = world.getBlock(x, y - 1, z);
 
 		if (block == null) {
 			return false;
 		} else {
-			return world.isBlockSolidOnSide(i, j - 1, k, ForgeDirection.UP) || block == Block.glass || block == DustMod.rutBlock;
-			// return block.renderAsNormalBlock() || block == Block.glass ||
-			// world.isBlockSolidOnSide(i,j,k,0);
+			return block == Blocks.glass || block == DustMod.rutBlock || block.isSideSolid(world, x, y - 1, z, ForgeDirection.UP);
 		}
-
-		// return world.isBlockNormalCube(i, j - 1, k);
 	}
 
 	@Override
@@ -150,12 +145,11 @@ public class BlockDust extends BlockContainer {
 	}
 
 	@Override
-	public int colorMultiplier(IBlockAccess iblockaccess, int i, int j, int k) {
-		int meta = iblockaccess.getBlockMetadata(i, j, k);
+	public int colorMultiplier(IBlockAccess blockAccess, int x, int y, int z) {
+		int meta = blockAccess.getBlockMetadata(x, y, z);
 		switch (meta) {
 		case BlockDust.UNUSED_DUST:
-			TileEntityDust ted = (TileEntityDust) iblockaccess
-					.getBlockTileEntity(i, j, k);
+			TileEntityDust ted = (TileEntityDust) blockAccess.getTileEntity(x, y, z);
 
 			if (ted == null) {
 				return 0xEFEFEF;
@@ -163,7 +157,7 @@ public class BlockDust extends BlockContainer {
 
 			return ted.getRandomDustColor();
 
-		case BlockDust.ACTIVE_DUST://case 3:
+		case BlockDust.ACTIVE_DUST:// case 3:
 		case BlockDust.ACTIVATING_DUST:
 			return 0xDD0000;
 
@@ -171,43 +165,32 @@ public class BlockDust extends BlockContainer {
 			return 0xEFEFEF;
 
 		default:
-//			System.out.println("derp? "
-//					+ iblockaccess.getBlockMetadata(i, j, k));
+			DustMod.logger.warn("Unknown metadata value for {}: {}", this.getClass().getCanonicalName(), meta);
 			return 0;
 		}
 	}
 
 	@Override
-	public void onNeighborBlockChange(World world, int i, int j, int k, int l) {
+	public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
 		if (world.isRemote) {
 			return;
 		}
 
-		// if (world.multiplayerWorld) {
-		// return;
-		// }
-		int i1 = world.getBlockMetadata(i, j, k);
+		int i1 = world.getBlockMetadata(x, y, z);
 
-		// boolean flag = world.getBlockId(i, j, k) ==
-		// 0;//world.canBlockBePlacedAt(blockID, i, j, k, true, i1);
-		if (world.getBlockId(i, j - 1, k) == 0
-				|| !Block.blocksList[world.getBlockId(i, j - 1, k)].blockMaterial
-						.isSolid()) {
-			// System.out.println("aww " + i + " " + (j-1) + " " + k + " " + i1
-			// + " " + world.getBlockId(i, j-1, k));
-			// if (world.getBlockMetadata(i, j, k) == 0) {
-			// onBlockRemoval(world, i, j, k);
-			// }
-			world.setBlockAndMetadataWithNotify(i, j, k, 0, 0, 3);
-		} else if (world.isBlockIndirectlyGettingPowered(i, j, k) && i1 == 0) {
-			updatePattern(world, i, j, k, null);
-			world.notifyBlockChange(i, j, k, 0);
-		} 
-		
-		TileEntityDust ted = (TileEntityDust)world.getBlockTileEntity(i, j, k);
+		Block blockBelow = world.getBlock(x, y - 1, z);
+
+		if (blockBelow == null || !blockBelow.isSideSolid(world, x, y - 1, z, ForgeDirection.UP)) {
+			world.setBlockToAir(x, y, z);
+		} else if (world.isBlockIndirectlyGettingPowered(x, y, z) && i1 == 0) {
+			updatePattern(world, x, y, z, null);
+			world.notifyBlockChange(x, y, z, this);
+		}
+
+		TileEntityDust ted = (TileEntityDust) world.getTileEntity(x, y, z);
 		ted.onNeighborBlockChange();
 
-		super.onNeighborBlockChange(world, i, j, k, l);
+		super.onNeighborBlockChange(world, x, y, z, block);
 	}
 
 	/**
@@ -215,56 +198,41 @@ public class BlockDust extends BlockContainer {
 	 * update, as appropriate
 	 */
 	@Override
-	public boolean removeBlockByPlayer(World world, EntityPlayer player, int i, int j, int k) {
-//		if (world.isRemote) {
-//			return;
-//		}
+	public boolean removedByPlayer(World world, EntityPlayer player, int x, int y, int z, boolean willHarvest) {
 
-		if (world.getBlockMetadata(i, j, k) > 0) {
-			world.setBlockAndMetadataWithNotify(i, j, k, 0,0,3);
-			// for(int x = -1; x <= 1; x++)
-			// for(int z = -1; z <= 1; z++){
-			// if(world.getBlockId(i+x, j, k+z) == blockID &&
-			// world.getBlockMetadata(i+x, j, k+z) == 1){
-			// world.setBlockWithNotify(i+x,j,k+z,0);
-			// }
-			// }
+		// TODO Test this
+		if (world.getBlockMetadata(x, y, z) > 0) {
+
+			return world.setBlockToAir(x, y, z);
+
 		} else {
-			TileEntityDust ted = (TileEntityDust) world.getBlockTileEntity(i,
-					j, k);
+			TileEntityDust ted = (TileEntityDust) world.getTileEntity(x, y, z);
 
-//			if (world.isRemote) {
-//				super.breakBlock(world, i, j, k, b, m);
-//				return;
-//			}
+			// if (world.isRemote) {
+			// super.breakBlock(world, i, j, k, b, m);
+			// return;
+			// }
 
 			if (ted == null || ted.isEmpty()) {
-				// System.out.println("TED Was empty!!");
+				DustMod.logger.warn("TED was empty!!");
 				return true;
 			}
 
-			// int amt = ted.getAmount()-1;
-			// System.out.println("REMOVE " + amt+1);
-			// int meta = world.getBlockMetadata(i, j, k);
-
-			for (int x = 0; x < ted.size; x++) {
-				for (int z = 0; z < ted.size; z++) {
-					int dust = ted.getDust(x, z);
+			for (int dx = 0; dx < TileEntityDust.size; dx++) {
+				for (int dy = 0; dy < TileEntityDust.size; dy++) {
+					int dust = ted.getDust(dx, dy);
 
 					if (dust > 0) {
-						// if
-						// (!ModLoader.getMinecraftInstance().thePlayer.capabilities.isCreativeMode)
-						// {
-						if(!player.capabilities.isCreativeMode)
-							this.dropBlockAsItem_do(world, i, j, k, new ItemStack(
-								DustMod.idust.itemID, 1, dust));
+
+						if (!player.capabilities.isCreativeMode)
+							this.dropBlockAsItem(world, x, y, z, new ItemStack(DustMod.idust, 1, dust));
+
 					}
-					// }
 				}
 			}
-		}
 
-		return super.removeBlockByPlayer(world, player, i, j, k);
+			return world.setBlockToAir(x, y, z);
+		}
 	}
 
 	@Override
@@ -273,97 +241,88 @@ public class BlockDust extends BlockContainer {
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, int i, int j, int k,
-			EntityPlayer p, int face, float x, float y, float z) {
+	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int face, float cx, float cy, float cz) {
 
-		if(!world.canMineBlock(p, i, j, k)) return false;
-		
-		ItemStack item = p.getCurrentEquippedItem();
-		
-		if(item != null && item.itemID == DustMod.chisel.itemID){
-			int bid = world.getBlockId(i, j-1, k);
-			if(bid == DustMod.rutBlock.blockID){
-				return DustMod.rutBlock.onBlockActivated(world, i, j-1, k, p, face, x, y, z);
+		if (!world.canMineBlock(player, x, y, z))
+			return false;
+
+		ItemStack itemStack = player.getCurrentEquippedItem();
+
+		if (itemStack.getItem() == DustMod.chisel) {
+			if (world.getBlock(x, y - 1, z) == DustMod.rutBlock) {
+				return DustMod.rutBlock.onBlockActivated(world, x, y - 1, z, player, face, cx, cy, cz);
 			}
 		}
 
-		if (world.getBlockMetadata(i, j, k) == ACTIVE_DUST) {
-			TileEntityDust ted = (TileEntityDust) world.getBlockTileEntity(i,
-					j, k);
-			ted.onRightClick(p);
+		if (world.getBlockMetadata(x, y, z) == ACTIVE_DUST) {
+			TileEntityDust ted = (TileEntityDust) world.getTileEntity(x, y, z);
+			ted.onRightClick(player);
 			return true;
-		} else if (world.getBlockMetadata(i, j, k) > 1) {
+		} else if (world.getBlockMetadata(x, y, z) > 1) {
 			return false;
 		}
 
-		if (p.isSneaking()) {
-			if(item == null || item.getItem() != DustMod.tome){
-				onBlockClicked(world, i, j, k, p);
+		if (player.isSneaking()) {
+			if (itemStack.getItem() != DustMod.tome) {
+				onBlockClicked(world, x, y, z, player);
 			}
 
 			return false;
 		}
 
-		if (!world.isRemote
-				&& item != null
-				&& item.itemID == DustMod.tome.itemID) {
-			updatePattern(world, i, j, k, p);
-			world.notifyBlockChange(i, j, k, 0);
+		if (!world.isRemote && itemStack != null && itemStack.getItem() == DustMod.tome) {
+			updatePattern(world, x, y, z, player);
+			world.notifyBlockChange(x, y, z, this);
 			return true;
 		}
 
-		if (item == null
-				|| (item.itemID != DustMod.idust.itemID 
-				&& item.itemID != DustMod.pouch.itemID)) {
+		if (itemStack.getItem() != DustMod.idust && itemStack.getItem() != DustMod.pouch) {
 			return false;
 		}
 
-		
+		boolean isPouch = (itemStack.getItem() == DustMod.pouch);
+		int dust = itemStack.getItemDamage();
+		if (isPouch)
+			dust = ItemPouch.getValue(itemStack);
 
-		boolean isPouch = (item.itemID == DustMod.pouch.itemID);
-		int dust = item.getItemDamage();// mod_DustMod.dustValue(p.getCurrentEquippedItem().itemID);
-		if(isPouch) dust = ItemPouch.getValue(item);
-		if(dust < 5) dust *= 100;
-		
-		if(isPouch && ItemPouch.getDustAmount(item) <= 0){
+		// XXX WTH?
+		if (dust < 5)
+			dust *= 100;
+
+		if (isPouch && ItemPouch.getDustAmount(itemStack) <= 0) {
 			return false;
 		}
-		
-		int rx = (int)Math.floor(x*TileEntityDust.size);
-		int rz = (int)Math.floor(z*TileEntityDust.size);
-		rx = Math.min(TileEntityDust.size-1, rx);
-		rz = Math.min(TileEntityDust.size-1, rz);
-		
-		// System.out.println("Result: " + rx + " " + rz);
-		TileEntityDust ted = (TileEntityDust) world.getBlockTileEntity(
-				i, j, k);
+
+		int rx = (int) Math.floor(cx * TileEntityDust.size);
+		int rz = (int) Math.floor(cz * TileEntityDust.size);
+		rx = Math.min(TileEntityDust.size - 1, rx);
+		rz = Math.min(TileEntityDust.size - 1, rz);
+
+		// DustMod.logger.debug("Result: {} {}", rx, rz);
+		TileEntityDust ted = (TileEntityDust) world.getTileEntity(x, y, z);
 
 		if (ted.getDust(rx, rz) <= 0) {
 			if (ted.getDust(rx, rz) == -2) {
-				setVariableDust(ted, rx, rz, p, dust);
+				setVariableDust(ted, rx, rz, player, dust);
 			} else {
-				ted.setDust(p, rx, rz, dust);
+				ted.setDust(player, rx, rz, dust);
 
-				if (!p.capabilities.isCreativeMode) {
-					ItemPouch.subtractDust(item, 1);
+				if (!player.capabilities.isCreativeMode) {
+					ItemPouch.subtractDust(itemStack, 1);
 
-					if (!isPouch && item.stackSize == 0) {
-						p.destroyCurrentEquippedItem();
+					if (!isPouch && itemStack.stackSize == 0) {
+						player.destroyCurrentEquippedItem();
 					}
 				}
 			}
 
-			world.notifyBlockChange(i, j, k, 0);
-			world.playSoundEffect((float) i + 0.5F, (float) j + 0.5F,
-					(float) k + 0.5F, stepSound.getStepSound(),
-					(stepSound.getVolume() + 1.0F) / 6.0F,
-					stepSound.getPitch() * 0.99F);
+			world.notifyBlockChange(x, y, z, this);
+			world.playSoundEffect((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F, stepSound.getStepResourcePath(), (stepSound.getVolume() + 1.0F) / 6.0F, stepSound.getPitch() * 0.99F);
 		}
 		return true;
 	}
 
-	private void setVariableDust(TileEntityDust ted, int x, int z,
-			EntityPlayer p, int dust) {
+	private void setVariableDust(TileEntityDust ted, int x, int z, EntityPlayer p, int dust) {
 		if (ted.getDust(x, z) != -2) {
 			return;
 		}
@@ -374,12 +333,12 @@ public class BlockDust extends BlockContainer {
 			for (int sind = 0; sind < p.inventory.mainInventory.length; sind++) {
 				ItemStack is = p.inventory.mainInventory[sind];
 
-				if (is != null && ((is.itemID == DustMod.idust.itemID
-						&& is.getItemDamage() == dust) ||
-						(is.itemID == DustMod.pouch.itemID && ItemPouch.getValue(is) == dust && ItemPouch.getDustAmount(is) > 0))) {
+				if (is != null
+						&& ((is.getItem() == DustMod.idust && is.getItemDamage() == dust) || (is.getItem() == DustMod.pouch && ItemPouch.getValue(is) == dust && ItemPouch.getDustAmount(is) > 0))) {
+					
 					ItemPouch.subtractDust(is, 1);
 
-					if (ItemPouch.getDustAmount(is) == 0 && is.itemID != DustMod.pouch.itemID) {
+					if (ItemPouch.getDustAmount(is) == 0 && is.getItem() != DustMod.pouch) {
 						p.inventory.mainInventory[sind] = null;
 					}
 
@@ -406,23 +365,22 @@ public class BlockDust extends BlockContainer {
 					int iz = z + j;
 
 					if (ix < 0) {
-						ix = ted.size - 1;
+						ix = TileEntityDust.size - 1;
 						wx--;
-					} else if (ix >= ted.size) {
+					} else if (ix >= TileEntityDust.size) {
 						ix = 0;
 						wx++;
 					}
 
 					if (iz < 0) {
-						iz = ted.size - 1;
+						iz = TileEntityDust.size - 1;
 						wz--;
-					} else if (iz >= ted.size) {
+					} else if (iz >= TileEntityDust.size) {
 						iz = 0;
 						wz++;
 					}
 
-					TileEntity te = p.worldObj.getBlockTileEntity(wx,
-							ted.yCoord, wz);
+					TileEntity te = p.worldObj.getTileEntity(wx, ted.yCoord, wz);
 
 					if (!(te instanceof TileEntityDust)) {
 						continue;
@@ -436,9 +394,10 @@ public class BlockDust extends BlockContainer {
 	}
 
 	@Override
-	public void onBlockClicked(World world, int i, int j, int k, EntityPlayer p) {
-				
-		if(!world.canMineBlock(p, i, j, k)) return;
+	public void onBlockClicked(World world, int x, int y, int z, EntityPlayer p) {
+
+		if (!world.canMineBlock(p, x, y, z))
+			return;
 
 		Vec3 look = p.getLookVec();
 		double mx = look.xCoord;// Math.cos((p.rotationYaw+90)*Math.PI/180);
@@ -450,9 +409,9 @@ public class BlockDust extends BlockContainer {
 			double ty = p.posY + p.getEyeHeight() + my * test;
 			double tz = p.posZ + mz * test;
 
-			if (ty - (double) j <= 0.02) {
-				double dx = Math.abs(tx - (double) i) - 0.02;
-				double dz = Math.abs(tz - (double) k) - 0.02;
+			if (ty - (double) y <= 0.02) {
+				double dx = Math.abs(tx - (double) x) - 0.02;
+				double dz = Math.abs(tz - (double) z) - 0.02;
 				int rx = (int) Math.floor(dx * TileEntityDust.size);
 				int rz = (int) Math.floor(dz * TileEntityDust.size);
 
@@ -472,30 +431,22 @@ public class BlockDust extends BlockContainer {
 					rz = 0;
 				}
 
-				TileEntityDust ted = (TileEntityDust) world.getBlockTileEntity(
-						i, j, k);
+				TileEntityDust ted = (TileEntityDust) world.getTileEntity(x, y, z);
 
-				if (ted.getDust(rx, rz) != 0
-						&& world.getBlockMetadata(i, j, k) == 0) {
-					if (ted.getDust(rx, rz) > 0
-							&& !p.capabilities.isCreativeMode) {
-						this.dropBlockAsItem_do(world, i, j, k,
-								new ItemStack(DustMod.idust.itemID, 1,
-										ted.getDust(rx, rz)));
+				if (ted.getDust(rx, rz) != 0 && world.getBlockMetadata(x, y, z) == 0) {
+					if (ted.getDust(rx, rz) > 0 && !p.capabilities.isCreativeMode) {
+						this.dropBlockAsItem(world, x, y, z, new ItemStack(DustMod.idust, 1, ted.getDust(rx, rz)));
 					}
 
-					world.playSoundEffect((float) i + 0.5F, (float) j + 0.5F,
-							(float) k + 0.5F, stepSound.getStepSound(),
-							(stepSound.getVolume() + 1.0F) / 6.0F,
-							stepSound.getPitch() * 0.99F);
-					world.notifyBlockChange(i, j, k, 0);
+					world.playSoundEffect((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F, stepSound.getStepResourcePath(), (stepSound.getVolume() + 1.0F) / 6.0F, stepSound.getPitch() * 0.99F);
+					world.notifyBlockChange(x, y, z, this);
 					ted.setDust(p, rx, rz, 0);
 
 					// System.out.println("drop click");
-					if (ted.isEmpty() && world.getBlockMetadata(i, j, k) != 10) {
+					if (ted.isEmpty() && world.getBlockMetadata(x, y, z) != 10) {
 						// System.out.println("Destroying");
-						world.setBlockAndMetadataWithNotify(i, j, k, 0,0,3);
-						this.onBlockDestroyedByPlayer(world, i, j, k, 0);
+						world.setBlockToAir(x, y, z);
+						this.onBlockDestroyedByPlayer(world, x, y, z, 0);
 					}
 				}
 				break;
@@ -507,10 +458,11 @@ public class BlockDust extends BlockContainer {
 		// super.onBlockClicked(world, i, j, k, p);
 	}
 
+	/*
 	@Override
 	public int idDropped(int i, Random random, int j) {
 		return 0;// i == 0 ? mod_DustMod.ITEM_DustID+256:0;
-	}
+	}*/
 
 	public void updatePattern(World world, int i, int j, int k, EntityPlayer p) {
 		List<Integer[]> n = new ArrayList<Integer[]>();
@@ -521,8 +473,8 @@ public class BlockDust extends BlockContainer {
 		}
 
 		for (Integer[] iter : n) {
-			if (world.getBlockId(iter[0], j, iter[2]) == blockID) {
-				world.setBlockMetadataWithNotify(iter[0], j, iter[2], ACTIVATING_DUST,2);
+			if (world.getBlock(iter[0], j, iter[2]) == this) {
+				world.setBlockMetadataWithNotify(iter[0], j, iter[2], ACTIVATING_DUST, 2);
 			}
 		}
 
@@ -556,14 +508,12 @@ public class BlockDust extends BlockContainer {
 
 		for (int x = 0; x <= dx; x++) {
 			for (int z = 0; z <= dz; z++) {
-				if (world.getBlockId(x + sx, j, z + sz) == blockID) {
-					TileEntityDust ted = (TileEntityDust) world
-							.getBlockTileEntity(x + sx, j, z + sz);
+				if (world.getBlock(x + sx, j, z + sz) == this) {
+					TileEntityDust ted = (TileEntityDust) world.getTileEntity(x + sx, j, z + sz);
 
 					for (int ix = 0; ix < size; ix++) {
 						for (int iz = 0; iz < size; iz++) {
-							map[ix + x * size][iz + z * size] = ted.getDust(ix,
-									iz);
+							map[ix + x * size][iz + z * size] = ted.getDust(ix, iz);
 						}
 					}
 				}
@@ -571,18 +521,15 @@ public class BlockDust extends BlockContainer {
 		}
 
 		// System.out.println("ASNASO " + Arrays.deepToString(map));
-		DustManager.callShape(world, (double) sx + (double) dx / 2
-				+ 0.5D, j + 1D, (double) sz + (double) dz / 2 + 0.5D, map, n,
-				(p == null) ? null : p.username);
+		DustManager.callShape(world, (double) sx + (double) dx / 2 + 0.5D, j + 1D, (double) sz + (double) dz / 2 + 0.5D, map, n, (p == null) ? null : p.getGameProfile().getId());
 	}
 
-	public void addNeighbors(World world, int i, int j, int k,
-			List<Integer[]> list) {
+	public void addNeighbors(World world, int i, int j, int k, List<Integer[]> list) {
 		for (int x = -1; x <= 1; x++) {
 			for (int z = -1; z <= 1; z++) {
-				if (world.getBlockId(i + x, j, k + z) == blockID
-						&& world.getBlockMetadata(i + x, j, k + z) == 0) {
+				if (world.getBlock(i + x, j, k + z) == this && world.getBlockMetadata(i + x, j, k + z) == 0) {
 					boolean cont = true;
+					// XXX
 					stopcheck:
 
 					for (Integer[] iter : list) {
@@ -602,66 +549,57 @@ public class BlockDust extends BlockContainer {
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World var1) {
+	public TileEntity createNewTileEntity(World world, int par2) {
 		return new TileEntityDust();
 	}
 
+	@SideOnly(Side.CLIENT)
+	public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z) {
+		Block block = world.getBlock(x, y, z); 
+		return block != null ? block.getPickBlock(target, world, x, y, z) : null;
+	};
 
-    @SideOnly(Side.CLIENT)
+	/**
+	 * Get the block's damage value (for use with pick block).
+	 */
+	public int getDamageValue(World world, int i, int j, int k) {
+		return world.getBlockMetadata(i, j - 1, k);
+	}
 
-    /**
-     * only called by clickMiddleMouseButton , and passed to inventory.setCurrentItem (along with isCreative)
-     */
-    public int idPicked(World world, int i, int j, int k)
-    {
-        return world.getBlockId(i,j-1,k);
-    }
-    
+	@SideOnly(Side.CLIENT)
+	/**
+	 * Returns the default ambient occlusion value based on block opacity
+	 */
+	public float getAmbientOcclusionLightValue(IBlockAccess par1IBlockAccess, int par2, int par3, int par4) {
+		return 0;
+	}
 
-    /**
-     * Get the block's damage value (for use with pick block).
-     */
-    public int getDamageValue(World world, int i, int j, int k)
-    {
-        return world.getBlockMetadata(i,j-1,k);
-    }
-    
+	/**
+	 * Get a light value for the block at the specified coordinates, normal
+	 * ranges are between 0 and 15
+	 *
+	 * @param world
+	 *            The current world
+	 * @param x
+	 *            X Position
+	 * @param y
+	 *            Y position
+	 * @param z
+	 *            Z position
+	 * @return The light value
+	 */
+	public int getLightValue(IBlockAccess world, int x, int y, int z) {
+		int meta = world.getBlockMetadata(x, y, z);
+		if (meta == ACTIVE_DUST || meta == ACTIVATING_DUST) {
+			return 8;
+		}
+		return lightValue;
+	}
 
+	@SideOnly(Side.CLIENT)
+	public void func_94332_a(IIconRegister iconRegister) {
+		this.topTexture = iconRegister.registerIcon(DustMod.spritePath + "dust_top");
+		this.sideTexture = iconRegister.registerIcon(DustMod.spritePath + "dust_side");
+	}
 
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Returns the default ambient occlusion value based on block opacity
-     */
-    public float getAmbientOcclusionLightValue(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
-    {
-        return 0;
-    }
-    
-
-    /**
-     * Get a light value for the block at the specified coordinates, normal ranges are between 0 and 15
-     *
-     * @param world The current world
-     * @param x X Position
-     * @param y Y position
-     * @param z Z position
-     * @return The light value
-     */
-    public int getLightValue(IBlockAccess world, int x, int y, int z)
-    {
-        int meta = world.getBlockMetadata(x, y, z);
-        if(meta == ACTIVE_DUST || meta == ACTIVATING_DUST){
-        	return 8;
-        }
-        return lightValue[blockID];
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void func_94332_a(IconRegister par1IconRegister)
-    {
-        this.topTexture = par1IconRegister.func_94245_a(DustMod.spritePath + "dust_top");
-        this.sideTexture = par1IconRegister.func_94245_a(DustMod.spritePath + "dust_side");
-    }
-    
 }

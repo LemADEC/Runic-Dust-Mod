@@ -8,10 +8,13 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockFalling;
 import net.minecraft.block.BlockSand;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.item.EntityFallingSand;
+import net.minecraft.entity.item.EntityFallingBlock;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
@@ -25,11 +28,8 @@ import net.minecraft.world.World;
  *
  * @author billythegoat101
  */
-public class EntityBlock extends EntityFallingSand
+public class EntityBlock extends EntityFallingBlock
 {
-//    public int blockID;
-//    protected int meta;
-
     /** How long the block has been falling for. */
     protected int fallTime;
     protected boolean save = true;
@@ -55,7 +55,7 @@ public class EntityBlock extends EntityFallingSand
         super(par1World);
     }
 
-    public EntityBlock(World par1World, double par2, double par4, double par6, int par8)
+    public EntityBlock(World par1World, double par2, double par4, double par6, Block par8)
     {
         super(par1World, par2, par4, par6, par8);
     }
@@ -64,22 +64,24 @@ public class EntityBlock extends EntityFallingSand
     protected void entityInit()
     {
         super.entityInit();
-        dataWatcher.addObject(10, new Integer(blockID));
-        dataWatcher.addObject(11, new Integer(metadata));
-        dataWatcher.addObject(12, new Integer((lingering ? 1:0)));
+        /*
+        dataWatcher.addObject(10, func_145805_f());
+        dataWatcher.addObject(11, new Integer(field_145814_a));
+        dataWatcher.addObject(12, new Integer((lingering ? 1:0)));*/
     }
 
     public void updateDataWatcher()
     {
-        dataWatcher.updateObject(10, new Integer(blockID));
-        dataWatcher.updateObject(11, new Integer(metadata));
-        dataWatcher.updateObject(12, new Integer((lingering ? 1:0)));
+    	/*
+        dataWatcher.updateObject(10, func_145805_f());
+        dataWatcher.updateObject(11, new Integer(field_145814_a));
+        dataWatcher.updateObject(12, new Integer((lingering ? 1:0)));*/
     }
     public void updateEntityFromDataWatcher()
-    {
+    {/*
         blockID = dataWatcher.getWatchableObjectInt(10);
         metadata = dataWatcher.getWatchableObjectInt(11);
-        lingering = dataWatcher.getWatchableObjectInt(12) == 1;
+        lingering = dataWatcher.getWatchableObjectInt(12) == 1;*/
     }
 
     @Override
@@ -157,7 +159,7 @@ public class EntityBlock extends EntityFallingSand
         {
             if (lingering && getDistance(lx, ly, lz) > 1.5D && canPlace(lx,ly,lz))
             {
-                worldObj.setBlockAndMetadataWithNotify(lx, ly, lz, 0,0,3);
+                worldObj.setBlockToAir(lx, ly, lz);
                 lingering = false;
                 this.updateDataWatcher();
             }
@@ -189,7 +191,7 @@ public class EntityBlock extends EntityFallingSand
 //                }
 
 
-                if (lingering && worldObj.getBlockId(lx, ly, lz) != blockID)
+                if (lingering && worldObj.getBlock(lx, ly, lz) != func_145805_f())
                 {
 //                	System.out.println("DEATH2");
                     setDead();
@@ -197,7 +199,7 @@ public class EntityBlock extends EntityFallingSand
                 }
                 lingering = false;
                 if(canPlace(lx,ly,lz))
-                	worldObj.setBlockAndMetadataWithNotify(lx, ly, lz, 0,0,3);
+                	worldObj.setBlockToAir(lx, ly, lz);
             	
                 this.setPosition(gx,gy,gz);
                 place();
@@ -224,7 +226,7 @@ public class EntityBlock extends EntityFallingSand
                 setDead();
             }
         }
-        else if ((parentDust != null && parentDust.isDead) || blockID == 0)
+        else if ((parentDust != null && parentDust.isDead) || func_145805_f().getMaterial() == Material.air)
         {
 //        	System.out.println("DEATH4");
             setDead();
@@ -275,28 +277,28 @@ public class EntityBlock extends EntityFallingSand
                     this.motionZ *= 0.699999988079071D;
                     this.motionY *= -0.5D;
 
-                    if (this.worldObj.getBlockId(var1, var2, var3) != Block.pistonMoving.blockID)
+                    if (this.worldObj.getBlock(var1, var2, var3) != Blocks.piston_extension)
                     {
                         this.setDead();
 
-                        if (this.worldObj.canPlaceEntityOnSide(this.blockID, var1, var2, var3, true, 1, (Entity)null, null) && !BlockSand.canFallBelow(this.worldObj, var1, var2 - 1, var3) && this.worldObj.setBlockAndMetadataWithNotify(var1, var2, var3, this.blockID, this.metadata,3))
+                        if (this.worldObj.canPlaceEntityOnSide(func_145805_f(), var1, var2, var3, true, 1, (Entity)null, null) && !BlockFalling.func_149831_e(this.worldObj, var1, var2 - 1, var3) && this.worldObj.setBlock(var1, var2, var3, func_145805_f(), this.field_145814_a,3))
                         {
-                            if (Block.blocksList[this.blockID] instanceof BlockSand)
+                            if (func_145805_f() instanceof BlockFalling)
                             {
-                                ((BlockSand)Block.blocksList[this.blockID]).onFinishFalling(this.worldObj, var1, var2, var3, this.metadata);
+                                ((BlockFalling)func_145805_f()).func_149828_a(this.worldObj, var1, var2, var3, this.field_145814_a);
                             }
                         }
-                        else if (this.shouldDropItem)
+                        else if (this.field_145813_c)
                         {
-                            this.entityDropItem(new ItemStack(this.blockID, 1, Block.blocksList[this.blockID].damageDropped(this.metadata)), 0.0F);
+                            this.entityDropItem(new ItemStack(func_145805_f(), 1, func_145805_f().damageDropped(this.field_145814_a)), 0.0F);
                         }
                     }
                 }
                 else if (this.fallTime > 100 && !this.worldObj.isRemote && (var2 < 1 || var2 > 256) || this.fallTime > 600)
                 {
-                    if (this.shouldDropItem)
+                    if (this.field_145813_c)
                     {
-                        this.entityDropItem(new ItemStack(this.blockID, 1, Block.blocksList[this.blockID].damageDropped(this.metadata)), 0.0F);
+                        this.entityDropItem(new ItemStack(func_145805_f(), 1, func_145805_f().damageDropped(this.field_145814_a)), 0.0F);
                     }
 
                     this.setDead();
@@ -307,8 +309,8 @@ public class EntityBlock extends EntityFallingSand
             
             //Collision with entity
             double knockback = 2D;
-            Vec3 var17 = this.worldObj.getWorldVec3Pool().getVecFromPool(this.posX, this.posY, this.posZ);
-            Vec3 var3 = this.worldObj.getWorldVec3Pool().getVecFromPool(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
+            Vec3 var17 = Vec3.createVectorHelper(this.posX, this.posY, this.posZ);
+            Vec3 var3 = Vec3.createVectorHelper(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
             Entity var5 = null;
             List var6 = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox.addCoord(this.motionX, this.motionY, this.motionZ).expand(1.0D, 1.0D, 1.0D));
             double var7 = 0.0D;
@@ -376,8 +378,8 @@ public class EntityBlock extends EntityFallingSand
      */
     protected void writeEntityToNBT(NBTTagCompound tag)
     {
-        tag.setInteger("tile", blockID);
-        tag.setInteger("meta", metadata);
+        tag.setInteger("tile", Block.getIdFromBlock(func_145805_f()));
+        tag.setInteger("meta", field_145814_a);
         tag.setBoolean("save", save);
         tag.setBoolean("hasparentdust", hasParentDust);
         tag.setLong("parentDustID", parentDustID);
@@ -406,7 +408,8 @@ public class EntityBlock extends EntityFallingSand
             return;
         }
 
-        blockID = tag.getInteger("tile");
+        //TODO rewrite class?
+        //blockID = tag.getInteger("tile");
         hasParentDust = tag.getBoolean("hasparentdust");
         parentDustID = tag.getLong("parentDustID");
         going = tag.getBoolean("going");
@@ -472,7 +475,7 @@ public class EntityBlock extends EntityFallingSand
 
         if (canPlace(lx,ly,lz))
         {
-            worldObj.setBlockAndMetadataWithNotify(lx, ly, lz, blockID, metadata,3);
+            worldObj.setBlock(lx, ly, lz, func_145805_f(), field_145814_a,3);
 
             if (lingerWhenArrived)
             {
@@ -537,8 +540,8 @@ public class EntityBlock extends EntityFallingSand
     		for(int j = -1; j <= 1; j++){
     			for(int k = -1; k <= 1; k++){
     				if(Math.abs(i+j)!=1 && Math.abs(i+k)!=0) continue;
-    				int bid = worldObj.getBlockId(ix+i, iy+j, iz+k);
-    				if(bid != 0) return true;
+    				Block block = worldObj.getBlock(ix+i, iy+j, iz+k);
+    				if(block.getMaterial() != Material.air) return true;
     			}
     		}
     	}
@@ -568,16 +571,14 @@ public class EntityBlock extends EntityFallingSand
     }
     
     public boolean canPlace(int x, int y, int z){
-    	int blockID = worldObj.getBlockId(x, y, z);
+    	Block block = worldObj.getBlock(x, y, z);
     	int metadata = worldObj.getBlockMetadata(x,y,z);
     	
-    	if(blockID == 0) return true;
-    	if(blockID == this.blockID && metadata == this.metadata) return true;
-    	
-    	Block block = Block.blocksList[blockID];
+    	if(block.getMaterial() == Material.air) return true;
+    	if(block == this.func_145805_f() && metadata == this.field_145814_a) return true;
     	
     	
-    	return block.blockMaterial.isReplaceable();
+    	return block.getMaterial().isReplaceable();
     }
     
 }

@@ -6,6 +6,7 @@ package dustexample.examplerunes;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import dustmod.DustEvent;
 import dustmod.EntityDust;
@@ -39,21 +40,21 @@ public class DEMakeBlockFromDustLevel extends DustEvent
     {
         super.onInit(e);
         
-        int blockID = 0;
+        Block block = Blocks.air;
         //Since it is a solid rune, e.dustID returns the dust it is made of
         //And depending on that dust, we select a block we want to use
         switch(e.dustID){
             case 1:
-                blockID = Block.wood.blockID;
+            	block = Blocks.log;
                 break;
             case 2:
-                blockID = Block.tnt.blockID;
+            	block = Blocks.tnt;
                 break;
             case 3:
-                blockID = Block.blockLapis.blockID;
+            	block = Blocks.lapis_block;
                 break;
             case 4:
-                blockID = Block.netherBrick.blockID;
+            	block = Blocks.nether_brick;
                 break;
         }
         
@@ -63,7 +64,7 @@ public class DEMakeBlockFromDustLevel extends DustEvent
             int x = i[0];
             int y = i[1] -1;
             int z = i[2];
-            world.setBlockAndMetadataWithNotify(x, y, z, blockID,0,3);
+            world.setBlock(x, y, z, block,0,3);
         }
         
         e.fade();

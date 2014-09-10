@@ -9,13 +9,12 @@ import java.util.Random;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumRarity;
-import net.minecraft.item.EnumToolMaterial;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.world.World;
@@ -26,9 +25,9 @@ import net.minecraft.world.World;
  */
 public class ItemSpiritSword extends ItemSword
 {
-    public ItemSpiritSword(int i)
+    public ItemSpiritSword()
     {
-        super(i, EnumToolMaterial.EMERALD);
+        super(ToolMaterial.EMERALD);
         setMaxDamage(131);
     }
 
@@ -66,8 +65,7 @@ public class ItemSpiritSword extends ItemSword
     	if(r < tol){
     		int amt = 1;
     		if(rand.nextDouble() < 0.5D) amt = 2;
-    		EntityItem ei = player.dropPlayerItem(new ItemStack(DustMod.idust,amt,200));
-    		ei.setPosition(entity.posX, entity.posY, entity.posZ);
+    		EntityItem ei = new EntityItem(entity.worldObj, entity.posX, entity.posY, entity.posZ, new ItemStack(DustMod.idust,amt,200));
     		ei.delayBeforeCanPickup = 0;
     	}
     	
@@ -76,7 +74,7 @@ public class ItemSpiritSword extends ItemSword
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void func_94581_a(IconRegister par1IconRegister) {
-		this.iconIndex = par1IconRegister.func_94245_a(DustMod.spritePath + this.getUnlocalizedName().replace("item.", ""));
+	public void registerIcons(IIconRegister iconRegister) {
+		this.itemIcon = iconRegister.registerIcon(DustMod.spritePath + this.getUnlocalizedName().replace("item.", ""));
 	}
 }

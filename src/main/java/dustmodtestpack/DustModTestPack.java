@@ -1,10 +1,9 @@
 package dustmodtestpack;
 
 import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.Mod.PostInit;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.network.NetworkMod;
 import dustmod.DustShape;
 import dustmod.InscriptionEvent;
 import dustmod.InscriptionManager;
@@ -23,13 +22,12 @@ import dustmodtestpack.inscriptions.WaterAffinity;
  * 
  */
 @Mod(modid = "DustModTestPack", name = "Dust mod Test pack", version = "0.03", dependencies = "after:DustMod")
-@NetworkMod(clientSideRequired = false, serverSideRequired = false)
 public class DustModTestPack {
 
 	@Instance("DustModTestPack")
 	public static DustModTestPack instance;
 
-	@PostInit
+	@EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
 		registerDusts();
 		registerRunes();

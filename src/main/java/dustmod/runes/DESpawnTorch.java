@@ -73,8 +73,8 @@ public class DESpawnTorch extends DustEvent
             int x = e.getX();
             int y = e.getY();
             int z = e.getZ();
-            world.setBlockAndMetadataWithNotify(x, y, z, 0,0,0);
-            world.setBlockAndMetadataWithNotify(x, y, z, Block.torchWood.blockID, 0,3);
+            world.setBlock(x, y, z, 0,0,0);
+            world.setBlock(x, y, z, Block.torchWood.blockID, 0,3);
         }
         
         if(e.data[0] == 1 && e.ticksExisted%10 == 0){

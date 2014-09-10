@@ -10,6 +10,8 @@ import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import dustmod.DustEvent;
@@ -40,24 +42,24 @@ public class DEFortuneEnch extends DustEvent
     public void onInit(EntityDust e)
     {
         List<EntityItem> sacrifice = getItems(e);
-        int item = Item.pickaxeDiamond.itemID;
+        Item item = Items.diamond_pickaxe;
 
         for (EntityItem i: sacrifice)
         {
             ItemStack is = i.getEntityItem();
 
-            if (is.itemID == Item.pickaxeDiamond.itemID || is.itemID == Item.swordDiamond.itemID)
+            if (is.getItem() == Items.diamond_pickaxe || is.getItem() == Items.diamond_sword)
             {
-                item = is.itemID;
+                item = is.getItem();
                 break;
             }
         }
 
 //        int gold = ((item == Item.pickaxeDiamond.itemID) ? Item.pickaxeGold.itemID:Item.swordGold.itemID);
         ItemStack[] req = this.sacrifice(e, new ItemStack[] {new ItemStack(item, 1, 0),
-                      new ItemStack(Block.oreDiamond.blockID, 1, 0),
-                      new ItemStack(Block.oreRedstone.blockID, 1, 0),
-                      new ItemStack(Block.oreLapis.blockID, 1, 0)
+                      new ItemStack(Blocks.diamond_ore, 1, 0),
+                      new ItemStack(Blocks.redstone_ore, 1, 0),
+                      new ItemStack(Blocks.lapis_ore, 1, 0)
         });
 
         if (!checkSacrifice(req) || !takeXP(e, 15))

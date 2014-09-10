@@ -1,12 +1,9 @@
 package dustmod;
 
-import java.util.HashMap;
-
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.stats.StatList;
 import net.minecraft.util.DamageSource;
 
 public class InscriptionEvent {
@@ -46,9 +43,10 @@ public class InscriptionEvent {
 //			return true;
 //		}else if(true) return false;
 		
+		// XXX WTH?
 		boolean isOP = true;
 		try{
-			isOP = MinecraftServer.getServer().getConfigurationManager().areCommandsAllowed(player.username);
+			isOP = MinecraftServer.getServer().getConfigurationManager().func_152596_g(player.getGameProfile());
 		}catch(Exception e){}
     	return permaAllowed && (this.permission.equals("ALL") || (this.permission.equals("OP") && isOP));
     }
@@ -102,24 +100,24 @@ public class InscriptionEvent {
 		return false;
 	}
 	
-	public void onUpdate(EntityLiving wearer, ItemStack item, boolean[] buttons){
+	public void onUpdate(EntityLivingBase wearer, ItemStack item, boolean[] buttons){
 	}
 	
-	public void onDamage(EntityLiving wearer, ItemStack item, DamageSource source, int damage){}
+	public void onDamage(EntityLivingBase wearer, ItemStack item, DamageSource source, int damage){}
 	
-	public int getPreventedDamage(EntityLiving wearer, ItemStack item, DamageSource source, int damage){return damage;}
+	public int getPreventedDamage(EntityLivingBase wearer, ItemStack item, DamageSource source, int damage){return damage;}
 	
-	public int getArmorPoints(EntityLiving wearer, ItemStack item){
+	public int getArmorPoints(EntityLivingBase wearer, ItemStack item){
 		return 0;
 	}
 	
-	public void onRemoval(EntityLiving wearer, ItemStack item){
+	public void onRemoval(EntityLivingBase wearer, ItemStack item){
 	}
 	
-	public void onEquip(EntityLiving wearer, ItemStack item){
+	public void onEquip(EntityLivingBase wearer, ItemStack item){
 	}
 	
-	public void onCreate(EntityLiving creator, ItemStack item){
+	public void onCreate(EntityLivingBase creator, ItemStack item){
 	}
 	
 	/**
@@ -138,7 +136,7 @@ public class InscriptionEvent {
 	 * @param pickedup
 	 * @return
 	 */
-	public ItemStack onItemPickup(EntityLiving wearer, ItemStack insc, ItemStack pickedup){return pickedup;}
+	public ItemStack onItemPickup(EntityLivingBase wearer, ItemStack insc, ItemStack pickedup){return pickedup;}
 	
 	public void damage(EntityPlayer ent, ItemStack item, int amt){
 		int curDamage = item.getItemDamage();

@@ -1,10 +1,10 @@
 package dustmod;
 
-import java.util.Random;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.packet.Packet;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 
 public class TileEntityDustTable extends TileEntity
@@ -19,28 +19,32 @@ public class TileEntityDustTable extends TileEntity
     public float rotation;
     public float prevRotation;
     public float rotAmt;
-    private static Random rand = new Random();
 
     public int page = 0;
 
     public int dir = -1;
-//    private int page = 0;
 
-    public TileEntityDustTable()
-    {
-    }
+	public TileEntityDustTable() {
+	}
 
-    @Override
-    public void writeToNBT(NBTTagCompound tag)
-    {
-        super.writeToNBT(tag);
-        tag.setInteger("page", page);
-    }
-    public void readFromNBT(NBTTagCompound tag)
-    {
-        super.readFromNBT(tag);
-        page = tag.getInteger("page");
-        pageFlipping = prevPageFlipping = floatd = (float)page / 2F;
+	@Override
+	public void writeToNBT(NBTTagCompound tag) {
+		super.writeToNBT(tag);
+		writeNetworkNBT(tag);
+	}
+
+	public void writeNetworkNBT(NBTTagCompound tag) {
+		tag.setInteger("page", page);
+	}
+
+	public void readFromNBT(NBTTagCompound tag) {
+		super.readFromNBT(tag);
+		readNetworkNBT(tag);
+	}
+    
+    public void readNetworkNBT(NBTTagCompound tag) {
+    	page = tag.getInteger("page");
+		pageFlipping = prevPageFlipping = floatd = (float) page / 2F;
     }
 
     public void updateEntity()
@@ -143,6 +147,14 @@ public class TileEntityDustTable extends TileEntity
     @Override
     public Packet getDescriptionPacket()
     {
-        return PacketHandler.getTELPacket(this);
+    	NBTTagCompound tag = new NBTTagCompound();
+        writeNetworkNBT(tag);
+        return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 1, tag);
+    }
+    
+    @Override
+    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
+    	readNetworkNBT(pkt.func_148857_g());
+    	worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 }

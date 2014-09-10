@@ -3,11 +3,14 @@ package dustmod.inscriptions;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumMovingObjectType;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.util.Vec3;
 import dustmod.DustEvent;
 import dustmod.DustMod;
@@ -30,7 +33,7 @@ public class EnderInscription extends InscriptionEvent {
 	public boolean callSacrifice(DustEvent rune, EntityDust e, ItemStack item) {
 		ItemStack[] req = new ItemStack[0];
 		int xp = 10;
-		req = new ItemStack[]{new ItemStack(Item.enderPearl,8), new ItemStack(Block.field_94339_ct,1), new ItemStack(Item.blazeRod, 2)};
+		req = new ItemStack[]{new ItemStack(Items.ender_pearl,8), new ItemStack(Blocks.quartz_block,1), new ItemStack(Items.blaze_rod, 2)};
 		
 		req = rune.sacrifice(e, req);
 		if(!rune.checkSacrifice(req)) return false;
@@ -40,7 +43,7 @@ public class EnderInscription extends InscriptionEvent {
 	}
 	
 	@Override
-	public void onUpdate(EntityLiving wearer, ItemStack item, boolean[] buttons) {
+	public void onUpdate(EntityLivingBase wearer, ItemStack item, boolean[] buttons) {
 		super.onUpdate(wearer, item, buttons);
 //		System.out.println("huh " + wasFalling(item) +  " " + wearer.posY + " " + wearer.isCollidedVertically + " " + wearer.onGround);
 
@@ -83,16 +86,16 @@ public class EnderInscription extends InscriptionEvent {
 			}
 
 			double newY = testLoc[1];
-			if(wearer.worldObj.getBlockId((int)testLoc[0], (int)testLoc[1], (int)testLoc[2]) != 0){
+			if(!wearer.worldObj.isAirBlock((int)testLoc[0], (int)testLoc[1], (int)testLoc[2])){
 				for(int i = 0; i < 3; i++){
-					if(wearer.worldObj.getBlockId((int)testLoc[0], (int)Math.floor(testLoc[1])+i, (int)testLoc[2]) == 0){
+					if(wearer.worldObj.isAirBlock((int)testLoc[0], (int)Math.floor(testLoc[1])+i, (int)testLoc[2])){
 						newY = Math.floor(testLoc[1])+i;
 						break;
 					}
 				}
 			}else{
 				for(int i = 0; i < 64; i++){
-					if(wearer.worldObj.getBlockId((int)testLoc[0], (int)Math.floor(testLoc[1])-i, (int)testLoc[2]) != 0){
+					if(!wearer.worldObj.isAirBlock((int)testLoc[0], (int)Math.floor(testLoc[1])-i, (int)testLoc[2])){
 						newY = Math.floor(testLoc[1])-i+1;
 						break;
 					}
@@ -134,10 +137,10 @@ public class EnderInscription extends InscriptionEvent {
 		}
 	}
 	
-	private void onTele(ItemStack item, EntityLiving wearer){
+	private void onTele(ItemStack item, EntityLivingBase wearer){
 		item.getTagCompound().setInteger("lastTele", wearer.ticksExisted);
 	}
-	private boolean canTele(ItemStack item, EntityLiving wearer){
+	private boolean canTele(ItemStack item, EntityLivingBase wearer){
 		int last = 0;
 		if(item.getTagCompound().hasKey("mouse"))
 			last = item.getTagCompound().getInteger("lastTele");
@@ -174,7 +177,7 @@ public class EnderInscription extends InscriptionEvent {
 	
 	public int[] getClickedBlock(Entity wearer, ItemStack item){
 		MovingObjectPosition click = DustMod.getWornInscription().getMovingObjectPositionFromPlayer(wearer.worldObj, (EntityPlayer)wearer, false);
-		if(click != null && click.typeOfHit == EnumMovingObjectType.TILE){
+		if(click != null && click.typeOfHit == MovingObjectType.BLOCK){
 			int tx = click.blockX;
 			int ty = click.blockY;
 			int tz = click.blockZ;

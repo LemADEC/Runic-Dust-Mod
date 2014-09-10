@@ -3,14 +3,15 @@ package dustmod;
 import java.util.List;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -19,15 +20,15 @@ public class ItemPouch extends DustModItem {
 
 	public static final int max = 6400;
 
-    private int blockID;
+    private Block block;
     private ItemStack container = null;
     
-    private Icon bagIcon;
-    private Icon mainIcon;
-    private Icon subIcon;
-	public ItemPouch(int par1, Block block) {
-		super(par1);
-        blockID = block.blockID;
+    private IIcon bagIIcon;
+    private IIcon mainIIcon;
+    private IIcon subIIcon;
+	public ItemPouch(Block block) {
+		super();
+        this.block = block;
 		this.hasSubtypes = true;
 		this.setMaxStackSize(1);
 	}
@@ -37,13 +38,13 @@ public class ItemPouch extends DustModItem {
     {
 		if(!world.canMineBlock(p, i, j, k)) return false;
 		
-        int var11 = world.getBlockId(i, j, k);
+        Block var11 = world.getBlock(i, j, k);
 
-        if (var11 == Block.snow.blockID)
+        if (var11 == Blocks.snow)
         {
             face = 1;
         }
-        else if (var11 != Block.vine.blockID && var11 != Block.tallGrass.blockID && var11 != Block.deadBush.blockID)
+        else if (var11 != Blocks.vine && var11 != Blocks.tallgrass && var11 != Blocks.deadbush)
         {
             if (face == 0)
             {
@@ -86,21 +87,20 @@ public class ItemPouch extends DustModItem {
         }
         else
         {
-            if (world.canPlaceEntityOnSide(this.blockID, i, j, k, false, face, (Entity)null, item))
+            if (world.canPlaceEntityOnSide(block, i, j, k, false, face, (Entity)null, item))
             {
-                Block var12 = Block.blocksList[this.blockID];
-                int var13 = var12.onBlockPlaced(world, i, j, k, face, x, y, z, 0);
+                int var13 = block.onBlockPlaced(world, i, j, k, face, x, y, z, 0);
 
-                if (world.setBlockAndMetadataWithNotify(i, j, k, this.blockID, 0, 3))
+                if (world.setBlock(i, j, k, block, 0, 3))
                 {
-                    if (world.getBlockId(i, j, k) == this.blockID)
+                    if (world.getBlock(i, j, k) == block)
                     {
-                        Block.blocksList[this.blockID].onBlockPlacedBy(world, i, j, k, p, item);
-                        Block.blocksList[this.blockID].onPostBlockPlaced(world, i, j, k, var13);
+                    	block.onBlockPlacedBy(world, i, j, k, p, item);
+                    	block.onPostBlockPlaced(world, i, j, k, var13);
                     }
                     DustMod.dust.onBlockActivated(world, i, j, k, p, face, x, y, z);
 
-                    world.playSoundEffect((double)((float)i + 0.5F), (double)((float)j + 0.5F), (double)((float)k + 0.5F), var12.stepSound.getStepSound(), (var12.stepSound.getVolume() + 1.0F) / 6.0F, var12.stepSound.getPitch() * 0.99F);
+                    world.playSoundEffect((double)((float)i + 0.5F), (double)((float)j + 0.5F), (double)((float)k + 0.5F), block.stepSound.getStepResourcePath(), (block.stepSound.getVolume() + 1.0F) / 6.0F, block.stepSound.getPitch() * 0.99F);
 //                    if(!p.capabilities.isCreativeMode)subtractDust(item,1);
                 }
             }
@@ -114,10 +114,7 @@ public class ItemPouch extends DustModItem {
     public String getUnlocalizedName(ItemStack itemstack)
     {
 		int dust = getValue(itemstack);
-    	String id = DustItemManager.getIDS()[dust];
-    	if(id != null) return "pouch." + DustItemManager.idsRemote[dust];
-//    	System.out.println("Dammit " + dust + " " + itemstack.getItemDamage());
-        return "pouchblank";
+		return DustItemManager.hasDust(dust) ? "pouch." + DustItemManager.getId(dust) : "pouchblank";
     }
     
     @Override
@@ -130,15 +127,15 @@ public class ItemPouch extends DustModItem {
     }
     
     @SideOnly(Side.CLIENT)
-
+    @Override
     /**
      * returns a list of items with the same ID, but different meta (eg: dye returns 16 items)
      */
-    public void getSubItems(int par1, CreativeTabs par2CreativeTabs, List par3List)
+    public void getSubItems(Item par1, CreativeTabs par2CreativeTabs, List par3List)
     {
         for (int i = 5; i < 1000; ++i) //i > 4 for migration from old system
         {
-        	if(DustItemManager.getColors()[i] != null){
+        	if(DustItemManager.hasDust(i)){
                 par3List.add(new ItemStack(par1, 1, i*2));
         	}
         }
@@ -162,13 +159,13 @@ public class ItemPouch extends DustModItem {
     
     @Override
     @SideOnly(Side.CLIENT)
-    public Icon getIconFromDamageForRenderPass(int par1, int rend) {
+    public IIcon getIconFromDamageForRenderPass(int par1, int rend) {
     	switch(rend){
-    	case 0: return bagIcon;
-    	case 1: return mainIcon;
-    	case 2: return subIcon;
+    	case 0: return bagIIcon;
+    	case 1: return mainIIcon;
+    	case 2: return subIIcon;
     	}
-        return subIcon;
+        return subIIcon;
     }
     
 
@@ -191,7 +188,7 @@ public class ItemPouch extends DustModItem {
     }
     
     @Override
-    public ItemStack getContainerItemStack(ItemStack itemStack) {
+    public ItemStack getContainerItem(ItemStack itemStack) {
     	// TODO Auto-generated method stub
     	return container;
     }
@@ -217,10 +214,10 @@ public class ItemPouch extends DustModItem {
     
     
     public static int getDustAmount(ItemStack pouch){
-    	if(pouch.itemID == DustMod.idust.itemID){
+    	if(pouch.getItem() == DustMod.idust){
     		return pouch.stackSize;
     	}
-    	if(pouch.itemID != DustMod.pouch.itemID) return -1;
+    	if(pouch.getItem() != DustMod.pouch) return -1;
     	
     	if(pouch.getItemDamage() %2 == 0) return 0;
     	
@@ -232,14 +229,14 @@ public class ItemPouch extends DustModItem {
     }
     
     public static boolean subtractDust(ItemStack pouch, int sub){
-    	if(pouch.itemID == DustMod.idust.itemID){
+    	if(pouch.getItem() == DustMod.idust){
     		if(pouch.stackSize >= sub){
     			pouch.stackSize -= sub;
     			return true;
     		} else
     			return false;
     	}
-    	if(pouch.itemID != DustMod.pouch.itemID) return false;
+    	if(pouch.getItem() != DustMod.pouch) return false;
     	
     	if(!pouch.hasTagCompound()){
     		pouch.setTagCompound(new NBTTagCompound());
@@ -264,11 +261,11 @@ public class ItemPouch extends DustModItem {
      * @return amount remaining if attempting to add more than pouch can contain
      */
     public static int addDust(ItemStack pouch, int add){
-    	if(pouch.itemID == DustMod.idust.itemID){
+    	if(pouch.getItem() == DustMod.idust){
 			pouch.stackSize += add;
 			return 0;
     	}
-    	if(pouch.itemID != DustMod.pouch.itemID) return -1;
+    	if(pouch.getItem() != DustMod.pouch) return -1;
     	
     	int rtn = 0;
     	
@@ -293,10 +290,10 @@ public class ItemPouch extends DustModItem {
     }
     
     public static void setAmount(ItemStack pouch, int amt){
-    	if(pouch.itemID == DustMod.idust.itemID){
+    	if(pouch.getItem() == DustMod.idust){
 			pouch.stackSize -= amt;
     	}
-    	if(pouch.itemID != DustMod.pouch.itemID) return;
+    	if(pouch.getItem() != DustMod.pouch) return;
     	
     	if(!pouch.hasTagCompound()){
     		pouch.setTagCompound(new NBTTagCompound());
@@ -318,9 +315,9 @@ public class ItemPouch extends DustModItem {
     
     @Override
     @SideOnly(Side.CLIENT)
-    public void func_94581_a(IconRegister iconRegister) {
-    	this.bagIcon = iconRegister.func_94245_a(DustMod.spritePath + "dustPouch_back");
-    	this.mainIcon = iconRegister.func_94245_a(DustMod.spritePath + "dustPouch_main");
-    	this.subIcon = iconRegister.func_94245_a(DustMod.spritePath + "dustPouch_sub");
+    public void registerIcons(IIconRegister IIconRegister) {
+    	this.bagIIcon = IIconRegister.registerIcon(DustMod.spritePath + "dustPouch_back");
+    	this.mainIIcon = IIconRegister.registerIcon(DustMod.spritePath + "dustPouch_main");
+    	this.subIIcon = IIconRegister.registerIcon(DustMod.spritePath + "dustPouch_sub");
     }
 }

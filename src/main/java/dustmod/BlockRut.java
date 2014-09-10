@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package dustmod;
 
 import java.util.Random;
@@ -9,15 +5,18 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
@@ -29,9 +28,9 @@ import cpw.mods.fml.relauncher.SideOnly;
  */
 public class BlockRut extends BlockContainer
 {
-    public BlockRut(int i)
+    public BlockRut()
     {
-        super(i, Material.wood);
+        super(Material.wood);
         this.setLightOpacity(0);
     }
 
@@ -51,7 +50,7 @@ public class BlockRut extends BlockContainer
     }
 
     @Override
-    public void onNeighborBlockChange(World world, int i, int j, int k, int l)
+    public void onNeighborBlockChange(World world, int x, int y, int z, Block block)
     {
         boolean notified = false;
         //DustModBouncer.notifyBlockChange(world, i, j, k, 0);
@@ -63,40 +62,40 @@ public class BlockRut extends BlockContainer
                 {
                     if (ix == iy || ix == iz || iy == iz)
                     {
-                        TileEntityRut ter = (TileEntityRut)world.getBlockTileEntity(i, j, k);
-                        int check = world.getBlockId(i + ix, j + iy, k + iz);
+                        TileEntityRut ter = (TileEntityRut)world.getTileEntity(x, y, z);
+                        Block check = world.getBlock(x + ix, y + iy, z + iz);
 
-                        if (ter.fluid == 0)
+                        if (ter.fluid == Blocks.air)
                         {
-                            if (check == Block.lavaStill.blockID || check == Block.lavaMoving.blockID)
+                            if (check == Blocks.lava)
                             {
-                                ter.setFluid(Block.lavaStill.blockID);
+                                ter.setFluid(Blocks.lava);
                                 notified = true;
 //                                mod_DustMod.notifyBlockChange(world, i, j, k, 0);
                             }
-                            else if (check == Block.waterStill.blockID || check == Block.waterMoving.blockID)
+                            else if (check == Blocks.water)
                             {
-                                ter.setFluid(Block.waterStill.blockID);
-                                notified = true;
-//                                mod_DustMod.notifyBlockChange(world, i, j, k, 0);
-                            }
-                        }
-
-                        if (ter.fluid == Block.waterStill.blockID)
-                        {
-                            if (check == Block.lavaStill.blockID || check == Block.lavaMoving.blockID)
-                            {
-                                ter.setFluid(Block.cobblestone.blockID);
+                                ter.setFluid(Blocks.water);
                                 notified = true;
 //                                mod_DustMod.notifyBlockChange(world, i, j, k, 0);
                             }
                         }
 
-                        if (ter.fluid == Block.lavaStill.blockID)
+                        if (ter.fluid == Blocks.water)
                         {
-                            if (check == Block.waterStill.blockID || check == Block.waterMoving.blockID)
+                            if (check == Blocks.lava)
                             {
-                                ter.setFluid(Block.obsidian.blockID);
+                                ter.setFluid(Blocks.cobblestone);
+                                notified = true;
+//                                mod_DustMod.notifyBlockChange(world, i, j, k, 0);
+                            }
+                        }
+
+                        if (ter.fluid == Blocks.lava)
+                        {
+                            if (check == Blocks.water)
+                            {
+                                ter.setFluid(Blocks.obsidian);
                                 notified = true;
 //                                mod_DustMod.notifyBlockChange(world, i, j, k, 0);
                             }
@@ -106,21 +105,21 @@ public class BlockRut extends BlockContainer
             }
         }
 
-//        if(((TileEntityRut)world.getBlockTileEntity(i, j, k)).updateNeighbors() && !notified){
+//        if(((TileEntityRut)world.getTileEntity(i, j, k)).updateNeighbors() && !notified){
 //        	DustModBouncer.notifyBlockChange(world, i, j, k, 0);
 //        }
-        world.markBlockForRenderUpdate(i, j, k);
+        world.markBlockForUpdate(x, y, z);
     }
     @Override
-    public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer p, int face, float x, float y, float z)
+    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int face, float cx, float cy, float cz)
     {
 
-		if(!world.canMineBlock(p, i, j, k)) return false;
+		if(!world.canMineBlock(player, x, y, z)) return false;
 		
-        ItemStack pItem = p.getCurrentEquippedItem();
-        boolean isNull = (pItem == null);
+        ItemStack playerItemStack = player.getCurrentEquippedItem();
+        boolean isNull = (playerItemStack == null);
 
-        TileEntityRut ter = (TileEntityRut)world.getBlockTileEntity(i, j, k);
+        TileEntityRut ter = (TileEntityRut)world.getTileEntity(x, y, z);
 
         if (ter.isBeingUsed)
         {
@@ -128,78 +127,76 @@ public class BlockRut extends BlockContainer
         }
 
 //        ter.fluid = Block.obsidian.blockID;
-        if (/*ter.fluid == 0 && */!isNull && pItem.itemID == Item.bucketWater.itemID)
+        
+        if (/*ter.fluid == 0 && */!isNull && playerItemStack.getItem() == Items.water_bucket)
         {
-            if (!p.capabilities.isCreativeMode)
+            if (!player.capabilities.isCreativeMode)
             {
-                pItem.itemID = Item.bucketEmpty.itemID;
+            	player.setCurrentItemOrArmor(0, new ItemStack(Items.bucket));
             }
 
-            ter.setFluid(Block.waterStill.blockID);
+            ter.setFluid(Blocks.water);
             return true;
         }
 
-        if (/*ter.fluid == 0 && */!isNull && pItem.itemID == Item.bucketLava.itemID)
+        if (/*ter.fluid == 0 && */!isNull && playerItemStack.getItem() == Items.lava_bucket)
         {
-            if (!p.capabilities.isCreativeMode)
+            if (!player.capabilities.isCreativeMode)
             {
-                pItem.itemID = Item.bucketEmpty.itemID;
+            	player.setCurrentItemOrArmor(0, new ItemStack(Items.bucket));
             }
 
-            ter.setFluid(Block.lavaStill.blockID);
+            ter.setFluid(Blocks.lava);
             return true;
         }
 
-        if (!isNull && (ter.fluid == 0 || ter.fluidIsFluid()))
+        if (!isNull && (ter.fluid == Blocks.air || ter.fluidIsFluid()))
         {
-            int bid = pItem.itemID;
-            
-            if (bid < Block.blocksList.length && Block.blocksList[bid] != null && pItem.getItem() instanceof ItemBlock)
+            if (playerItemStack.getItem() instanceof ItemBlock)
             {
-                Block b = Block.blocksList[bid];
+                Block b = Block.getBlockFromItem(playerItemStack.getItem());
 
-                if (b.renderAsNormalBlock() && b.isOpaqueCube() && (b.getBlockHardness(world, i,j,k) <= TileEntityRut.hardnessStandard || DustMod.Enable_Decorative_Ruts))
+                if (b.renderAsNormalBlock() && b.isOpaqueCube() && (b.getBlockHardness(world, x,y,z) <= TileEntityRut.hardnessStandard || DustMod.Enable_Decorative_Ruts))
                 {
-                    if (!p.capabilities.isCreativeMode)
+                    if (!player.capabilities.isCreativeMode)
                     {
-                        pItem.stackSize--;
+                        playerItemStack.stackSize--;
                     }
 
-                    ter.setFluid(bid);
+                    ter.setFluid(b);
                     return true;
                 }
             }
         }
 
-        if (!isNull && ter.fluid != 0 && !ter.fluidIsFluid() && (Block.blocksList[ter.fluid].getBlockHardness(world, i,j,k) <= TileEntityRut.hardnessStandard || DustMod.Enable_Decorative_Ruts))
+        if (!isNull && ter.fluid != Blocks.air && !ter.fluidIsFluid() && (ter.fluid.getBlockHardness(world, x,y,z) <= TileEntityRut.hardnessStandard || DustMod.Enable_Decorative_Ruts))
         {
-            if (Item.itemsList[pItem.itemID] instanceof ItemSpade)
+            if (playerItemStack.getItem() instanceof ItemSpade)
             {
-                this.dropBlockAsItem_do(world, i, j + 1, k, new ItemStack(ter.fluid, 1, 0));
-                ter.setFluid(0);
+                this.dropBlockAsItem(world, x, y + 1, z, new ItemStack(ter.fluid, 1, 0));
+                ter.setFluid(Blocks.air);
                 return true;
             }
         }
 
-        if (isNull || pItem.itemID != DustMod.chisel.itemID)
+        if (isNull || playerItemStack.getItem() != DustMod.chisel)
         {
             return false;
         }
 
-        Block block = Block.blocksList[ter.maskBlock];
-        world.playSoundEffect((float)i + 0.5F, (float)j + 0.5F, (float)k + 0.5F, block.stepSound.getStepSound(), (block.stepSound.getVolume() + 1.0F) / 6.0F, block.stepSound.getPitch() * 0.99F);
-
+        Block maskBlock = ter.maskBlock;
+        world.playSoundEffect((float)x + 0.5F, (float)y + 0.5F, (float)z + 0.5F, maskBlock.stepSound.getStepResourcePath(), (maskBlock.stepSound.getVolume() + 1.0F) / 6.0F, maskBlock.stepSound.getPitch() * 0.99F);
         
         int bx,by,bz;
-        bx = (int)Math.floor(x*3);
-        by = (int)Math.floor(y*3);
-        bz = (int)Math.floor(z*3);
+        bx = (int)Math.floor(cx*3);
+        by = (int)Math.floor(cy*3);
+        bz = (int)Math.floor(cz*3);
         
         bx = (int)Math.min(2, bx);
         by = (int)Math.min(2, by);
         bz = (int)Math.min(2, bz);
         
-        toggleRut(ter, p, bx,by,bz);
+        toggleRut(ter, player, bx,by,bz);
         
         return true;
     }
@@ -214,18 +211,18 @@ public class BlockRut extends BlockContainer
         }
     }
 
-    private static int determineOrientation(World world, int i, int j, int k, EntityPlayer entityplayer)
+    private static int determineOrientation(World world, int x, int y, int z, EntityPlayer entityplayer)
     {
-        if (MathHelper.abs((float)entityplayer.posX - (float)i) < 2.0F && MathHelper.abs((float)entityplayer.posZ - (float)k) < 2.0F)
+        if (MathHelper.abs((float)entityplayer.posX - (float)x) < 2.0F && MathHelper.abs((float)entityplayer.posZ - (float)z) < 2.0F)
         {
             double d = (entityplayer.posY + 1.8200000000000001D) - (double)entityplayer.yOffset;
 
-            if (d - (double)j > 2D)
+            if (d - (double)y > 2D)
             {
                 return 1;
             }
 
-            if ((double)j - d > 0.0D)
+            if ((double)y - d > 0.0D)
             {
                 return 0;
             }
@@ -252,74 +249,65 @@ public class BlockRut extends BlockContainer
     }
 
     @Override
-    public void breakBlock(World world, int i, int j, int k, int b, int m) {
+    public void breakBlock(World world, int x, int y, int z, Block b, int m) {
 //		if (world.isRemote) {
 //        	super.breakBlock(world, i, j, k, b, m);
 //			return;
 //		}
-        TileEntityRut ter = (TileEntityRut)world.getBlockTileEntity(i, j, k);
+        TileEntityRut ter = (TileEntityRut)world.getTileEntity(x, y, z);
 
         if (ter.isDead)
         {
-        	super.breakBlock(world, i, j, k, b, m);
+        	super.breakBlock(world, x, y, z, b, m);
             return;
         }
 
-        super.onBlockDestroyedByPlayer(world, i, j, k, m);
-        int bid = ter.maskBlock;
+        super.onBlockDestroyedByPlayer(world, x, y, z, m);
         int meta = ter.maskMeta;
-        int drop = Block.blocksList[bid].idDropped(meta, new Random(), 0);
-        int mdrop = Block.blocksList[bid].damageDropped(meta);
-        int qdrop = Block.blocksList[bid].quantityDropped(new Random());
-        this.dropBlockAsItem_do(world, i, j, k, new ItemStack(drop, qdrop, mdrop));
+        Item drop = ter.maskBlock.getItemDropped(meta, new Random(), 0);
+        int mdrop = ter.maskBlock.damageDropped(meta);
+        int qdrop = ter.maskBlock.quantityDropped(new Random());
+        this.dropBlockAsItem(world, x, y, z, new ItemStack(drop, qdrop, mdrop));
 
-        if (ter.fluid != 0 && !ter.fluidIsFluid() && ter.canEdit())
+        if (ter.fluid != Blocks.air && !ter.fluidIsFluid() && ter.canEdit())
         {
-            this.dropBlockAsItem_do(world, i, j, k, new ItemStack(ter.fluid, 1, 0));
+            this.dropBlockAsItem(world, x, y, z, new ItemStack(ter.fluid, 1, 0));
         }
-    	super.breakBlock(world, i, j, k, b, m);
+    	super.breakBlock(world, x, y, z, b, m);
     }
 
+    /*
     @Override
     public int idDropped(int i, Random random, int j)
     {
         return 0;
-    }
+    }*/
 
     @Override
-    public TileEntity createNewTileEntity(World world)
+    public TileEntity createNewTileEntity(World world, int par2)
     {
         return new TileEntityRut();
     }
-    
-    @Override
-    @SideOnly(Side.CLIENT)
-    public Icon getBlockTexture(IBlockAccess world, int i,
-    		int j, int k, int meta) {
-    	TileEntityRut ter = (TileEntityRut)world.getBlockTileEntity(i, j, k);
-    	Block b = Block.blocksList[ter.maskBlock];
-    	return b.getBlockTexture(world, i, j, k, ter.maskMeta);
-    }
 
-
+	@Override
+	@SideOnly(Side.CLIENT)
+	public IIcon getIcon(IBlockAccess world, int x, int y, int z, int meta) {
+		TileEntityRut ter = (TileEntityRut) world.getTileEntity(x, y, z);
+		return ter.maskBlock.getIcon(world, x, y, z, ter.maskMeta);
+	}
 
     @SideOnly(Side.CLIENT)
-
-    /**
-     * only called by clickMiddleMouseButton , and passed to inventory.setCurrentItem (along with isCreative)
-     */
-    public int idPicked(World world, int i, int j, int k)
-    {
-    	TileEntityRut ter = (TileEntityRut)world.getBlockTileEntity(i, j, k);
-    	return ter.maskBlock;
-    }
+    public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z) {
+    	TileEntityRut ter = (TileEntityRut)world.getTileEntity(x, y, z);
+    	return new ItemStack(ter.maskBlock);
+    };
 
     /**
      * Get the block's damage value (for use with pick block).
      */
     public int getDamageValue(World world, int i, int j, int k)
     {
-    	TileEntityRut ter = (TileEntityRut)world.getBlockTileEntity(i, j, k);
+    	TileEntityRut ter = (TileEntityRut)world.getTileEntity(i, j, k);
     	return ter.maskMeta;
     }
 
@@ -335,22 +323,22 @@ public class BlockRut extends BlockContainer
      */
     public int getLightValue(IBlockAccess world, int x, int y, int z)
     {
-        TileEntityRut ter = (TileEntityRut)world.getBlockTileEntity(x, y, z);
+        TileEntityRut ter = (TileEntityRut)world.getTileEntity(x, y, z);
 
         
-        Block mask = blocksList[ter.fluid];
-        Block fluid = blocksList[ter.fluid];
-        int light = lightValue[blockID];
+        Block mask = ter.maskBlock;
+        Block fluid = ter.fluid;
+        int light = lightValue;
         
         if (mask != null && mask != this)
         {
-        	int mLight = lightValue[ter.fluid];
+        	int mLight = ter.maskBlock.getLightValue();
         	if(mLight > light) light = mLight;
         }
         
         if (fluid != null && fluid != this)
         {
-        	int fLight = lightValue[ter.fluid];
+        	int fLight = ter.fluid.getLightValue();
         	if(fLight > light) light = fLight;
         }
         return light;
@@ -358,6 +346,6 @@ public class BlockRut extends BlockContainer
     
     @Override
     @SideOnly(Side.CLIENT)
-    public void func_94332_a(IconRegister par1IconRegister) {
+    public void registerBlockIcons(IIconRegister iconRegister) {
     }
 }

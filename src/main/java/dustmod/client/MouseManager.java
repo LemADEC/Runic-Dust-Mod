@@ -6,7 +6,8 @@ import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Mouse;
 
 import cpw.mods.fml.client.FMLClientHandler;
-import dustmod.PacketHandler;
+import dustmod.DustMod;
+import dustmod.network.MouseMessage;
 
 public class MouseManager {
 	
@@ -26,7 +27,7 @@ public class MouseManager {
 			boolean s = Mouse.isButtonDown(i);
 			
 			if(state[i] != s){
-				FMLClientHandler.instance().sendPacket(PacketHandler.getMousePacket(i, s));
+				DustMod.networkWrapper.sendToServer(new MouseMessage(i, s));
 			}
 			
 			state[i] = s;

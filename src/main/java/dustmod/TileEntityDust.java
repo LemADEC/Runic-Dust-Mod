@@ -14,9 +14,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.Packet132TileEntityData;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 
 /**
@@ -27,7 +27,7 @@ public class TileEntityDust extends TileEntity implements IInventory
 {
     public static final int size = 4;
     public boolean active = false;
-    private int[][] pattern;
+    private int[] pattern;
     private boolean[] dusts;
     private int toDestroy = -1;
     private int ticksExisted = 0;
@@ -42,26 +42,24 @@ public class TileEntityDust extends TileEntity implements IInventory
 
     public TileEntityDust()
     {
-        pattern = new int[size][size];
+        pattern = new int[size * size];
     }
 
     public void setEntityDust(EntityDust ed)
     {
         this.entityDust = ed;
-        this.dustEntID = ed.entityId;
+        this.dustEntID = ed.getEntityId();
     }
 
     public void writeToNBT(NBTTagCompound tag)
     {
         super.writeToNBT(tag);
-
-        for (int i = 0; i < size; i++)
-        {
-            for (int j = 0; j < size; j++)
-            {
-                tag.setInteger(i + "dust" + j, pattern[i][j]);
-            }
-        }
+        writeNetworkNBT(tag);
+    }
+    
+    public void writeNetworkNBT(NBTTagCompound tag)
+    {
+    	tag.setIntArray("pattern", pattern);
 
         tag.setInteger("toDestroy", toDestroy);
         tag.setInteger("ticks", ticksExisted);
@@ -75,16 +73,12 @@ public class TileEntityDust extends TileEntity implements IInventory
     public void readFromNBT(NBTTagCompound tag)
     {
         super.readFromNBT(tag);
-
-        for (int i = 0; i < size; i++)
-        {
-            for (int j = 0; j < size; j++)
-            {
-            	int dust = tag.getInteger(i + "dust" + j);
-            	if(dust < 5 && dust > 0) dust *= 100; //Migration
-                pattern[i][j] = dust;
-            }
-        }
+        readNetworkNBT(tag);
+    }
+    
+    public void readNetworkNBT(NBTTagCompound tag)
+    {
+    	pattern = tag.getIntArray("pattern");
 
         if (tag.hasKey("toDestroy"))
         {
@@ -109,7 +103,7 @@ public class TileEntityDust extends TileEntity implements IInventory
     	if(p != null && !worldObj.canMineBlock(p, this.xCoord, this.yCoord, this.zCoord)) return;
     	int last = getDust(i,j);
     	if(dust >= 1000) dust = 999;
-        pattern[i][j] = dust;
+        pattern[i * size + j] = dust;
         dusts = null;
         
         if(dust != 0 && last != dust){
@@ -126,19 +120,19 @@ public class TileEntityDust extends TileEntity implements IInventory
 	        		worldObj.spawnParticle("reddust", xCoord+ (double)i/4D + Math.random()*0.15, yCoord, zCoord+ (double)j/4D + Math.random()*0.15, r,g,b);
 	        	}
         }
-        worldObj.notifyBlockChange(xCoord, yCoord, zCoord, 0);
-        worldObj.markBlockForRenderUpdate(xCoord, yCoord, zCoord);
-        this.onInventoryChanged();
+        worldObj.notifyBlockChange(xCoord, yCoord, zCoord, worldObj.getBlock(xCoord, yCoord, zCoord));
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        this.markDirty();
     }
 
-    public int[][] getPattern()
+    public int[] getPattern()
     {
         return pattern;
     }
 
     public int getDust(int i, int j)
     {
-    	int rtn = pattern[i][j];
+    	int rtn = pattern[i * size + j];
     	if(rtn >= 1000){
     		return 999;
     	}
@@ -153,7 +147,7 @@ public class TileEntityDust extends TileEntity implements IInventory
 //        if(worldObj.isRemote) return;
         if (ticksExisted > 2 && isEmpty() && worldObj.getBlockMetadata(xCoord, yCoord, zCoord) != 10)
         {
-            worldObj.setBlockAndMetadataWithNotify(xCoord, yCoord, zCoord, 0,0,3);
+            worldObj.setBlockToAir(xCoord, yCoord, zCoord);
 //            DustMod.log("Killing, empty");
             this.invalidate();
             return;
@@ -263,9 +257,9 @@ public class TileEntityDust extends TileEntity implements IInventory
             }
         }
 
-        if (DustMod.isDust(worldObj.getBlockId(xCoord - 1, yCoord, zCoord)))
+        if (DustMod.isDust(worldObj.getBlock(xCoord - 1, yCoord, zCoord)))
         {
-            TileEntityDust ted = (TileEntityDust) worldObj.getBlockTileEntity(xCoord - 1, yCoord, zCoord);
+            TileEntityDust ted = (TileEntityDust) worldObj.getTileEntity(xCoord - 1, yCoord, zCoord);
 
             for (int i = 0; i < size; i++)
             {
@@ -273,9 +267,9 @@ public class TileEntityDust extends TileEntity implements IInventory
             }
         }
 
-        if (DustMod.isDust(worldObj.getBlockId(xCoord + 1, yCoord, zCoord)))
+        if (DustMod.isDust(worldObj.getBlock(xCoord + 1, yCoord, zCoord)))
         {
-            TileEntityDust ted = (TileEntityDust) worldObj.getBlockTileEntity(xCoord + 1, yCoord, zCoord);
+            TileEntityDust ted = (TileEntityDust) worldObj.getTileEntity(xCoord + 1, yCoord, zCoord);
 
             for (int i = 0; i < size; i++)
             {
@@ -283,9 +277,9 @@ public class TileEntityDust extends TileEntity implements IInventory
             }
         }
 
-        if (DustMod.isDust(worldObj.getBlockId(xCoord, yCoord, zCoord - 1)))
+        if (DustMod.isDust(worldObj.getBlock(xCoord, yCoord, zCoord - 1)))
         {
-            TileEntityDust ted = (TileEntityDust) worldObj.getBlockTileEntity(xCoord, yCoord, zCoord - 1);
+            TileEntityDust ted = (TileEntityDust) worldObj.getTileEntity(xCoord, yCoord, zCoord - 1);
 
             for (int i = 0; i < size; i++)
             {
@@ -293,9 +287,9 @@ public class TileEntityDust extends TileEntity implements IInventory
             }
         }
 
-        if (DustMod.isDust(worldObj.getBlockId(xCoord, yCoord, zCoord + 1)))
+        if (DustMod.isDust(worldObj.getBlock(xCoord, yCoord, zCoord + 1)))
         {
-            TileEntityDust ted = (TileEntityDust) worldObj.getBlockTileEntity(xCoord, yCoord, zCoord + 1);
+            TileEntityDust ted = (TileEntityDust) worldObj.getTileEntity(xCoord, yCoord, zCoord + 1);
 
             for (int i = 0; i < size; i++)
             {
@@ -408,7 +402,6 @@ public class TileEntityDust extends TileEntity implements IInventory
 
         Random rand = new Random();
         int[] rgb = DustItemManager.getFloorColorRGB(dusts[rand.nextInt(s)]);
-        int hex = 0;
         return new Color(rgb[0], rgb[1], rgb[2]).getRGB();
     }
 
@@ -427,24 +420,14 @@ public class TileEntityDust extends TileEntity implements IInventory
     {
         ted.dusts = Arrays.copyOf(dusts, dusts.length);
 
-        for (int i = 0; i < pattern.length; i++)
-        {
-            ted.pattern[i] = Arrays.copyOf(pattern[i], pattern[i].length);
-        }
+        ted.pattern = Arrays.copyOf(pattern, pattern.length);
 
         ted.toDestroy = toDestroy;
         ted.ticksExisted = ticksExisted;
         int tx = ted.xCoord;
         int ty = ted.yCoord;
         int tz = ted.zCoord;
-        ted.worldObj.setBlockAndMetadataWithNotify(tx, ty, tz, worldObj.getBlockMetadata(xCoord, yCoord, zCoord),0,3);
-    }
-
-    @Override
-    public void onDataPacket(INetworkManager net, Packet132TileEntityData pkt)
-    {
-        super.onDataPacket(net, pkt);
-//        System.out.println("DataPacket");
+        ted.worldObj.setBlock(tx, ty, tz, worldObj.getBlock(xCoord, yCoord, zCoord),worldObj.getBlockMetadata(xCoord, yCoord, zCoord),3);
     }
 
     @Override
@@ -465,7 +448,7 @@ public class TileEntityDust extends TileEntity implements IInventory
         }
         else
         {
-            return new ItemStack(DustMod.idust.itemID, 1, pattern[x][y]);
+            return new ItemStack(DustMod.idust, 1, pattern[x * size + y]);
         }
     }
 
@@ -475,7 +458,7 @@ public class TileEntityDust extends TileEntity implements IInventory
         int y = loc % size;
         int x = (loc - size) / size;
 //        if(amt > 0){
-        pattern[x][y] = 0;
+        pattern[x * size + y] = 0;
         return null;
 //        }else if(amt < 0){
 //            pattern[x][y] = 1;
@@ -502,18 +485,16 @@ public class TileEntityDust extends TileEntity implements IInventory
         int x = (loc - size) / size;
         int size = item.stackSize;
         int meta = item.getItemDamage();
-        int id = item.itemID;
 
-        if (id == DustMod.idust.itemID && size > 0)
+        if (item.getItem() == DustMod.idust && size > 0)
         {
-            pattern[x][y] = meta;
+            pattern[x * size + y] = meta;
         }
     }
-
+    
     @Override
-    public String getInvName()
-    {
-        return "dusttileentity";
+    public String getInventoryName() {
+    	return "dusttileentity";
     }
 
     @Override
@@ -527,15 +508,13 @@ public class TileEntityDust extends TileEntity implements IInventory
     {
         return false;
     }
-
+    
     @Override
-    public void openChest()
-    {
+    public void openInventory() {
     }
-
+    
     @Override
-    public void closeChest()
-    {
+    public void closeInventory() {
     }
 
     public void setRenderFlame(boolean val, int r, int g, int b){
@@ -556,18 +535,24 @@ public class TileEntityDust extends TileEntity implements IInventory
     @Override
     public Packet getDescriptionPacket()
     {
-        return PacketHandler.getTEDPacket(this);
+    	NBTTagCompound tag = new NBTTagCompound();
+        writeNetworkNBT(tag);
+        return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 1, tag);
     }
-
-	@Override
-	public boolean func_94042_c() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean func_94041_b(int i, ItemStack itemstack) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    
+    @Override
+    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
+    	readNetworkNBT(pkt.func_148857_g());
+    	worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+    
+    @Override
+    public boolean hasCustomInventoryName() {
+    	return false;
+    }
+    
+    @Override
+    public boolean isItemValidForSlot(int p_94041_1_, ItemStack p_94041_2_) {
+    	return false;
+    }
 }

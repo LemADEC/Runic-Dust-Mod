@@ -111,7 +111,7 @@ public class DEPain extends PoweredEvent //This is a Powered rune
                 if(i instanceof EntityPlayer){
                     //Check if it is the summoning player
                     EntityPlayer player = (EntityPlayer) i;
-                    if(player.username.equals(e.summonerUN)){
+                    if(e.isSummoner(player)){
                         continue; //Skip this entity, don't hurt them
                     }
                 }

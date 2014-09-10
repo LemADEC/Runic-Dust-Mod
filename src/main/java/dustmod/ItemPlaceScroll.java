@@ -7,15 +7,16 @@ package dustmod;
 import java.util.List;
 import java.util.logging.Level;
 
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumMovingObjectType;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import cpw.mods.fml.common.FMLLog;
@@ -28,12 +29,10 @@ import cpw.mods.fml.relauncher.SideOnly;
  */
 public class ItemPlaceScroll extends DustModItem
 {
-    private int blockID;
 
-    public ItemPlaceScroll(int i)
+    public ItemPlaceScroll()
     {
-        super(i);
-        blockID = DustMod.dust.blockID;
+        super();
         setMaxDamage(0);
         setHasSubtypes(true);
         this.setMaxStackSize(4);
@@ -61,7 +60,7 @@ public class ItemPlaceScroll extends DustModItem
     		DustShape ds = DustManager.getShapeFromID(item.getItemDamage());
             int r = (int)MathHelper.floor_double((double)((wielder.rotationYaw * 4F) / 360F) + 0.5D) & 3;
             
-            if (DustMod.isDust(world.getBlockId(i, j, k)))
+            if (DustMod.isDust(world.getBlock(i, j, k)))
             {
                 j--;
             }
@@ -73,10 +72,10 @@ public class ItemPlaceScroll extends DustModItem
             	 ds.drawOnWorldPart(world, i, j, k, (EntityPlayer)wielder, r, ((EntityPlayer)wielder).getItemInUseCount());
              }
             } catch(Exception e){
-            	FMLLog.log(Level.SEVERE, "THE FUUUUCK " + e.getMessage(), e.getStackTrace());
+            	DustMod.logger.error("THE FUUUUCK " + e.getMessage(), e);
             	e.printStackTrace();
             }
-            ((EntityPlayer)wielder).inventory.onInventoryChanged();
+            ((EntityPlayer)wielder).inventory.markDirty();
 //    	}
     	return true;
     }
@@ -152,10 +151,10 @@ public class ItemPlaceScroll extends DustModItem
     
     @Override
     @SideOnly(Side.CLIENT)
-    public void getSubItems(int par1, CreativeTabs par2CreativeTabs,
+    public void getSubItems(Item par1, CreativeTabs par2CreativeTabs,
     		List list) {
     	for(DustShape i:DustManager.getShapes()){
-    		list.add(new ItemStack(itemID, 1, i.id));
+    		list.add(new ItemStack(this, 1, i.id));
     	}
 //    	super.getSubItems(par1, par2CreativeTabs, list);
     }
@@ -172,7 +171,7 @@ public class ItemPlaceScroll extends DustModItem
 
 	public int[] getClickedBlock(Entity wielder, ItemStack item){
 		MovingObjectPosition click = this.getMovingObjectPositionFromPlayer(wielder.worldObj, (EntityPlayer)wielder, false);
-		if(click != null && click.typeOfHit == EnumMovingObjectType.TILE){
+		if(click != null && click.typeOfHit == MovingObjectType.BLOCK){
 			int tx = click.blockX;
 			int ty = click.blockY;
 			int tz = click.blockZ;
@@ -199,7 +198,7 @@ public class ItemPlaceScroll extends DustModItem
         double var7 = par2EntityPlayer.prevPosX + (par2EntityPlayer.posX - par2EntityPlayer.prevPosX) * (double)var4;
         double var9 = par2EntityPlayer.prevPosY + (par2EntityPlayer.posY - par2EntityPlayer.prevPosY) * (double)var4 + 1.62D - (double)par2EntityPlayer.yOffset;
         double var11 = par2EntityPlayer.prevPosZ + (par2EntityPlayer.posZ - par2EntityPlayer.prevPosZ) * (double)var4;
-        Vec3 var13 = world.getWorldVec3Pool().getVecFromPool(var7, var9, var11);
+        Vec3 var13 = Vec3.createVectorHelper(var7, var9, var11);
         float var14 = MathHelper.cos(-var6 * 0.017453292F - (float)Math.PI);
         float var15 = MathHelper.sin(-var6 * 0.017453292F - (float)Math.PI);
         float var16 = -MathHelper.cos(-var5 * 0.017453292F);
@@ -212,13 +211,13 @@ public class ItemPlaceScroll extends DustModItem
 //            var21 = ((EntityPlayerMP)par2EntityPlayer).theItemInWorldManager.getBlockReachDistance();
 //        }
         Vec3 var23 = var13.addVector((double)var18 * var21, (double)var17 * var21, (double)var20 * var21);
-        lastMOP = world.rayTraceBlocks_do_do(var13, var23, par3, !par3);
+        lastMOP = world.rayTraceBlocks(var13, var23, !par3);
         return lastMOP;
     }
     
     @Override
     @SideOnly(Side.CLIENT)
-    public void func_94581_a(IconRegister iconRegister) {
-    	this.iconIndex = iconRegister.func_94245_a(DustMod.spritePath + "dustScroll");
+    public void registerIcons(IIconRegister IIconRegister) {
+    	this.itemIcon = IIconRegister.registerIcon(DustMod.spritePath + "dustScroll");
     }
 }

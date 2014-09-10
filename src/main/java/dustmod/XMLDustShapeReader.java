@@ -58,8 +58,7 @@ public class XMLDustShapeReader extends DefaultHandler {
 
 			xr.parse(new InputSource(fileStream));
 		} catch (Exception ex) {
-			DustMod.log(Level.SEVERE, "Unable to read rune XML file! "
-					+ runeFile, ex.getMessage());
+			DustMod.logger.error("Unable to read rune XML file! " + runeFile, ex.getMessage());
 			ex.printStackTrace();
 		}
 	}
@@ -161,12 +160,12 @@ public class XMLDustShapeReader extends DefaultHandler {
 
 			String[] splitLine = currentValue.split("\n");
 			if (splitLine.length != height) {
-				DustMod.log(Level.SEVERE, "Error reading rune XML file! Design height does not match the specified height!", idName);
+				DustMod.logger.error("Error reading rune XML file! Design height does not match the specified height! {}", idName);
 			} else {
 				for (String line : splitLine) {
 					String[] splitComma = line.split(",");
 					if (splitComma.length != width) {
-						DustMod.log(Level.SEVERE, "Error reading rune XML file! Design width does not match the specified width!", idName);
+						DustMod.logger.error("Error reading rune XML file! Design width does not match the specified width! {}", idName);
 						break;
 					}
 					for (String element : splitComma) {

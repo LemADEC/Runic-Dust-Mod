@@ -4,10 +4,10 @@
  */
 package dustmod.runes;
 
-import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.item.Item;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import dustmod.DustEvent;
 import dustmod.DustMod;
@@ -37,13 +37,13 @@ public class DECompression extends DustEvent
 
     public void onInit(EntityDust e)
     {
-    	if (!this.takeItems(e, new ItemStack(Block.blockSteel.blockID, 1, -1)))
+    	if (!this.takeItems(e, new ItemStack(Blocks.iron_block, 1, -1)))
         {
             e.fizzle();
             return;
         }
     	//Cant use negator
-    	if (this.takeItems(e, new ItemStack(DustMod.getNegator().itemID, 1, -1)))
+    	if (this.takeItems(e, new ItemStack(DustMod.getNegator(), 1, -1)))
         {
             e.fizzle();
             return;
@@ -52,7 +52,7 @@ public class DECompression extends DustEvent
         int diamondAmt = 0;
         ItemStack[] req = new ItemStack[]
         {
-            new ItemStack(Item.coal, 0, 0)
+            new ItemStack(Items.coal, 0, 0)
         };
 
         while (req[0].stackSize == 0)
@@ -90,7 +90,7 @@ public class DECompression extends DustEvent
             for (int i = 0; i < stacks; i++)
             {
                 Entity en = null;
-                ItemStack create =  new ItemStack(Item.diamond.itemID, 64, 0);
+                ItemStack create =  new ItemStack(Items.diamond, 64, 0);
                 en = new EntityItem(e.worldObj, e.posX, e.posY - EntityDust.yOffset, e.posZ, create);
 
                 if (en != null)
@@ -103,7 +103,7 @@ public class DECompression extends DustEvent
             if (leftover > 0)
             {
                 Entity en = null;
-                ItemStack create =  new ItemStack(Item.diamond.itemID, leftover, 0);
+                ItemStack create =  new ItemStack(Items.diamond, leftover, 0);
                 en = new EntityItem(e.worldObj, e.posX, e.posY - EntityDust.yOffset, e.posZ, create);
 
                 if (en != null)

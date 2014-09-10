@@ -2,7 +2,10 @@ package dustmod.inscriptions;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import dustmod.DustEvent;
@@ -24,7 +27,7 @@ public class VoidInscription extends InscriptionEvent {
 	
 	@Override
 	public boolean callSacrifice(DustEvent rune, EntityDust e, ItemStack item) {
-		ItemStack[] req = new ItemStack[]{new ItemStack(Block.obsidian,4), new ItemStack(Item.enderPearl, 2)};
+		ItemStack[] req = new ItemStack[]{new ItemStack(Blocks.obsidian,4), new ItemStack(Items.ender_pearl, 2)};
 		req = rune.sacrifice(e, req);
 		if(!rune.checkSacrifice(req)) return false;
 		if(!rune.takeXP(e, 5));
@@ -33,10 +36,10 @@ public class VoidInscription extends InscriptionEvent {
 	}
 
 	@Override
-	public ItemStack onItemPickup(EntityLiving wearer, ItemStack insc,
+	public ItemStack onItemPickup(EntityLivingBase wearer, ItemStack insc,
 			ItemStack pickedup) {
 		VoidStorageManager.addItemToVoidInventory(
-				((EntityPlayer) wearer).username, pickedup);
+				((EntityPlayer) wearer).getGameProfile().getId(), pickedup);
 		ItemStack rtn = pickedup.copy();
 		this.damage((EntityPlayer)wearer, insc, pickedup.stackSize);
 		rtn.stackSize = 0;

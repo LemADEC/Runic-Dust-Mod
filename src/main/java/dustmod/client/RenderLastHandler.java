@@ -6,9 +6,8 @@ package dustmod.client;
 
 import java.util.HashMap;
 
-import net.minecraft.client.renderer.RenderGlobal;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.event.ForgeSubscribe;
 //forge
 
 /**
@@ -19,12 +18,10 @@ public class RenderLastHandler  /*implements IRenderWorldLastHandler */{ //[forg
 
     public static HashMap<Object[], IRenderLast> map = new HashMap<Object[], IRenderLast>();
 
-    @ForgeSubscribe
+    @SubscribeEvent
     public void onRenderWorldLast(RenderWorldLastEvent evt)
     {
-    	RenderGlobal renderer;
     	float partialTicks;
-    	renderer = evt.context;
     	partialTicks = evt.partialTicks;
         for (Object[] o: map.keySet())
         {

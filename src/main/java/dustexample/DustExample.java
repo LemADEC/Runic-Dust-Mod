@@ -4,13 +4,13 @@
  */
 package dustexample;
 
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.Mod.PostInit;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.registry.GameRegistry;
 import dustexample.examplerunes.DEChestNom;
 import dustexample.examplerunes.DEIceSprite;
@@ -41,12 +41,11 @@ import dustmod.XMLDustShapeReader;
  */
 
 @Mod(modid = "DustExample", name = "Dust Mod Example 1", version = "1.0", dependencies = "after:DustMod")
-@NetworkMod(clientSideRequired = false, serverSideRequired = false)
 public class DustExample {
 	@Instance("DustExample")
 	public static DustExample instance;
 
-	@PostInit
+	@EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
 		 registerDusts();
 		 registerRunes();
@@ -59,8 +58,8 @@ public class DustExample {
 
 		// Register recipe for our dust (2xGlowstoneDust + 1xCoal)
 		GameRegistry.addShapelessRecipe(new ItemStack(DustMod.getItemDust(), 4,
-				350), new ItemStack(Item.lightStoneDust, 1), new ItemStack(
-				Item.lightStoneDust, 1), new ItemStack(Item.coal, 1, -1));
+				350), new ItemStack(Items.glowstone_dust, 1), new ItemStack(
+				Items.glowstone_dust, 1), new ItemStack(Items.coal, 1, -1));
 	}
 
 	/**

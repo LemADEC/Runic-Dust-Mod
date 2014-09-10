@@ -8,6 +8,8 @@ import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import dustmod.DustEvent;
@@ -49,8 +51,8 @@ public class DEFireBowEnch extends DustEvent
 //            }
 //        }
 //        int gold = ((item == Item.pickaxeDiamond.itemID) ? Item.pickaxeGold.itemID:Item.shovelGold.itemID);
-        ItemStack[] req = this.sacrifice(e, new ItemStack[] {new ItemStack(Item.bow, 1, 0),
-                      new ItemStack(Block.blockGold.blockID, 1, 0), new ItemStack(Item.fireballCharge, 9)
+        ItemStack[] req = this.sacrifice(e, new ItemStack[] {new ItemStack(Items.bow, 1, 0),
+                      new ItemStack(Blocks.gold_block, 1, 0), new ItemStack(Items.fire_charge, 9)
         });
 
         if (!checkSacrifice(req) || !takeXP(e, 30))
@@ -72,7 +74,7 @@ public class DEFireBowEnch extends DustEvent
         if (e.ticksExisted > 20)
         {
             Entity en = null;
-            ItemStack create =  new ItemStack((int)Item.bow.itemID, 1, 0);
+            ItemStack create = new ItemStack(Items.bow, 1, 0);
 //            if(e.data == mod_DustMod.spiritSword.itemID){
             create.addEnchantment(Enchantment.flame, 1);
 //            }

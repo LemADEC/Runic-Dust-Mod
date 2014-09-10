@@ -9,6 +9,7 @@ import java.util.Random;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
@@ -71,8 +72,8 @@ public class GuiTome extends GuiScreen
     {
         super.drawScreen(par1, par2, par3);
         drawDefaultBackground();
-        drawGuiContainerBackgroundLayer(par3, par1, par2);
-        drawGuiContainerForegroundLayer();
+        drawGuIIcontainerBackgroundLayer(par3, par1, par2);
+        drawGuIIcontainerForegroundLayer();
 
         for (int i = 0; i < buttonList.size(); i++)
         {
@@ -106,9 +107,9 @@ public class GuiTome extends GuiScreen
     		"The QubeTubers are cool!", "Try Minecraft:Ars Magica!", "Play outside!"};
     int randAuthor = (int)(Math.random()*derp.length);
     /**
-     * Draw the foreground layer for the GuiContainer (everythin in front of the items)
+     * Draw the foreground layer for the GuIIcontainer (everythin in front of the items)
      */
-    protected void drawGuiContainerForegroundLayer()
+    protected void drawGuIIcontainerForegroundLayer()
     {
         String name = "";
         String author = "";
@@ -150,13 +151,13 @@ public class GuiTome extends GuiScreen
         }
 
         GL11.glColor3f(255, 0, 0);
-        fontRenderer.drawString(name, (width - xSize) / 2 - offX, (height - ySize) / 2 - fontRenderer.FONT_HEIGHT - 2, recolor ? 0xFF0000 : 0xEEEEEE);
-        fontRenderer.drawSplitString(notes, (width + xSize) / 2 + 2 - offX, (height - ySize) / 2 + 2, (width - xSize) / 2 + offX, 0xffa0a0a0);
+        fontRendererObj.drawString(name, (width - xSize) / 2 - offX, (height - ySize) / 2 - fontRendererObj.FONT_HEIGHT - 2, recolor ? 0xFF0000 : 0xEEEEEE);
+        fontRendererObj.drawSplitString(notes, (width + xSize) / 2 + 2 - offX, (height - ySize) / 2 + 2, (width - xSize) / 2 + offX, 0xffa0a0a0);
         GL11.glPushMatrix();
         float scale = 0.6666F;
         GL11.glTranslated((width - xSize) / 2 - offX, (height - ySize) / 2 + ySize, 0);
         GL11.glScalef(scale,scale,scale);
-        fontRenderer.drawString(author, 0,0, 0xffa0a0a0);
+        fontRendererObj.drawString(author, 0,0, 0xffa0a0a0);
         GL11.glPopMatrix();
     }
 
@@ -192,17 +193,17 @@ public class GuiTome extends GuiScreen
     {
         super.keyTyped(par1, key);
 
-        if (key == 1 || key == this.mc.gameSettings.keyBindInventory.keyCode)
+        if (key == 1 || key == this.mc.gameSettings.keyBindInventory.getKeyCode())
         {
             this.mc.thePlayer.closeScreen();
 //        	this.mc.displayGuiScreen((GuiScreen)null);
         }
 
-        if (key == mc.gameSettings.keyBindLeft.keyCode)
+        if (key == mc.gameSettings.keyBindLeft.getKeyCode())
         {
             retreatPage();
         }
-        else if (key == mc.gameSettings.keyBindRight.keyCode)
+        else if (key == mc.gameSettings.keyBindRight.getKeyCode())
         {
             advancePage();
         }
@@ -298,14 +299,14 @@ public class GuiTome extends GuiScreen
     }
 
     /**
-     * Draw the background layer for the GuiContainer (everything behind the items)
+     * Draw the background layer for the GuIIcontainer (everything behind the items)
      */
-    protected void drawGuiContainerBackgroundLayer(float par1, int par2, int par3)
+    protected void drawGuIIcontainerBackgroundLayer(float par1, int par2, int par3)
     {
 //    	System.out.println("RAWR " + DustManager.isEmpty() + " " + InscriptionManager.isEmpty());
-        int i = mc.renderEngine.getTexture(DustMod.path + "/tomeGui.png");
+        //int i = mc.renderEngine.getTexture(DustMod.path + "/tomeGui.png");
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        mc.renderEngine.func_98187_b(DustMod.path + "/tomeGui.png");
+        mc.renderEngine.bindTexture(new ResourceLocation("dustmod", DustMod.path + "/tomeGui.png"));
 //        mc.renderEngine.bindTexture(mc.renderEngine.getTexture(RenderDustTable.getPagePath(page)));
         int j = (width - xSize) / 2 - offX;
         int k = (height - ySize) / 2;
@@ -327,18 +328,18 @@ public class GuiTome extends GuiScreen
         if(isRunes()){
 	        if(getRunePage() == 0){
 	        	if(DustManager.isEmpty()){
-	        		mc.renderEngine.func_98187_b(DustMod.path + "/pages" + "/no_runes.png");
+	        		mc.renderEngine.bindTexture(new ResourceLocation("dustmod", DustMod.path + "/pages" + "/no_runes.png"));
 	        	}else {
-	        		mc.renderEngine.func_98187_b(DustMod.path + "/pages/info.png");
+	        		mc.renderEngine.bindTexture(new ResourceLocation("dustmod", DustMod.path + "/pages/info.png"));
 	        	}
 	        }
 	        else PageHelper.bindPage(RenderDustTable.getRunePageName(getRunePage()));
         }else {
 	        if(getInsPage() == 0){
 	        	if(InscriptionManager.isEmpty()){
-	        		mc.renderEngine.func_98187_b(DustMod.path + "/pages" + "/no_inscriptions.png");
+	        		mc.renderEngine.bindTexture(new ResourceLocation("dustmod", DustMod.path + "/pages" + "/no_inscriptions.png"));
 	        	}else {
-	        		mc.renderEngine.func_98187_b(DustMod.path + "/pages" + "/info.png");
+	        		mc.renderEngine.bindTexture(new ResourceLocation("dustmod", DustMod.path + "/pages" + "/info.png"));
 	        	}
 	        }
 	        else PageHelper.bindPage(InscriptionManager.getEventInOrder(getInsPage() -1).getIDName());
@@ -348,10 +349,10 @@ public class GuiTome extends GuiScreen
         GL11.glPopMatrix();
         
         if(isRunes()){
-        	mc.renderEngine.func_98187_b(DustMod.path + "/tomeGui.png");
+        	mc.renderEngine.bindTexture(new ResourceLocation("dustmod", DustMod.path + "/tomeGui.png"));
         	drawTexturedModalRect(j-6,k,12,0,12,ySize);
         }else {
-        	mc.renderEngine.func_98187_b(DustMod.path + "/tomeGui.png");
+        	mc.renderEngine.bindTexture(new ResourceLocation("dustmod", DustMod.path + "/tomeGui.png"));
         	drawTexturedModalRect(j-6,k,0,0,12,ySize);
         }
     }

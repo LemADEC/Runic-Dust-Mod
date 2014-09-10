@@ -1,7 +1,9 @@
 package dustmod.inscriptions;
 
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import dustmod.DustEvent;
@@ -24,7 +26,7 @@ public class BounceInscription extends InscriptionEvent {
 
 	@Override
 	public boolean callSacrifice(DustEvent rune, EntityDust e, ItemStack item) {
-		ItemStack[] req = new ItemStack[]{new ItemStack(Item.slimeBall,8), new ItemStack(Item.bootsLeather, 1)};
+		ItemStack[] req = new ItemStack[]{new ItemStack(Items.slime_ball,8), new ItemStack(Items.leather_boots, 1)};
 		req = rune.sacrifice(e, req);
 		if(!rune.checkSacrifice(req)) return false;
 		item.setItemDamage(0);
@@ -32,7 +34,7 @@ public class BounceInscription extends InscriptionEvent {
 	}
 	
 	@Override
-	public void onUpdate(EntityLiving wearer, ItemStack item, boolean[] buttons) {
+	public void onUpdate(EntityLivingBase wearer, ItemStack item, boolean[] buttons) {
 		super.onUpdate(wearer, item, buttons);
 		if(!wearer.onGround){
 			if(getLastYVel(item) > wearer.motionY)

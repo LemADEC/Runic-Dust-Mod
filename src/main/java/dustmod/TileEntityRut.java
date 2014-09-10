@@ -5,11 +5,16 @@
 package dustmod;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockSand;
+import net.minecraft.block.BlockFalling;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.packet.Packet;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
 
 /**
  *
@@ -17,12 +22,14 @@ import net.minecraft.tileentity.TileEntity;
  */
 public class TileEntityRut extends TileEntity
 {
+	public static final int RUT_COUNT = 3;
+	
     public static float hardnessStandard = -1;
-    public int maskBlock;
+    public Block maskBlock;
     public int maskMeta;
-    public int prevFluid;
-    public int fluid;
-    public int[][][] ruts;
+    public Block prevFluid;
+    public Block fluid;
+    public int[] ruts;
     public boolean isBeingUsed = false;
     public boolean isDead = false;
     public int ticksExisted = 0;
@@ -39,19 +46,13 @@ public class TileEntityRut extends TileEntity
     public TileEntityRut()
     {
     	if(hardnessStandard == -1){
-    		 hardnessStandard = Block.gravel.getBlockHardness(worldObj,xCoord,yCoord,zCoord);
+    		 hardnessStandard = Blocks.gravel.getBlockHardness(worldObj,xCoord,yCoord,zCoord);
     	}
-        ruts = new int[3][3][3];
+        ruts = new int[RUT_COUNT * RUT_COUNT * RUT_COUNT];
 
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < RUT_COUNT * RUT_COUNT * RUT_COUNT; i++)
         {
-            for (int j = 0; j < 3; j++)
-            {
-                for (int k = 0; k < 3; k++)
-                {
-                    ruts[i][j][k] = 0;
-                }
-            }
+            ruts[i] = 0;
         }
     }
 
@@ -73,10 +74,10 @@ public class TileEntityRut extends TileEntity
             updateNeighbors();
         }
 
-        if (isEmpty() || (Block.blocksList[maskBlock] instanceof BlockSand && BlockSand.canFallBelow(worldObj, xCoord, yCoord - 1, zCoord)))
+        if (isEmpty() || (maskBlock instanceof BlockFalling && BlockFalling.func_149831_e(worldObj, xCoord, yCoord - 1, zCoord)))
         {
             isDead = true;
-            worldObj.setBlockAndMetadataWithNotify(xCoord, yCoord, zCoord, maskBlock, maskMeta,3);
+            worldObj.setBlock(xCoord, yCoord, zCoord, maskBlock, maskMeta, 3);
             this.invalidate();
             return;
         }
@@ -108,23 +109,23 @@ public class TileEntityRut extends TileEntity
                             continue;
                         }
 
-                        if (worldObj.getBlockId(i + ix, j + iy, k + iz) == DustMod.rutBlock.blockID)
+                        if (worldObj.getBlock(i + ix, j + iy, k + iz) == DustMod.rutBlock)
                         {
-                            TileEntityRut ter = (TileEntityRut)worldObj.getBlockTileEntity(i + ix, j + iy, k + iz);
+                            TileEntityRut ter = (TileEntityRut)worldObj.getTileEntity(i + ix, j + iy, k + iz);
 
-                            if (ter.fluid == 0)
+                            if (ter.fluid == null)
                             {
                                 ter.setFluid(this.fluid);
                             }
-                            else if (ter.fluid == Block.waterStill.blockID && this.fluid == Block.lavaStill.blockID)
+                            else if (ter.fluid == Blocks.water && this.fluid == Blocks.lava)
                             {
-                                ter.setFluid(Block.cobblestone.blockID);
-                                this.setFluid(Block.cobblestone.blockID);
+                                ter.setFluid(Blocks.cobblestone);
+                                this.setFluid(Blocks.cobblestone);
                             }
-                            else if (this.fluid == Block.waterStill.blockID && ter.fluid == Block.lavaStill.blockID)
+                            else if (this.fluid == Blocks.water && ter.fluid == Blocks.lava)
                             {
-                                ter.setFluid(Block.cobblestone.blockID);
-                                this.setFluid(Block.cobblestone.blockID);
+                                ter.setFluid(Blocks.cobblestone);
+                                this.setFluid(Blocks.cobblestone);
                             }
                         }
                     }
@@ -132,7 +133,7 @@ public class TileEntityRut extends TileEntity
             }
         }
 
-        if (worldObj.getWorldTime() % 60 == 0 && fluid == 0)
+        if (worldObj.getWorldTime() % 60 == 0 && fluid == Blocks.air)
         {
             for (int ix = -1; ix <= 1; ix++)
             {
@@ -142,18 +143,18 @@ public class TileEntityRut extends TileEntity
                     {
                         if (ix == iy || ix == iz || iy == iz)
                         {
-                            int check = worldObj.getBlockId(xCoord + ix, yCoord + iy, zCoord + iz);
+                            Block check = worldObj.getBlock(xCoord + ix, yCoord + iy, zCoord + iz);
 
-                            if (fluid == 0)
+                            if (fluid == Blocks.air)
                             {
-                                if (check == Block.lavaStill.blockID || check == Block.lavaMoving.blockID)
+                                if (check == Blocks.lava)
                                 {
-                                    setFluid(Block.lavaStill.blockID);
+                                    setFluid(Blocks.lava);
 //                                    mod_DustMod.notifyBlockChange(worldObj, xCoord, yCoord, zCoord, 0);
                                 }
-                                else if (check == Block.waterStill.blockID || check == Block.waterMoving.blockID)
+                                else if (check == Blocks.water)
                                 {
-                                    setFluid(Block.waterStill.blockID);
+                                    setFluid(Blocks.water);
 //                                    mod_DustMod.notifyBlockChange(worldObj, xCoord, yCoord, zCoord, 0);
                                 }
                             }
@@ -182,8 +183,8 @@ public class TileEntityRut extends TileEntity
                 for (int k = -1; k <= 1; k++)
                 {
                 	boolean prev = neighborSolid[i + 1][j + 1][k + 1]; 
-                    int bid = worldObj.getBlockId(xCoord + i, yCoord + j, zCoord + k);
-                    boolean next = (bid != 0 && (Block.blocksList[bid].isOpaqueCube() || Block.blocksList[bid] == DustMod.rutBlock));
+                    Block block = worldObj.getBlock(xCoord + i, yCoord + j, zCoord + k);
+                    boolean next = (block != null && (block.isOpaqueCube() || block == DustMod.rutBlock));
                     if(prev != next) rtn = true;
                     neighborSolid[i + 1][j + 1][k + 1] = next;
                 }
@@ -204,38 +205,46 @@ public class TileEntityRut extends TileEntity
     public void writeToNBT(NBTTagCompound tag)
     {
         super.writeToNBT(tag);
-        tag.setInteger("maskBlock", maskBlock);
-        tag.setInteger("maskMeta", maskMeta);
-        tag.setInteger("fluid", fluid);
-        tag.setBoolean("isBeingUsed", isBeingUsed);
 
-        for (int i = 0; i < 3; i++)
-        {
-            for (int j = 0; j < 3; j++)
-            {
-                for (int k = 0; k < 3; k++)
-                {
-                    tag.setInteger("rut[" + i + "," + j + "," + k + "]", ruts[i][j][k]);
-                }
-            }
-        }
+        writeNetworkNBT(tag);
+    }
+    
+    public void writeNetworkNBT(NBTTagCompound tag)
+    {
+        UniqueIdentifier maskIdent = GameRegistry.findUniqueIdentifierFor(maskBlock);
+        UniqueIdentifier fluidIdent = GameRegistry.findUniqueIdentifierFor(fluid);
+
+        tag.setString("maskBlock", maskIdent.modId + ":" + maskIdent.name);
+        tag.setInteger("maskMeta", maskMeta);
+        tag.setString("fluid", fluidIdent.modId + ":" + fluidIdent.name);
+        tag.setBoolean("isBeingUsed", isBeingUsed);
+        
+        tag.setIntArray("ruts", ruts);
         
         tag.setBoolean("flame", hasFlame);
         tag.setInteger("flameR", fr);
         tag.setInteger("flameG", fg);
         tag.setInteger("flameB", fb);
     }
+    
     public void readFromNBT(NBTTagCompound tag)
     {
         super.readFromNBT(tag);
 
-        if (tag.hasKey("maskBlock"))
+        readNetworkNBT(tag);
+    }
+    
+    public void readNetworkNBT(NBTTagCompound tag)
+    {
+    	if (tag.hasKey("maskBlock"))
         {
-            maskBlock = tag.getInteger("maskBlock");
+        	String[] ids = tag.getString("maskBlock").split(":", 2);
+        	
+            maskBlock = GameRegistry.findBlock(ids[0], ids[1]);
         }
         else
         {
-            maskBlock = Block.workbench.blockID;
+            maskBlock = Blocks.crafting_table;
         }
 
         if (tag.hasKey("maskMeta"))
@@ -249,32 +258,23 @@ public class TileEntityRut extends TileEntity
 
         if (tag.hasKey("fluid"))
         {
-            fluid = tag.getInteger("fluid");
+        	String[] ids = tag.getString("fluid").split(":", 2);
+        	
+        	fluid = GameRegistry.findBlock(ids[0], ids[1]);
         }
         else
         {
-            fluid = 2;
+            fluid = Blocks.water;
         }
 
         if (tag.hasKey("isBeingUsed"))
         {
             isBeingUsed = tag.getBoolean("isBeingUsed");
         }
-
-        for (int i = 0; i < 3; i++)
+        
+        if (tag.hasKey("ruts"))
         {
-            for (int j = 0; j < 3; j++)
-            {
-                for (int k = 0; k < 3; k++)
-                {
-                    String stag = "rut[" + i + "," + j + "," + k + "]";
-
-                    if (tag.hasKey(stag))
-                    {
-                        ruts[i][j][k] = tag.getInteger(stag);
-                    }
-                }
-            }
+        	ruts = tag.getIntArray("ruts");
         }
         
         if(tag.hasKey("flame")){
@@ -314,16 +314,16 @@ public class TileEntityRut extends TileEntity
                 return;
             }
 
-            ruts[i][j][k] = l;
+            ruts[i * RUT_COUNT * RUT_COUNT + j * RUT_COUNT + k] = l;
         }
 
 //        System.out.println("Setting [" + i + "," + j + "," + k + "]");
-        worldObj.notifyBlockChange(xCoord, yCoord, zCoord, 0);
+        worldObj.notifyBlockChange(xCoord, yCoord, zCoord, worldObj.getBlock(xCoord, yCoord, zCoord));
         worldObj.markBlockForUpdate(xCoord,yCoord,zCoord);
     }
     public int getRut(int i, int j, int k)
     {
-        return ruts[i][j][k];
+        return ruts[i * RUT_COUNT * RUT_COUNT + j * RUT_COUNT + k];
     }
 
     public void setRenderFlame(boolean val, int r, int g, int b){
@@ -344,29 +344,27 @@ public class TileEntityRut extends TileEntity
     public void resetBlock()
     {
         isDead = true;
-        worldObj.setBlockAndMetadataWithNotify(xCoord, yCoord, zCoord, maskBlock, maskMeta,3);
+        worldObj.setBlock(xCoord, yCoord, zCoord, maskBlock, maskMeta,3);
     }
 
     public boolean fluidIsFluid()
     {
-        Block f = Block.blocksList[fluid];
-        return (f == null || f == Block.waterStill || f == Block.lavaStill);
+        return (fluid == null || fluid == Blocks.water || fluid == Blocks.lava);
     }
 
-    public void setFluid(int fluid)
+    public void setFluid(Block fluid)
     {
         if (this.fluid != fluid)
         {
             this.fluid = fluid;
-            worldObj.notifyBlockChange(xCoord, yCoord, zCoord, 0);
+            worldObj.notifyBlockChange(xCoord, yCoord, zCoord, worldObj.getBlock(xCoord, yCoord, zCoord));
             changed = true;
             worldObj.markBlockForUpdate(xCoord,yCoord,zCoord);
         }
     }
     public boolean canEdit()
     {
-        Block f = Block.blocksList[fluid];
-        return (fluidIsFluid() || f.getBlockHardness(worldObj,xCoord,yCoord,zCoord) <= hardnessStandard || DustMod.Enable_Decorative_Ruts) && !isBeingUsed;
+        return (fluidIsFluid() || fluid.getBlockHardness(worldObj,xCoord,yCoord,zCoord) <= hardnessStandard || DustMod.Enable_Decorative_Ruts) && !isBeingUsed;
     }
 
     public boolean isEmpty()
@@ -391,6 +389,14 @@ public class TileEntityRut extends TileEntity
     @Override
     public Packet getDescriptionPacket()
     {
-        return PacketHandler.getTERPacket(this);
+    	NBTTagCompound tag = new NBTTagCompound();
+        writeNetworkNBT(tag);
+        return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 1, tag);
+    }
+    
+    @Override
+    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
+    	readNetworkNBT(pkt.func_148857_g());
+    	worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 }

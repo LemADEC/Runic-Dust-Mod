@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -25,7 +28,7 @@ public class DEFarm extends DustEvent {
 	}
 
 	public void onInit(EntityDust e) {
-		ItemStack[] req = new ItemStack[] { new ItemStack(Item.ingotIron, 8, -1) };
+		ItemStack[] req = new ItemStack[] { new ItemStack(Items.iron_ingot, 8, -1) };
 		sacrifice(e, req);
 
 		if (req[0].stackSize > 0 || !this.takeXP(e, 4)) {
@@ -85,7 +88,7 @@ public class DEFarm extends DustEvent {
 			int k = e.getZ();
 			// System.out.println("R = " + r + " " + dustID);
 			World world = e.worldObj;
-			world.setBlockAndMetadataWithNotify(i, j - 1, k, Block.waterStill.blockID,0,3);
+			world.setBlock(i, j - 1, k, Blocks.water,0,3);
 			Random rand = new Random();
 
 			ArrayList<Double> locs = new ArrayList<Double>();
@@ -95,25 +98,24 @@ public class DEFarm extends DustEvent {
 					layer:
 
 					for (int dj = r; dj >= -r; dj--) {
-						int bidt = world.getBlockId(di + i, dj + j, dk + k);
-						int bidb = world.getBlockId(di + i, dj + j - 1, dk + k);
+						Block bidt = world.getBlock(di + i, dj + j, dk + k);
+						Block bidb = world.getBlock(di + i, dj + j - 1, dk + k);
 
-						if ((bidb == Block.dirt.blockID
-								|| bidb == Block.grass.blockID
-								|| bidb == Block.tilledField.blockID || bidb == Block.sand.blockID)
-								&& (bidt == 0 || DustMod.isDust(bidt) || bidt == Block.tallGrass.blockID)) {
-							world.setBlockAndMetadataWithNotify(i + di, j + dj - 1,
-									k + dk, Block.tilledField.blockID,0,3);
+						if ((bidb == Blocks.dirt
+								|| bidb == Blocks.grass
+								|| bidb == Blocks.farmland || bidb == Blocks.sand)
+								&& (bidt.getMaterial() == Material.air || DustMod.isDust(bidt) || bidt == Blocks.tallgrass)) {
+							world.setBlock(i + di, j + dj - 1,
+									k + dk, Blocks.farmland,0,3);
 							int meta = cBase + rand.nextInt(cRand);
 
 							if (meta > 7) {
 								meta = 7;
 							}
 
-							world.setBlockAndMetadataWithNotify(i + di, j + dj,
-									k + dk, 0, 0,3);
-							world.setBlockAndMetadataWithNotify(i + di, j + dj,
-									k + dk, Block.crops.blockID, meta,3);
+							world.setBlockToAir(i + di, j + dj,k + dk);
+							world.setBlock(i + di, j + dj,
+									k + dk, Blocks.wheat, meta,3);
 							locs.add(i+di +0.5);
 							locs.add((double)j+dj);
 							locs.add(k+dk +0.5);
@@ -132,7 +134,7 @@ public class DEFarm extends DustEvent {
 			locs.add((double)i);
 			locs.add(j-1D);
 			locs.add((double)k);
-			world.setBlockAndMetadataWithNotify(i, j - 1, k, Block.waterStill.blockID,0,3);
+			world.setBlock(i, j - 1, k, Blocks.water,0,3);
 			
 			double[] locations = new double[locs.size()];
 			for(int d = 0; d < locs.size(); d++){

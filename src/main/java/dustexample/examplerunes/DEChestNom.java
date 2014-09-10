@@ -6,10 +6,10 @@ package dustexample.examplerunes;
 
 import java.util.List;
 
-import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.world.World;
@@ -69,7 +69,7 @@ public class DEChestNom extends DustEvent
             /**Item sacrifice**/
         
         //An array of all item/block sacrifices required.
-        ItemStack[] sacr = new ItemStack[]{new ItemStack(Block.chest.blockID,1,0), new ItemStack(Item.ingotGold.itemID,1,0)};
+        ItemStack[] sacr = new ItemStack[]{new ItemStack(Blocks.chest,1,0), new ItemStack(Items.gold_ingot,1,0)};
         //This array is optional, You can just list all the itemstacks directly into takeItems
         //Like this : boolean success = this.takeItems(e,new ItemStack(Block.chest.blockID,1,0), new ItemStack(Item.ingotGold.itemID,1,0));
         
@@ -101,7 +101,7 @@ public class DEChestNom extends DustEvent
         //If we've made it here then the sacrifice must have been fulfilled.
         //so now we place that chest
         World world = e.worldObj;
-        world.setBlockAndMetadataWithNotify(e.getX(), e.getY(), e.getZ(), Block.chest.blockID,0,3);
+        world.setBlock(e.getX(), e.getY(), e.getZ(), Blocks.chest,0,3);
         
     }
     
@@ -126,9 +126,9 @@ public class DEChestNom extends DustEvent
             int z = e.getZ();
             
             TileEntityChest tec = null;
-            if(world.getBlockId(x, y, z) == Block.chest.blockID)
+            if(world.getBlock(x, y, z) == Blocks.chest)
             {
-                tec = (TileEntityChest)world.getBlockTileEntity(x, y, z);
+                tec = (TileEntityChest)world.getTileEntity(x, y, z);
             }else
             {
                 //Kills the rune.
@@ -141,7 +141,7 @@ public class DEChestNom extends DustEvent
             
             //If there are items detected nearby, trigger the openChest animation
             if(items.size() > 0){
-                tec.openChest();
+                tec.openInventory();
                 e.data[0] = e.ticksExisted+20; //Used to delay-trigger the closing chest animation
             }
             
@@ -157,7 +157,7 @@ public class DEChestNom extends DustEvent
                     ItemStack inv = tec.getStackInSlot(i);
                     
                     //If the item in that chest slot matches the one dropped, 
-                    if(inv != null && inv.itemID == item.itemID && inv.getItemDamage() == item.getItemDamage())
+                    if(inv != null && inv.getItem() == item.getItem() && inv.getItemDamage() == item.getItemDamage())
                     {
                         //Then add the dropped item to that itemstack in the chest.
                         inv.stackSize += item.stackSize;
@@ -177,7 +177,7 @@ public class DEChestNom extends DustEvent
                 {
                     ItemStack inv = tec.getStackInSlot(i);
                     //If the slot is empty, put the dropped itemstack there.
-                    if(inv == null || inv.itemID == 0)
+                    if(inv == null || inv.getItem() == null)
                     {
                         tec.setInventorySlotContents(i, item);
                         ei.setDead();
@@ -196,12 +196,10 @@ public class DEChestNom extends DustEvent
             int z = e.getZ();
             
             TileEntityChest tec = null;
-            if(world.getBlockId(x, y, z) == Block.chest.blockID)
+            if(world.getBlock(x, y, z) == Blocks.chest)
             {
-                tec = (TileEntityChest)world.getBlockTileEntity(x, y, z);
-                tec.closeChest();
-                //Helps makes sure the chest can open again
-                if(tec.numUsingPlayers < 0) tec.numUsingPlayers = 0;
+                tec = (TileEntityChest)world.getTileEntity(x, y, z);
+                tec.closeInventory();
             }
         }
     }
@@ -238,10 +236,10 @@ public class DEChestNom extends DustEvent
         int z = e.getZ();
 
         TileEntityChest tec = null;
-        if(world.getBlockId(x, y, z) == Block.chest.blockID)
+        if(world.getBlock(x, y, z) == Blocks.chest)
         {
-            tec = (TileEntityChest)world.getBlockTileEntity(x, y, z);
-            tec.closeChest();
+            tec = (TileEntityChest)world.getTileEntity(x, y, z);
+            tec.closeInventory();
         }
     }
 }

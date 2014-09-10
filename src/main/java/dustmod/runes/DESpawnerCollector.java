@@ -69,13 +69,13 @@ public class DESpawnerCollector extends DustEvent
 
         if (e.worldObj.getBlockId(fin[0], fin[1], fin[2]) == Block.mobSpawner.blockID)
         {
-        	TileEntityMobSpawner tems =(TileEntityMobSpawner)e.worldObj.getBlockTileEntity(fin[0], fin[1], fin[2]);
+        	TileEntityMobSpawner tems =(TileEntityMobSpawner)e.worldObj.getTileEntity(fin[0], fin[1], fin[2]);
 //        	String entID = tems.func_92015_a();
             tems.invalidate();
 
             if (e.ticksExisted > 100)
             {
-                e.worldObj.setBlockAndMetadataWithNotify(fin[0], fin[1], fin[2], 0,0,3);
+                e.worldObj.setBlock(fin[0], fin[1], fin[2], 0,0,3);
                 EntityItem ei = new EntityItem(e.worldObj);
                 ei.setPosition(e.posX, e.posY - e.yOffset, e.posZ);
                 ItemStack item = new ItemStack(Block.mobSpawner, 1);

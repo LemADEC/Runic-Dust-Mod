@@ -1,7 +1,7 @@
 package dustmod;
 
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.Item;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -12,8 +12,8 @@ public class DustModTab extends CreativeTabs {
 	}
 	
 	@Override
-	public ItemStack getIconItemStack() {
-		return new ItemStack(DustMod.tome);
+	public Item getTabIconItem() {
+		return DustMod.tome;
 	}
 	
 

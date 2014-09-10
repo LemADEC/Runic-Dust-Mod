@@ -13,7 +13,9 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 import org.lwjgl.opengl.GL11;
@@ -138,7 +140,7 @@ public class RenderEntityDust extends Render implements IRenderLast
         Tessellator tessellator = Tessellator.instance;
         RenderHelper.disableStandardItemLighting();
         GL11.glDisable(GL11.GL_CULL_FACE);
-        loadTexture(DustMod.path + "/beam.png");
+        bindTexture(new ResourceLocation("dustmod", "beam.png"));
         GL11.glShadeModel(GL11.GL_SMOOTH);
         float f9 = 0.0F - ((float)(ticks)) * 0.01F;
         float f10 = MathHelper.sqrt_float(f4 * f4 + f5 * f5 + f6 * f6) / 32F - ((float)(ticks)) * 0.01F;
@@ -185,7 +187,7 @@ public class RenderEntityDust extends Render implements IRenderLast
             RenderHelper.disableStandardItemLighting();
             var10.setBrightness(Integer.MAX_VALUE);
             RenderHelper.disableStandardItemLighting();
-            loadTexture("/misc/beam.png");
+            bindTexture(new ResourceLocation("dustmod", "beam.png"));
             RenderHelper.disableStandardItemLighting();
             GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, 10497.0F);
             RenderHelper.disableStandardItemLighting();
@@ -352,29 +354,29 @@ public class RenderEntityDust extends Render implements IRenderLast
                 int y = p[1];
                 int z = p[2];
 
-                if (e.worldObj.getBlockId(x, y + 1, z) != 0)
+                if (e.worldObj.getBlock(x, y + 1, z) != Blocks.air)
                 {
                     sides = new Integer[] {0, 0, 0, 0};
                     e.flameRenderHelperRut.put(i, sides);
                     continue;
                 }
 
-                if (e.worldObj.getBlockId(x, y + 1, z - 1) != 0)
+                if (e.worldObj.getBlock(x, y + 1, z - 1) != Blocks.air)
                 {
                     sides[0] = 0;
                 }
 
-                if (e.worldObj.getBlockId(x, y + 1, z + 1) != 0)
+                if (e.worldObj.getBlock(x, y + 1, z + 1) != Blocks.air)
                 {
                     sides[1] = 0;
                 }
 
-                if (e.worldObj.getBlockId(x - 1, y + 1, z) != 0)
+                if (e.worldObj.getBlock(x - 1, y + 1, z) != Blocks.air)
                 {
                     sides[2] = 0;
                 }
 
-                if (e.worldObj.getBlockId(x + 1, y + 1, z) != 0)
+                if (e.worldObj.getBlock(x + 1, y + 1, z) != Blocks.air)
                 {
                     sides[3] = 0;
                 }
@@ -414,12 +416,12 @@ public class RenderEntityDust extends Render implements IRenderLast
             }
         }
 
-        renderBlocks.blockAccess = e.worldObj;
+        field_147909_c.blockAccess = e.worldObj;
         GL11.glPushMatrix();
         float scaley = 0.5F;
 //        GL11.glScalef(1F, scaley, 1F);
 //        GL11.glTranslatef(0, -scaley, 0);
-        loadTexture("/terrain.png");
+        //bindTexture("/terrain.png");
         int i = MathHelper.floor_double(e.posX);
         int j = MathHelper.floor_double(e.posY);
         int k = MathHelper.floor_double(e.posZ);
@@ -455,8 +457,8 @@ public class RenderEntityDust extends Render implements IRenderLast
     	System.out.println("BLOCK FIRE");
     	GL11.glPushMatrix();
 //      GL11.glTranslatef((float)d, (float)d1+1, (float)d2);
-      loadTexture("/terrain.png");
-      Block block = Block.fire;//Block.blocksList[Block.fire.blockID];
+      //bindTexture("/terrain.png");
+      Block block = Blocks.fire;//Block.blocksList[Block.fire.blockID];
       GL11.glDisable(GL11.GL_LIGHTING);
       float f = 0.5F;
       float f1 = 1.0F;
@@ -477,26 +479,26 @@ public class RenderEntityDust extends Render implements IRenderLast
 
       if (sides[0] == 1)
       {
-          renderBlocks.renderEastFace(block, -0.5D, -0.5D, -0.5D, block.getBlockTextureFromSide(2));
-          renderBlocks.renderWestFace(block, -0.5D, -0.5D, -1.5D, block.getBlockTextureFromSide(3));
+    	  field_147909_c.renderFaceXPos(block, -0.5D, -0.5D, -0.5D, block.getBlockTextureFromSide(2));
+    	  field_147909_c.renderFaceXNeg(block, -0.5D, -0.5D, -1.5D, block.getBlockTextureFromSide(3));
       }
 
       if (sides[1] == 1)
       {
-          renderBlocks.renderWestFace(block, -0.5D, -0.5D, -0.5D, block.getBlockTextureFromSide(3));
-          renderBlocks.renderEastFace(block, -0.5D, -0.5D, 0.5D, block.getBlockTextureFromSide(2));
+    	  field_147909_c.renderFaceXNeg(block, -0.5D, -0.5D, -0.5D, block.getBlockTextureFromSide(3));
+    	  field_147909_c.renderFaceXPos(block, -0.5D, -0.5D, 0.5D, block.getBlockTextureFromSide(2));
       }
 
       if (sides[2] == 1)
       {
-          renderBlocks.renderNorthFace(block, -0.5D, -0.5D, -0.5D, block.getBlockTextureFromSide(4));
-          renderBlocks.renderSouthFace(block, -1.5D, -0.5D, -0.5D, block.getBlockTextureFromSide(5));
+    	  field_147909_c.renderFaceZNeg(block, -0.5D, -0.5D, -0.5D, block.getBlockTextureFromSide(4));
+    	  field_147909_c.renderFaceZPos(block, -1.5D, -0.5D, -0.5D, block.getBlockTextureFromSide(5));
       }
 
       if (sides[3] == 1)
       {
-          renderBlocks.renderSouthFace(block, -0.5D, -0.5D, -0.5D, block.getBlockTextureFromSide(5));
-          renderBlocks.renderNorthFace(block, 0.5D, -0.5D, -0.5D, block.getBlockTextureFromSide(4));
+    	  field_147909_c.renderFaceZPos(block, -0.5D, -0.5D, -0.5D, block.getBlockTextureFromSide(5));
+    	  field_147909_c.renderFaceZNeg(block, 0.5D, -0.5D, -0.5D, block.getBlockTextureFromSide(4));
       }
 
       tessellator.draw();
@@ -581,4 +583,10 @@ public class RenderEntityDust extends Render implements IRenderLast
 //        GL11.glDisable(GL11.GL_DEPTH_TEST);
 //        GL11.glPopAttrib();
     }
+
+	@Override
+	protected ResourceLocation getEntityTexture(Entity p_110775_1_) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

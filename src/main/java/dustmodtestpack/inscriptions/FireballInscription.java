@@ -2,6 +2,7 @@ package dustmodtestpack.inscriptions;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntitySmallFireball;
 import net.minecraft.item.ItemStack;
@@ -32,7 +33,7 @@ public class FireballInscription extends InscriptionEvent {
 		}
 		
 		@Override
-		public void onUpdate(EntityLiving wearer, ItemStack item, boolean[] buttons) {
+		public void onUpdate(EntityLivingBase wearer, ItemStack item, boolean[] buttons) {
 			super.onUpdate(wearer, item, buttons);
 			EntityPlayer player = (EntityPlayer)wearer;
 

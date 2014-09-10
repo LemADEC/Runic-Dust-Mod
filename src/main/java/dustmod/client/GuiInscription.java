@@ -5,17 +5,16 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-import cpw.mods.fml.client.FMLClientHandler;
 import dustmod.DustItemManager;
 import dustmod.DustMod;
 import dustmod.InscriptionGuiContainer;
 import dustmod.InventoryInscription;
 import dustmod.ItemInk;
-import dustmod.PacketHandler;
 
 public class GuiInscription extends GuiContainer {
 
@@ -40,13 +39,13 @@ public class GuiInscription extends GuiContainer {
 	protected void drawGuiContainerBackgroundLayer(float var1, int var2,
 			int var3) {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.renderEngine.func_98187_b(DustMod.path + "/inscription.png");
+        this.mc.renderEngine.bindTexture(new ResourceLocation("dustmod", DustMod.path + "/inscription.png"));
         int x = (width - xSize) / 2;
         int y = (height - ySize) / 2;
         this.drawTexturedModalRect(x, y, 0, 0, xSize, ySize);
 
         ItemStack inscription = player.getCurrentEquippedItem();
-        if(inscription == null || inscription.itemID != DustMod.inscription.itemID){
+        if(inscription == null || inscription.getItem() != DustMod.inscription){
             this.mc.thePlayer.closeScreen();
         }
 	}
@@ -57,7 +56,7 @@ public class GuiInscription extends GuiContainer {
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.renderEngine.func_98187_b(DustMod.path + "/inscription.png");
+        this.mc.renderEngine.bindTexture(new ResourceLocation("dustmod", DustMod.path + "/inscription.png"));
 
 		Slot info = this.inventorySlots.getSlot(0);
 		if(info.getHasStack() && insc.canEdit()){
@@ -97,7 +96,7 @@ public class GuiInscription extends GuiContainer {
 			}
 		}
 		if(cont){
-			FMLClientHandler.instance().sendPacket(PacketHandler.getSetInscriptionPacket(insc.inv));
+			//XXX FMLClientHandler.instance().sendPacket(PacketHandler.getSetInscriptionPacket(insc.inv));
 		}
 	}
 	
@@ -135,9 +134,9 @@ public class GuiInscription extends GuiContainer {
 	protected void mouseClicked(int x, int y, int b) {
 
         Slot slot = this.getSlotAtPosition(x, y);
-        if(slot != null && slot.getHasStack() && slot.getStack().itemID == DustMod.ink.itemID){
+        if(slot != null && slot.getHasStack() && slot.getStack().getItem() == DustMod.ink){
         	int id = ItemInk.getDustID(slot.getStack());
-        	insc.setInventorySlotContents(0, new ItemStack(DustMod.ink.itemID, id, slot.slotNumber-1));
+        	insc.setInventorySlotContents(0, new ItemStack(DustMod.ink, id, slot.slotNumber-1));
         }
         if(isOnMap(x,y)){
 //        	System.out.println("rawr");
@@ -181,11 +180,11 @@ public class GuiInscription extends GuiContainer {
 				ItemStack stack = this.playerInv.getStackInSlot(slot);
 				if(getDust(x,y) != id && ItemInk.reduce(this.player,stack, 1)){
 					setDust(x,y,id);
-					FMLClientHandler.instance().sendPacket(PacketHandler.getUseInkPacket(slot, 1));
+					//XXX FMLClientHandler.instance().sendPacket(PacketHandler.getUseInkPacket(slot, 1));
 //					this.inventorySlots.putStackInSlot(slot, stack);
 					this.playerInv.setInventorySlotContents(slot, stack);
 					this.inventorySlots.putStackInSlot(slot+1, stack);
-					if(stack.itemID != DustMod.ink.itemID){
+					if(stack.getItem() != DustMod.ink){
 //						this.inventorySlots.putStackInSlot(0, new ItemStack(DustMod.ink.itemID, 0, -1));
 						 //Loop through player's hotbar for inks
 //						 for(int i = 1; i < 10; i++){
@@ -293,7 +292,7 @@ public class GuiInscription extends GuiContainer {
 	public void setDust(int x, int y, int dust){
 		changed = true;
 		
-		this.insc.setInventorySlotContents(x*16 + y + 10, new ItemStack(DustMod.inscription.itemID, 1, dust));
+		this.insc.setInventorySlotContents(x*16 + y + 10, new ItemStack(DustMod.inscription, 1, dust));
 		
 
 		if(newInscription){
