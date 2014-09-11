@@ -9,7 +9,7 @@ import java.util.List;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.effect.EntityLightningBolt;
-import net.minecraft.item.Item;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import dustmod.EntityDust;
 
@@ -24,7 +24,7 @@ public class DELightning extends DETrap
     public void onInit(EntityDust e)
     {
         super.onInit(e);
-        ItemStack[] sac = new ItemStack[] {new ItemStack(Item.ingotIron, 3)};
+        ItemStack[] sac = new ItemStack[] {new ItemStack(Items.iron_ingot, 3)};
         sac = this.sacrifice(e, sac);
 
         if (sac[0].stackSize > 0)

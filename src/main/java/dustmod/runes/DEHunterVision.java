@@ -5,6 +5,7 @@
 package dustmod.runes;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import dustmod.EntityDust;
@@ -33,7 +34,7 @@ public class DEHunterVision extends PoweredEvent
     public void onInit(EntityDust e)
     {
         super.onInit(e);
-        ItemStack[] req = new ItemStack[] {new ItemStack(Item.blazePowder, 3), new ItemStack(Item.eyeOfEnder, 1)};
+        ItemStack[] req = new ItemStack[] {new ItemStack(Items.blaze_powder, 3), new ItemStack(Items.ender_eye, 1)};
         req = this.sacrifice(e, req);
 
         if (!checkSacrifice(req) || !takeXP(e, 12))

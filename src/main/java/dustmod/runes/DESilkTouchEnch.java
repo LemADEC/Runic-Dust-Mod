@@ -10,6 +10,8 @@ import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import dustmod.DustEvent;
@@ -42,23 +44,28 @@ public class DESilkTouchEnch extends DustEvent
     public void onInit(EntityDust e)
     {
         List<EntityItem> sacrifice = getItems(e);
-        int item = -1;
+        Item item = null;
 
         for (EntityItem i: sacrifice)
         {
             ItemStack is = i.getEntityItem();
 
-            if (is.itemID == Item.pickaxeDiamond.itemID || is.itemID == Item.shovelDiamond.itemID)
+            if (is.getItem() == Items.diamond_pickaxe || is.getItem() == Items.diamond_shovel)
             {
-                item = is.itemID;
+                item = is.getItem();
 //                i.setDead();
                 break;
             }
         }
+        
+        if (item == null) {
+        	e.fizzle();
+        	return;
+        }
 
-        ItemStack[] req = this.sacrifice(e, new ItemStack[] {new ItemStack(item, 1, 0), new ItemStack(Block.blockGold.blockID, 1, 0)});
+        ItemStack[] req = this.sacrifice(e, new ItemStack[] {new ItemStack(item, 1, 0), new ItemStack(Blocks.gold_block, 1, 0)});
 
-        if (!checkSacrifice(req) || !takeXP(e, 10) || item == -1)
+        if (!checkSacrifice(req) || !takeXP(e, 10) || item == null)
         {
             e.fizzle();
             return;
@@ -69,7 +76,7 @@ public class DESilkTouchEnch extends DustEvent
         e.setColorStarOuter(0, 0, 255);
         e.setColorBeam(0, 0, 255);
 //        e.data = item;
-        e.data[1] = item; //the sacrifice entity id will be set to data
+        e.data[1] = Item.getIdFromItem(item); //the sacrifice entity id will be set to data
 //        e.sacrificeWaiting = 600;
 //        this.addSacrificeList(new Sacrifice(120));
     }
@@ -83,7 +90,7 @@ public class DESilkTouchEnch extends DustEvent
         {
         	DustMod.log("Drop");
             Entity en = null;
-            ItemStack create =  new ItemStack((int)e.data[1], 1, 0);
+            ItemStack create =  new ItemStack(Item.getItemById(e.data[1]), 1, 0);
 //            if(e.data == mod_DustMod.spiritSword.itemID){
             create.addEnchantment(Enchantment.silkTouch, 1);
 //            }

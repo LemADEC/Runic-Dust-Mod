@@ -10,6 +10,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -46,7 +47,7 @@ public class DETeleportation extends PoweredEvent
     {
         super.onInit(e);
         World world = e.worldObj;
-        ItemStack[] req = this.sacrifice(e, new ItemStack[] {new ItemStack(Item.eyeOfEnder, 1)});
+        ItemStack[] req = this.sacrifice(e, new ItemStack[] {new ItemStack(Items.ender_eye, 1)});
 
         if (req[0].stackSize != 0 || !takeXP(e, 5))
         {
@@ -90,8 +91,9 @@ public class DETeleportation extends PoweredEvent
                 if (gamt == 0 && bamt == 0)
                 {
                     fnd = i;
-                    e.data[0] = world.getBlockId(i[0], i[1] - 1, i[2]);
-                    DustMod.log("Warp ID set to " + e.data[0] + " " + (Block.blocksList[e.data[0]].getUnlocalizedName()));
+                    Block block = world.getBlock(i[0], i[1] - 1, i[2]); 
+                    e.data[0] = Block.getIdFromBlock(block);
+                    DustMod.log("Warp ID set to " + e.data[0] + " " + (block.getUnlocalizedName()));
                 }
             }
             else
@@ -106,7 +108,7 @@ public class DETeleportation extends PoweredEvent
             {
                 if (x == 0 || z == 0)
                 {
-                    if (DustMod.isDust(world.getBlockId(fnd[0] + x, fnd[1], fnd[2] + z)))
+                    if (DustMod.isDust(world.getBlock(fnd[0] + x, fnd[1], fnd[2] + z)))
                     {
                         TileEntityDust ted = (TileEntityDust) world.getTileEntity(x + fnd[0], fnd[1], fnd[2] + z);
                         int gamt = 4;
@@ -180,7 +182,7 @@ public class DETeleportation extends PoweredEvent
         	break;
         }
 //        e.worldObj.setBlockWithNotify(cx,cy,cz,Block.brick.blockID);
-        e.data[0] = e.worldObj.getBlockId(cx,cy,cz);
+        e.data[0] = Block.getIdFromBlock(e.worldObj.getBlock(cx,cy,cz));
 
 //        System.out.println("Derp set " + e.data[0] + " " + Block.blocksList[e.data[0]].getBlockName() + " " + e.rot);
         e.posY += 1.5D;

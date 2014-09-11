@@ -7,11 +7,11 @@ package dustmod.runes;
 import java.util.List;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import dustmod.EntityDust;
@@ -49,7 +49,7 @@ public class DEXP extends PoweredEvent
         e.data[0] = 24000;
         e.posY += 1D;
 
-        ItemStack[] req = new ItemStack[]{new ItemStack(Item.netherStar, 1)};
+        ItemStack[] req = new ItemStack[]{new ItemStack(Items.nether_star, 1)};
         req = this.sacrifice(e, req);
         if (!checkSacrifice(req))
         {
@@ -73,7 +73,7 @@ public class DEXP extends PoweredEvent
     		e.setRenderBeam(true);
         }
 
-        EntityPlayer player = e.worldObj.getPlayerEntityByName(e.summonerUN);
+        EntityPlayer player = e.getSummoner();
 
 //        if(true/*!e.worldObj.multiplayerWorld*/) player = ModLoader.getMinecraftInstance().thePlayer;
         if (player == null)
@@ -102,21 +102,22 @@ public class DEXP extends PoweredEvent
                 this.addFuel(e, ((EntityItem)et).getEntityItem().stackSize * 10);
             }
 
-            if (et instanceof EntityLiving && et != player)
+            if (et instanceof EntityLivingBase && et != player)
             {
                 if (et.motionY >= 0)
                 {
                     continue;
                 }
 
-                EntityLiving el = (EntityLiving)et;
+                EntityLivingBase el = (EntityLivingBase)et;
 
                 if (el.getHealth() <= 0)
                 {
                     continue;
                 }
 
-                int exp = el.experienceValue;//DustModEntityBouncer.getExperiencePoints(el, null);
+                //TODO fetch Exp from Entity
+                int exp = 0;//DustModEntityBouncer.getExperiencePoints(el, null);
                 el.attackEntityFrom(DamageSource.magic, 10000000);
 
                 for (int mul = 0; mul < 2; mul++)

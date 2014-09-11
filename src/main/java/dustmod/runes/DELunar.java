@@ -4,6 +4,7 @@
  */
 package dustmod.runes;
 
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import dustmod.DustEvent;
@@ -28,7 +29,7 @@ public class DELunar extends DustEvent
     public void onInit(EntityDust e)
     {
         e.setRenderStar(true);
-        ItemStack[] req = this.sacrifice(e, new ItemStack[] {new ItemStack(Item.netherStalkSeeds, 4), new ItemStack(Item.dyePowder, 1, 4)});
+        ItemStack[] req = this.sacrifice(e, new ItemStack[] {new ItemStack(Items.nether_wart, 4), new ItemStack(Items.dye, 1, 4)});
 
         if (req[0].stackSize != 0 || req[1].stackSize != 0)
         {

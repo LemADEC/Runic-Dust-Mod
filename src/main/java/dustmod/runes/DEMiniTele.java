@@ -6,6 +6,7 @@ package dustmod.runes;
 
 import java.util.List;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
@@ -101,7 +102,7 @@ public class DEMiniTele extends DustEvent
         cy = (int)e.posY - 1;
         cz = (int)e.posZ - (e.posZ<0?1:0);
 //        world.setBlockWithNotify(cx,cy,cz, Block.brick.blockID);
-        e.data[0] = world.getBlockId(cx,cy,cz);
+        e.data[0] = Block.getIdFromBlock(world.getBlock(cx,cy,cz));
 //        for (int x = -1; x <= 1 && fnd != null; x++) {
 //            for (int z = -1; z <= 1; z++) {
 //                if (x == 0 || z == 0) {

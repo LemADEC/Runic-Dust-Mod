@@ -8,7 +8,9 @@ import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -44,7 +46,7 @@ public class DELiftTerrain extends DustEvent
 
     public void onInit(EntityDust e)
     {
-        ItemStack[] req = new ItemStack[] {new ItemStack(Block.plantRed, 1)};
+        ItemStack[] req = new ItemStack[] {new ItemStack(Blocks.red_flower, 1)};
         req = this.sacrifice(e, req);
 
         if (!checkSacrifice(req) || !takeXP(e, 10))
@@ -173,12 +175,12 @@ public class DELiftTerrain extends DustEvent
 
                     if (t != height)
                     {
-                        int b = world.getBlockId(x, y + c, z);
+                        Block B = world.getBlock(x, y + c, z);
                         int m = world.getBlockMetadata(x, y + c, z);
-                        int nb = world.getBlockId(x, y + c + 1, z);
+                        Block nB = world.getBlock(x, y + c + 1, z);
 
 //                        System.out.println("fuck it all " + nb + " " + b + " " + world.getBlockId(x,y+c+2,z));;
-                        if (world.getBlockId(x, y + c + 2, z) == 0 && b != 0)
+                        if (world.isAirBlock(x, y + c + 2, z) && B.getMaterial() != Material.air)
                         {
 //                            System.out.println("GOOOOOOO");
                             List<Entity> ents = getEntities(e.worldObj, (double) x + 0.5D, (double) y + (double)c + 1D, (double) z + 0.5D, 1D);
@@ -201,8 +203,6 @@ public class DELiftTerrain extends DustEvent
                             }
                         }
 
-                        Block B = Block.blocksList[b];
-                        Block nB = Block.blocksList[nb];
                         boolean isContainer = false;
                         TileEntity te = null;
                         NBTTagCompound tag = null;
@@ -229,9 +229,9 @@ public class DELiftTerrain extends DustEvent
                         //                        e.fade();
                         //                        return;
                         //                    }
-                        world.setBlock(x, y + c + 1, z, 0, 0,3);
-                        world.setBlock(x, y + c + 1, z, b, m,3);
-                        world.setBlock(x, y + c, z, Block.stone.blockID,0,3);
+                        world.setBlockToAir(x, y + c + 1, z);
+                        world.setBlock(x, y + c + 1, z, B, m,3);
+                        world.setBlock(x, y + c, z, Blocks.stone,0,3);
 
                         if (isContainer)
                         {
@@ -292,7 +292,7 @@ public class DELiftTerrain extends DustEvent
 
     private void loadArea(EntityDust e)
     {
-        this.findRutAreaFlat(e, Block.blockClay.blockID);
+        this.findRutAreaFlat(e, Blocks.clay);
         int min = e.getY();
         int max = 0;
 
@@ -328,7 +328,7 @@ public class DELiftTerrain extends DustEvent
     {
         if (e.rutPoints == null)
         {
-            this.findRuts(e, Block.blockClay.blockID);
+            this.findRuts(e, Blocks.clay);
         }
 
         super.onUnload(e);

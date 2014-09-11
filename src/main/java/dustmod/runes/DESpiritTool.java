@@ -8,6 +8,8 @@ import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import dustmod.DustEvent;
@@ -96,13 +98,13 @@ public class DESpiritTool extends DustEvent
 //            e.fizzle();
 //            return;
 //        }
-        ItemStack[] req = new ItemStack[] {new ItemStack(Item.pickaxeGold, 1)};
+        ItemStack[] req = new ItemStack[] {new ItemStack(Items.golden_pickaxe, 1)};
         req = this.sacrifice(e, req);
 
         if (!checkSacrifice(req))
         {
 //            System.out.println("check1");
-            req = new ItemStack[] {new ItemStack(Item.swordGold, 1), new ItemStack(Block.glowStone, 1)};
+            req = new ItemStack[] {new ItemStack(Items.golden_sword, 1), new ItemStack(Blocks.glowstone, 1)};
             req = this.sacrifice(e, req);
 
             if (!checkSacrifice(req))
@@ -119,7 +121,7 @@ public class DESpiritTool extends DustEvent
         }
         else
         {
-            req = new ItemStack[] {new ItemStack(Block.tnt, 4)};
+            req = new ItemStack[] {new ItemStack(Blocks.tnt, 4)};
             req = this.sacrifice(e, req);
 
             if (!checkSacrifice(req))
@@ -149,18 +151,18 @@ public class DESpiritTool extends DustEvent
         if (e.ticksExisted > 20)
         {
             Entity en = null;
-            int itemID = 0;
+            Item item = null;
 
             if (e.data[0] == 1)
             {
-                itemID = DustMod.spiritPickaxe.itemID;
+            	item = DustMod.spiritPickaxe;
             }
             else if (e.data[0] == 2)
             {
-                itemID = DustMod.spiritSword.itemID;
+            	item = DustMod.spiritSword;
             }
 
-            ItemStack create =  new ItemStack(itemID, 1, 0);
+            ItemStack create =  new ItemStack(item, 1, 0);
 
             if (e.data[0] == 2)
             {

@@ -8,6 +8,8 @@ import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -37,7 +39,7 @@ public class DESpawnTorch extends DustEvent
     public void onInit(EntityDust e)
     {
         e.data[0] = 0;
-        ItemStack[] sac = new ItemStack[] {new ItemStack(Item.flint, 1)};
+        ItemStack[] sac = new ItemStack[] {new ItemStack(Items.flint, 1)};
         sac = this.sacrifice(e, sac);
 
         if (sac[0].stackSize <= 0)
@@ -73,15 +75,15 @@ public class DESpawnTorch extends DustEvent
             int x = e.getX();
             int y = e.getY();
             int z = e.getZ();
-            world.setBlock(x, y, z, 0,0,0);
-            world.setBlock(x, y, z, Block.torchWood.blockID, 0,3);
+            world.setBlockToAir(x, y, z);
+            world.setBlock(x, y, z, Blocks.torch, 0,3);
         }
         
         if(e.data[0] == 1 && e.ticksExisted%10 == 0){
             List<EntityItem> items = this.getItems(e);
             for(EntityItem i:items){
                 ItemStack item = i.getEntityItem();
-                if(item.itemID == Item.dyePowder.itemID && e.data[1] != item.getItemDamage()){
+                if(item.getItem() == Items.dye && e.data[1] != item.getItemDamage()){
                     e.data[1] = item.getItemDamage();
                     int[] color = this.getColor(item.getItemDamage());
                     e.setColorBeam(color[0], color[1], color[2]);
@@ -105,7 +107,7 @@ public class DESpawnTorch extends DustEvent
         }
         if (e.data[0] == 0)
         {
-            if (e.worldObj.getBlockId(e.getX(), e.getY(), e.getZ()) != Block.torchWood.blockID)
+            if (e.worldObj.getBlock(e.getX(), e.getY(), e.getZ()) != Blocks.torch)
             {
                 e.fade();
                 e.kill();

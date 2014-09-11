@@ -4,8 +4,8 @@
  */
 package dustmod.runes;
 
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import dustmod.EntityDust;
 import dustmod.PoweredEvent;
@@ -34,7 +34,7 @@ public class DETimeLock extends PoweredEvent
     public void onInit(EntityDust e)
     {
         super.onInit(e);
-        ItemStack[] req = new ItemStack[] {new ItemStack(Block.obsidian, 8), new ItemStack(Item.slimeBall, 4), new ItemStack(Item.dyePowder, 1, 4)};
+        ItemStack[] req = new ItemStack[] {new ItemStack(Blocks.obsidian, 8), new ItemStack(Items.slime_ball, 4), new ItemStack(Items.dye, 1, 4)};
         req = this.sacrifice(e, req);
 
         if (!checkSacrifice(req))

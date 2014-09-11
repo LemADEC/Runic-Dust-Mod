@@ -6,6 +6,8 @@ package dustmod.runes;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -36,7 +38,7 @@ public class DESpawnerCollector extends DustEvent
     {
 		e.setRenderBeam(true);
 		e.setStarScale(1.05F);
-        ItemStack[] req = new ItemStack[] {new ItemStack(Item.ingotGold, 6)};
+        ItemStack[] req = new ItemStack[] {new ItemStack(Items.gold_ingot, 6)};
         req = this.sacrifice(e, req);
 
         if (!checkSacrifice(req) || !takeXP(e, 10))
@@ -67,7 +69,7 @@ public class DESpawnerCollector extends DustEvent
         fin[1] /= 8;
         fin[2] /= 8;
 
-        if (e.worldObj.getBlockId(fin[0], fin[1], fin[2]) == Block.mobSpawner.blockID)
+        if (e.worldObj.getBlock(fin[0], fin[1], fin[2]) == Blocks.mob_spawner)
         {
         	TileEntityMobSpawner tems =(TileEntityMobSpawner)e.worldObj.getTileEntity(fin[0], fin[1], fin[2]);
 //        	String entID = tems.func_92015_a();
@@ -75,10 +77,10 @@ public class DESpawnerCollector extends DustEvent
 
             if (e.ticksExisted > 100)
             {
-                e.worldObj.setBlock(fin[0], fin[1], fin[2], 0,0,3);
+                e.worldObj.setBlockToAir(fin[0], fin[1], fin[2]);
                 EntityItem ei = new EntityItem(e.worldObj);
                 ei.setPosition(e.posX, e.posY - e.yOffset, e.posZ);
-                ItemStack item = new ItemStack(Block.mobSpawner, 1);
+                ItemStack item = new ItemStack(Blocks.mob_spawner, 1);
 //                NBTTagCompound nbt = new NBTTagCompound();
 //                item.setTagCompound(nbt);
 //                nbt.setString("EntityID", entID); 

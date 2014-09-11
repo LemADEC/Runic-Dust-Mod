@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
@@ -43,7 +44,7 @@ public class DEPowerRelay extends PoweredEvent
     public void onInit(EntityDust e)
     {
         super.onInit(e);
-        ItemStack[] req = new ItemStack[] {new ItemStack(Item.ingotIron, 3, -1)};
+        ItemStack[] req = new ItemStack[] {new ItemStack(Items.iron_ingot, 3, -1)};
         req = this.sacrifice(e, req);
 
         if (!checkSacrifice(req) || !takeXP(e, 15))

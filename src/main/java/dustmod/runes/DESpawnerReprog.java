@@ -9,11 +9,16 @@ import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.PlayerManager;
 import net.minecraft.tileentity.TileEntityMobSpawner;
-import cpw.mods.fml.common.network.PacketDispatcher;
+import net.minecraft.world.WorldServer;
 import dustmod.DustEvent;
+import dustmod.DustMod;
 import dustmod.EntityDust;
 
 /**
@@ -57,7 +62,7 @@ public class DESpawnerReprog extends DustEvent
                 EntityItem ei = (EntityItem)o;
                 ItemStack item = ei.getEntityItem();
 
-                if (item.itemID == Item.monsterPlacer.itemID)
+                if (item.getItem() == Items.spawn_egg)
                 {
                     entClass = item.getItemDamage();
                     item.stackSize--;
@@ -72,7 +77,7 @@ public class DESpawnerReprog extends DustEvent
             }
         }
 
-        ItemStack[] req = new ItemStack[] {new ItemStack(Item.enderPearl, 2)};
+        ItemStack[] req = new ItemStack[] {new ItemStack(Items.ender_pearl, 2)};
         req = this.sacrifice(e, req);
 
         if (!checkSacrifice(req) || entClass == -1 || !takeXP(e, 10))
@@ -102,18 +107,20 @@ public class DESpawnerReprog extends DustEvent
             fin[1] /= 8;
             fin[2] /= 8;
 
-            if (true || e.worldObj.getBlockId(fin[0], fin[1], fin[2]) == Block.mobSpawner.blockID)
+            if (true || e.worldObj.getBlock(fin[0], fin[1], fin[2]) == Blocks.mob_spawner)
             {
                 TileEntityMobSpawner tems = ((TileEntityMobSpawner)e.worldObj.getTileEntity(fin[0], fin[1], fin[2]));
-                tems.func_98049_a().func_98272_a(mob);
+                tems.func_145881_a().setEntityName(mob);
                 tems.validate();
                 
 //                e.worldObj.setBlockWithNotify(fin[0], fin[1], fin[2],0);
 //                e.worldObj.setBlockWithNotify(fin[0], fin[1], fin[2], Block.mobSpawner.blockID);
                 e.worldObj.markBlockForUpdate(fin[0], fin[1], fin[2]);
-                e.worldObj.setBlockTileEntity(fin[0], fin[1], fin[2],tems);
-                e.worldObj.notifyBlockChange(fin[0], fin[1], fin[2],0);
-                PacketDispatcher.sendPacketToAllAround(fin[0], fin[1], fin[2], 64, e.worldObj.getWorldInfo().getDimension(), tems.getDescriptionPacket());
+                e.worldObj.setTileEntity(fin[0], fin[1], fin[2],tems);
+                //TODO neccessary? e.worldObj.notifyBlockChange(fin[0], fin[1], fin[2],e.worldObj.getBlock(fin[0], fin[1], fin[2]));
+                
+                
+                //TODO neccessary? PacketDispatcher.sendPacketToAllAround(fin[0], fin[1], fin[2], 64, e.worldObj.getWorldInfo().getDimension(), tems.getDescriptionPacket());
 //                if(e.ticksExisted > 100){
 //                    e.worldObj.setBlockWithNotify(fin[0],fin[1],fin[2],0);
 //                    e.worldObj.markBlockNeedsUpdate(fin[0],fin[1],fin[2]);
@@ -145,7 +152,7 @@ public class DESpawnerReprog extends DustEvent
             fin[1] /= 8;
             fin[2] /= 8;
             TileEntityMobSpawner tems = ((TileEntityMobSpawner)e.worldObj.getTileEntity(fin[0], fin[1], fin[2]));
-            tems.func_98049_a().field_98287_c = 0;
+            tems.func_145881_a().field_98287_c = 0;
         }
     }
 }

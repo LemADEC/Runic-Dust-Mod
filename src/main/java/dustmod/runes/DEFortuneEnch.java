@@ -72,7 +72,7 @@ public class DEFortuneEnch extends DustEvent
 		e.setRenderBeam(true);
         e.setColorStarOuter(0, 0, 255);
         e.setColorBeam(0,0,255);
-        e.data[0] = item;
+        e.data[0] = Item.getIdFromItem(item);
     }
 
     public void onTick(EntityDust e)
@@ -82,14 +82,14 @@ public class DEFortuneEnch extends DustEvent
         if (e.ticksExisted > 20)
         {
             Entity en = null;
-            ItemStack create =  new ItemStack((int)e.data[0], 1, 0);
+            ItemStack create = new ItemStack(Item.getItemById(e.data[0]), 1, 0);
 
-            if (e.data[0] == Item.swordDiamond.itemID)
+            if (create.getItem() == Items.diamond_sword)
             {
                 create.addEnchantment(Enchantment.looting, 4);
             }
 
-            if (e.data[0] == Item.pickaxeDiamond.itemID)
+            if (create.getItem() == Items.diamond_pickaxe)
             {
                 create.addEnchantment(Enchantment.fortune, 4);
             }

@@ -8,6 +8,7 @@ import java.util.List;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
@@ -24,7 +25,7 @@ public class DEPoisonTrap extends DETrap
     public void onInit(EntityDust e)
     {
         super.onInit(e);
-        ItemStack[] sac = new ItemStack[] {new ItemStack(Item.spiderEye, 1)};
+        ItemStack[] sac = new ItemStack[] {new ItemStack(Items.spider_eye, 1)};
         sac = this.sacrifice(e, sac);
 
         if (sac[0].stackSize > 0)

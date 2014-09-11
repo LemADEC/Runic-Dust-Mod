@@ -8,8 +8,10 @@ import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
-import net.minecraft.block.BlockFluid;
+import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import dustmod.DustEvent;
@@ -39,7 +41,7 @@ public class DEObelisk extends DustEvent
     {
     	
         ItemStack[] sacrifice = new ItemStack[1];
-        sacrifice[0] = new ItemStack(Block.oreIron, 1);
+        sacrifice[0] = new ItemStack(Blocks.iron_ore, 1);
         this.sacrifice(e, sacrifice);
 
         if (sacrifice[0].stackSize != 0)
@@ -91,18 +93,15 @@ public class DEObelisk extends DustEvent
                         return;
                     }
 
-                    int b = world.getBlockId(x, y + c, z);
                     int m = world.getBlockMetadata(x, y + c, z);
-                    int nb = world.getBlockId(x, y + c + 1, z);
-                    Block B = Block.blocksList[b];
+                    Block B = world.getBlock(x, y + c, z);
 
-                    if ((b == 0 || (B != null && B instanceof BlockFluid)) && world.getBlockId(x, y + c + 2, z) != 0)
+                    if ((B.getMaterial() == Material.air || B instanceof BlockLiquid) && !world.isAirBlock(x, y + c + 2, z))
                     {
-                        b = Block.cobblestone.blockID;
-                        B = Block.cobblestone;
+                        B = Blocks.cobblestone;
                     }
 
-                    Block nB = Block.blocksList[nb];
+                    Block nB = world.getBlock(x, y + c + 1, z);
 
                     if ((B != null && B instanceof BlockContainer) && (nB != null && !(nB instanceof BlockContainer)))
                     {
@@ -110,8 +109,8 @@ public class DEObelisk extends DustEvent
                         return;
                     }
 
-                    world.setBlock(x, y + c + 1, z, b, m,3);
-                    world.setBlock(x, y + c, z, 0,0,3);
+                    world.setBlock(x, y + c + 1, z, B, m,3);
+                    world.setBlockToAir(x, y + c, z);
                 }
             }
             else
@@ -124,27 +123,25 @@ public class DEObelisk extends DustEvent
                         return;
                     }
 
-                    int b = world.getBlockId(x, y - t + e.data[0], z);
+                    Block B = world.getBlock(x, y - t + e.data[0], z);
                     int m = world.getBlockMetadata(x, y - t + e.data[0], z);
-                    int nb = world.getBlockId(x, y - t + e.data[0] + e.data[1], z);
-                    Block B = Block.blocksList[b];
-                    Block nB = Block.blocksList[nb];
-
+                    Block nB = world.getBlock(x, y - t + e.data[0] + e.data[1], z);
+                    
                     if ((B != null && B instanceof BlockContainer) || (nB != null && nB instanceof BlockContainer))
                     {
                         e.fade();
                         return;
                     }
 
-                    world.setBlock(x, y - t + e.data[0] + e.data[1], z, b, m,3);
-                    world.setBlock(x, y - t + e.data[0], z, 0,0,3);
+                    world.setBlock(x, y - t + e.data[0] + e.data[1], z, B, m,3);
+                    world.setBlockToAir(x, y - t + e.data[0], z);
                 }
             }
 
             e.data[0] += e.data[1];
         }
 
-        if (e.data[0] >= height && world.getBlockId(x, y + height - 1, z) == 0)
+        if (e.data[0] >= height && world.isAirBlock(x, y + height - 1, z))
         {
             e.data[1] = -1;
             e.data[0]--;

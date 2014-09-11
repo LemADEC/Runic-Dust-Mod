@@ -9,6 +9,7 @@ import java.util.List;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import dustmod.DustEvent;
@@ -41,7 +42,7 @@ public class DEXPStore extends DustEvent
     {
         ItemStack[] req = new ItemStack[]
         {
-            new ItemStack(Item.ingotIron, 16, -1)
+            new ItemStack(Items.iron_ingot, 16, -1)
         };
         sacrifice(e, req);
 
@@ -92,7 +93,7 @@ public class DEXPStore extends DustEvent
             {
                 EntityPlayer p = (EntityPlayer)i;
 
-                if (p.username.equals(e.summonerUN))
+                if (p.getGameProfile().getId().equals(e.getSummonerId()))
                 {
                     //                System.out.println("XP " + p.experienceTotal);
                     //                if(p.experienceTotal > 10){
@@ -194,7 +195,7 @@ public class DEXPStore extends DustEvent
     public void onRightClick(EntityDust e, TileEntityDust ted, EntityPlayer p)
     {
         super.onRightClick(e, ted, p);
-        if(p.username.equals(e.summonerUN)){
+        if(p.getGameProfile().getId().equals(e.getSummonerId())){
             e.ram = 100;
             drop(e);
         }

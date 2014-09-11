@@ -6,6 +6,7 @@ package dustmod.runes;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import dustmod.DustEvent;
@@ -34,7 +35,7 @@ public class DELillyBridge extends DustEvent
     public void onInit(EntityDust e)
     {
         World world = e.worldObj;
-        ItemStack[] req = this.sacrifice(e, new ItemStack[] {new ItemStack(Block.leaves, 4, -1)});
+        ItemStack[] req = this.sacrifice(e, new ItemStack[] {new ItemStack(Blocks.leaves, 4, -1)});
 
         if (req[0].stackSize != 0)
         {
@@ -79,10 +80,10 @@ public class DELillyBridge extends DustEvent
 
             for (int i = -1; i <= 1; i++)
             {
-                if (world.getBlockMaterial(x, y + i - 1, z) == Material.water &&
-                        world.getBlockId(x, y + i, z) == 0)
+                if (world.getBlock(x, y + i - 1, z).getMaterial() == Material.water &&
+                        world.isAirBlock(x, y + i, z))
                 {
-                    world.setBlock(x, y + i, z, Block.waterlily.blockID,0,3);
+                    world.setBlock(x, y + i, z, Blocks.waterlily,0,3);
                 }
             }
 

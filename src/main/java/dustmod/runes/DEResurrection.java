@@ -7,11 +7,11 @@ package dustmod.runes;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntitySkeleton;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import dustmod.DustEvent;
@@ -38,7 +38,7 @@ public class DEResurrection extends DustEvent
     {
 		e.setRenderStar(true);
 		e.setRenderBeam(true);
-        ItemStack[] sac = new ItemStack[] {new ItemStack(Block.slowSand, 4)};
+        ItemStack[] sac = new ItemStack[] {new ItemStack(Blocks.soul_sand, 4)};
         sac = this.sacrifice(e, sac);
 
         if (!checkSacrifice(sac))
@@ -75,42 +75,42 @@ public class DEResurrection extends DustEvent
                 break;
             }
 
-            int id = ei.getEntityItem().itemID;
+            Item item = ei.getEntityItem().getItem();
             int m = ei.getEntityItem().getItemDamage();
             int amount;
             int amt = amount = 2;
 
             for (EntityItem ent: itemstacks)
             {
-                if (ent.getEntityItem().itemID == id && ent.getEntityItem().getItemDamage() == m)
+                if (ent.getEntityItem().getItem() == item && ent.getEntityItem().getItemDamage() == m)
                 {
                     amount -= ent.getEntityItem().stackSize;
                 }
             }
 
-            if (amount <= 0 && DustMod.getEntityIDFromDrop(new ItemStack(id, 0, m), 0) != -1)
+            if (amount <= 0 && DustMod.getEntityIDFromDrop(new ItemStack(item, 0, m), 0) != -1)
             {
                 for (EntityItem ent: itemstacks)
                 {
-                    if (ent.getEntityItem().itemID == id && ent.getEntityItem().getItemDamage() == m)
+                    if (ent.getEntityItem().getItem() == item && ent.getEntityItem().getItemDamage() == m)
                     {
                         while (amt > 0 && ent.getEntityItem().stackSize > 0)
                         {
                             amt--;
-                            ItemStack item = ent.getEntityItem();
-                            item.stackSize--;
+                            ItemStack itemStack = ent.getEntityItem();
+                            itemStack.stackSize--;
                             
-                            if (item.stackSize <= 0)
+                            if (itemStack.stackSize <= 0)
                             {
                                 ent.setDead();
                             }else{
-                            	ent.setEntityItemStack(item);
+                            	ent.setEntityItemStack(itemStack);
                             }
                         }
                     }
                 }
 
-                entClass = DustMod.getEntityIDFromDrop(new ItemStack(id, 0, m), 0);
+                entClass = DustMod.getEntityIDFromDrop(new ItemStack(item, 0, m), 0);
 
                 if (entClass != -1)
                 {

@@ -6,6 +6,7 @@ package dustmod.runes;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import dustmod.DustEvent;
@@ -29,7 +30,7 @@ public class DEWall extends DustEvent
     public void onInit(EntityDust e)
     {
         e.setIgnoreRune(true);
-        ItemStack[] req = this.sacrifice(e, new ItemStack[] {new ItemStack(Block.oreIron, 1)});
+        ItemStack[] req = this.sacrifice(e, new ItemStack[] {new ItemStack(Blocks.iron_ore, 1)});
 
         if (req[0].stackSize != 0 || !this.takeXP(e, 3))
         {
@@ -65,31 +66,27 @@ public class DEWall extends DustEvent
                         return;
                     }
 
-                    int b = world.getBlockId(x + (dir ? w : 0), y - t + currentHeight, z + (dir ? 0 : w));
-                    int m = world.getBlockId(x + (dir ? w : 0), y - t + currentHeight, z + (dir ? 0 : w));
-                    int nb = world.getBlockId(x + (dir ? w : 0), y - t + currentHeight + 1, z + (dir ? 0 : w));
-                    Block B = Block.blocksList[b];
-                    Block nB = Block.blocksList[nb];
+                    int m = world.getBlockMetadata(x + (dir ? w : 0), y - t + currentHeight, z + (dir ? 0 : w));
+                    Block B = world.getBlock(x + (dir ? w : 0), y - t + currentHeight, z + (dir ? 0 : w));
+                    Block nB = world.getBlock(x + (dir ? w : 0), y - t + currentHeight + 1, z + (dir ? 0 : w));
 
                     if (B == DustMod.dust)
                     {
-                        b = 0;
-                        B = null;
+                        B = Blocks.air;
                     }
                     else if (nB == DustMod.dust)
                     {
-                        nb = 0;
-                        nB = null;
+                        nB = Blocks.air;
                     }
 
-                    if ((B != null && B instanceof BlockContainer) || (nB != null && nB instanceof BlockContainer))
+                    if (B instanceof BlockContainer || nB instanceof BlockContainer)
                     {
                         e.fade();
                         return;
                     }
 
-                    world.setBlock(x + (dir ? w : 0), y - t + currentHeight + 1, z + (dir ? 0 : w), b, m,3);
-                    world.setBlock(x + (dir ? w : 0), y - t + currentHeight, z + (dir ? 0 : w), /*(t == height+1) ? Block.brick.blockID:*/0,0,3);
+                    world.setBlock(x + (dir ? w : 0), y - t + currentHeight + 1, z + (dir ? 0 : w), B, m,3);
+                    world.setBlockToAir(x + (dir ? w : 0), y - t + currentHeight, z + (dir ? 0 : w));
                 }
             }
 

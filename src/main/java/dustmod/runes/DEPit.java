@@ -7,9 +7,12 @@ package dustmod.runes;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -60,8 +63,8 @@ public class DEPit extends DustEvent
 
         boolean advanced = (dustID > 2);
         ItemStack[] sac;//
-        if(!advanced) sac = new ItemStack[] {new ItemStack(Block.wood.blockID, 2, -1)};
-        else sac = new ItemStack[] {new ItemStack(Item.coal.itemID, 2, -1)};
+        if(!advanced) sac = new ItemStack[] {new ItemStack(Blocks.log, 2, -1)};
+        else sac = new ItemStack[] {new ItemStack(Items.coal, 2, -1)};
         sac = this.sacrifice(e, sac);
 
         if (!this.checkSacrifice(sac))
@@ -76,7 +79,7 @@ public class DEPit extends DustEvent
         World world = e.worldObj;
 
 //            world.setBlock(x, y-1, z, Block.brick.blockID);
-        if (world.getBlockId(x, y, z) != 0)
+        if (!world.isAirBlock(x, y, z))
         {
             e.fizzle();
             return;
@@ -84,15 +87,14 @@ public class DEPit extends DustEvent
 
         for (int dy = 0; dy <= dist; dy++)
         {
-            int bid = world.getBlockId(x, y - dy, z);
-            Block block = Block.blocksList[bid];
+            Block block = world.getBlock(x, y - dy, z);
 
 //            System.out.println("DERPBLOCK " + bid +" [" + (i+dy) + "," + (i+dj) + "," + (k+dk) + "] ");
-            if (block != null && bid != Block.bedrock.blockID)
+            if (block.getMaterial() != Material.air && block != Blocks.bedrock)
             {
                 block.onBlockDestroyedByPlayer(world, x, y - dy, z, world.getBlockMetadata(x, y - dy, z));
                 block.dropBlockAsItem(world, x, y - dy, z, world.getBlockMetadata(x, y - dy, z), 0);
-                world.setBlock(x, y - dy, z, 0,0,3);
+                world.setBlockToAir(x, y - dy, z);
             }
         }
 

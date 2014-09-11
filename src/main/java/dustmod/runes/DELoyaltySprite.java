@@ -16,6 +16,7 @@ import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.MathHelper;
 import dustmod.EntityDust;
 import dustmod.PoweredEvent;
@@ -52,8 +53,9 @@ public class DELoyaltySprite extends PoweredEvent
 //        ModLoader.getMinecraftInstance().thePlayer.sendChatMessage("The loyalty sprite rune is currently out of order.");
         
         e.reanimate = true;
-        EntityPlayerMP mp = (EntityPlayerMP)e.worldObj.getPlayerEntityByName(e.summonerUN);
-        if(mp != null) mp.sendChatToPlayer("The loyalty sprite rune is currently out of order.");
+        EntityPlayer player = e.getSummoner();
+        if (player != null)
+        	player.addChatMessage(new ChatComponentText("The loyalty sprite rune is currently out of order."));
     }
 
     public void onTick(EntityDust e)
@@ -79,7 +81,7 @@ public class DELoyaltySprite extends PoweredEvent
         }
         else
         {
-            EntityPlayer player = e.worldObj.getPlayerEntityByName(e.summonerUN);
+            EntityPlayer player = e.getSummoner();
 
 //            if(true/*!e.worldObj.multiplayerWorld*/) player = ModLoader.getMinecraftInstance().thePlayer;
             if (player == null)

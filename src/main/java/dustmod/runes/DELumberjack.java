@@ -7,8 +7,11 @@ package dustmod.runes;
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLeaves;
+import net.minecraft.block.BlockLog;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.item.Item;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import dustmod.DustEvent;
@@ -37,7 +40,7 @@ public class DELumberjack extends DustEvent
     {
         ItemStack[] sac = new ItemStack[]
         {
-            new ItemStack(Item.stick, 2), new ItemStack(Block.wood, 3, -1)
+            new ItemStack(Items.stick, 2), new ItemStack(Blocks.log, 3, -1)
         };
         sac = this.sacrifice(e, sac);
 
@@ -56,7 +59,7 @@ public class DELumberjack extends DustEvent
         int y = e.getY();
         int z = e.getZ();
 
-        if (e.worldObj.getBlockId(x, y, z) != Block.wood.blockID)
+        if (!(e.worldObj.getBlock(x, y, z) instanceof BlockLog))
         {
             e.fizzle();
         }
@@ -180,7 +183,7 @@ public class DELumberjack extends DustEvent
         {
             for (int a = rand.nextInt(maxdouble); a > 0; a--)
             {
-                Block.wood.dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 1);
+                Blocks.log.dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 1);
             }
         }
 
@@ -188,13 +191,13 @@ public class DELumberjack extends DustEvent
         {
             for (int a = rand.nextInt(maxstick); a > 0; a--)
             {
-                EntityItem ei = new EntityItem(world, x, y, z, new ItemStack(Item.stick.itemID, 1, 0));
+                EntityItem ei = new EntityItem(world, x, y, z, new ItemStack(Items.stick, 1, 0));
                 world.spawnEntityInWorld(ei);
             }
         }
 
-        Block.wood.dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 1);
-        world.setBlock(x, y, z, 0,0,3);
+        Blocks.log.dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 1);
+        world.setBlockToAir(x, y, z);
 
         for (int i = -2; i <= 2; i++)
         {
@@ -259,13 +262,13 @@ public class DELumberjack extends DustEvent
         {
             for (int a = rand.nextInt(maxDust); a >= 0; a--)
             {
-                EntityItem ei = new EntityItem(world, x, y, z, new ItemStack(DustMod.getItemDust().itemID, 1, 100));
+                EntityItem ei = new EntityItem(world, x, y, z, new ItemStack(DustMod.getItemDust(), 1, 100));
                 world.spawnEntityInWorld(ei);
             }
         }
 
 //        Block.wood.dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 1);
-        world.setBlock(x, y, z, 0,0,3);
+        world.setBlockToAir(x, y, z);
 
         for (int i = -2; i <= 2; i++)
         {
@@ -289,29 +292,14 @@ public class DELumberjack extends DustEvent
     }
 
     public boolean isTree(World world, int i, int j, int k){
-        int block = world.getBlockId(i,j,k);
-        if(block != Block.wood.blockID){
-            return false;
-        }
+        Block block = world.getBlock(i,j,k);
         
-//        int meta = world.getBlockMetadata(i,j,k);
-//        if(meta >= 4)
-//            return false;
-        
-        return true;
+        return block instanceof BlockLog;
     }
     public boolean isLeaves(World world, int i, int j, int k){
-        int block = world.getBlockId(i,j,k);
-        if(block != Block.leaves.blockID){
-            return false;
-        }
+        Block block = world.getBlock(i,j,k);
         
-//        int meta = world.getBlockMetadata(i,j,k);
-//        if((meta&8) == 0){
-//            return false;
-//        }
-        
-        return true;
+        return block instanceof BlockLeaves;
     }
     
     public void spawnExplosionParticle(World world, double x, double y, double z)

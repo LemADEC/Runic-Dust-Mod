@@ -9,7 +9,7 @@ import java.util.List;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
@@ -40,7 +40,7 @@ public class DEHeal extends DustEvent
 
     public void onInit(EntityDust e)
     {
-        ItemStack[] req = new ItemStack[] {new ItemStack(Item.coal.itemID, 2, -1)};
+        ItemStack[] req = new ItemStack[] {new ItemStack(Items.coal, 2, -1)};
         req = this.sacrifice(e, req);
 
         if (!checkSacrifice(req) || !takeXP(e, 2))

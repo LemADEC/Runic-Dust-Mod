@@ -8,6 +8,7 @@ import java.util.List;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
@@ -40,8 +41,8 @@ public class DESpeed extends DustEvent
     {
         ItemStack[] req = new ItemStack[]
         {
-            new ItemStack(Item.sugar, 3, -1),
-            new ItemStack(Item.blazePowder, 1, -1),
+            new ItemStack(Items.sugar, 3, -1),
+            new ItemStack(Items.blaze_powder, 1, -1),
         };
         sacrifice(e, req);
 
