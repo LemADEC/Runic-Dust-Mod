@@ -5,6 +5,7 @@ import java.util.EnumSet;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
+import cpw.mods.fml.relauncher.Side;
 
 public class TickHandler {
 	
@@ -16,7 +17,8 @@ public class TickHandler {
 		if (event.phase == Phase.START && tickTypes.contains(event.type))
 		{
 			DustMod.proxy.tickMouseManager();
-			DustMod.keyHandler.tick();
+			if (event.side == Side.SERVER)
+				DustMod.keyHandler.tick();
 		}
 	}
 

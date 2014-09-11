@@ -58,7 +58,7 @@ public class ItemWornInscription extends ItemArmor implements ISpecialArmor {
 
 	@Override
 	public String getArmorTexture(ItemStack stack, Entity entity, int slot, String type) {
-		return DustMod.path + "/wornInscription.png";
+		return "wornInscription.png";
 	}
 
 	@Override

@@ -1,5 +1,4 @@
 package dustmod.client;
-import java.io.File;
 import java.nio.FloatBuffer;
 import java.util.List;
 
@@ -12,7 +11,6 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import dustmod.DustManager;
-import dustmod.DustMod;
 import dustmod.TileEntityDustTable;
 
 public class RenderDustTable extends TileEntitySpecialRenderer
@@ -86,7 +84,7 @@ public class RenderDustTable extends TileEntitySpecialRenderer
         
         int page = (int)Math.round(tedt.pageFlipping * 2);
         if(page == 0)
-            bindTexture(new ResourceLocation("dustmod", DustMod.path + File.separator + "pages" + File.separator + "info.png"));
+            bindTexture(new ResourceLocation("dustmod", "pages/info.png"));
         else PageHelper.bindPage(getRunePageName(page));
         
 //        bindTextureByName(PageHelper.g//getPagePath((int)Math.round(tedt.pageFlipping * 2)));
@@ -96,7 +94,7 @@ public class RenderDustTable extends TileEntitySpecialRenderer
         GL11.glTranslatef(t2x, t2y, t2z);
         GL11.glRotatef(r1, 0.0F, 1.0F, 0.0F);
         GL11.glRotatef(r2, 0.0F, 0.0F, 1.0F);
-        bindTexture(new ResourceLocation("dustmod", "/dust/book.png"));
+        bindTexture(new ResourceLocation("dustmod", "textures/book.png"));
 //        System.out.println("POTATO pf " + tedt.prevFloating + " float " + tedt.floating + " f " + f);
         book.render(null, f1, f4, f5, f6, 0.0F, 0.0625F);
         GL11.glPopMatrix();

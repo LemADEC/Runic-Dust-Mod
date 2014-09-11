@@ -43,6 +43,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.common.registry.EntityRegistry;
+import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
@@ -85,7 +86,6 @@ public class DustMod {
 	public static int lapisDID = 3;
 	public static int blazeDID = 4;
 
-	public static String path = "/mods/dustmod";
 	public static String spritePath = "dustmod:";
 	public static File suggestedConfig;
 	public static int[] tex;
@@ -134,8 +134,6 @@ public class DustMod {
 	public static CommonMouseHandler keyHandler = new CommonMouseHandler();
 	public static InscriptionManager inscriptionManager = new InscriptionManager();
 
-	private static boolean hasLoaded = false;
-
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
 
@@ -181,10 +179,13 @@ public class DustMod {
 		}
 
 		dust = new BlockDust();
+		//GameRegistry.registerBlock(dust, "block.dust");
 		
 		idust = (DustModItem) (new ItemDust(dust)).setUnlocalizedName("idust").setCreativeTab(creativeTab);
+		//GameRegistry.registerItem(idust, "item.dust");
 		
 		dustTable = ((Block) new BlockDustTable()).setBlockName("dustTable").setCreativeTab(creativeTab);
+		//GameRegistry.registerBlock(dustTable, "block.dustTable");
 		
 		tome = (DustModItem) (new ItemRunicTome()).setUnlocalizedName("dustlibrary").setCreativeTab(creativeTab);
 		
@@ -238,7 +239,7 @@ public class DustMod {
 				"[DustMod] :Do not use this");
 
 		lang.addStringLocalization(dustTable.getUnlocalizedName() + ".name", "en_US",
-				"Runic LexIIcon");
+				"Runic Lexicon");
 		lang.addStringLocalization(tome.getUnlocalizedName() + ".name", "en_US",
 				"Runic Tome");
 		lang.addStringLocalization(negateSacrifice.getUnlocalizedName() + ".name",

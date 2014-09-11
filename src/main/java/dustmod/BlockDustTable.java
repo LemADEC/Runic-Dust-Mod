@@ -103,7 +103,8 @@ public class BlockDustTable extends BlockContainer
         return false;
     }
 
-    public IIcon getBlockTextureFromSideAndMetadata(int side, int meta)
+    @Override
+    public IIcon getIcon(int side, int meta)
     {
         if (side == 1)
         {
@@ -195,7 +196,8 @@ public class BlockDustTable extends BlockContainer
 	}
 
     @SideOnly(Side.CLIENT)
-    public void func_94332_a(IIconRegister iconRegister)
+    @Override
+    public void registerBlockIcons(IIconRegister iconRegister)
     {
         this.topTex = iconRegister.registerIcon(DustMod.spritePath + "table_top");
         this.sideTex = iconRegister.registerIcon(DustMod.spritePath + "table_side");

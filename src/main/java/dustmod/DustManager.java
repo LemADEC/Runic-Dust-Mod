@@ -179,7 +179,7 @@ public class DustManager
     
     
     /**
-     * Register a new DustShape into the local system. The lexIIcon image will be 
+     * Register a new DustShape into the local system. The Lexicon image will be 
      * generated automatically if missing.
      * 
      * @param shape The DustShape object that stores all the shape information

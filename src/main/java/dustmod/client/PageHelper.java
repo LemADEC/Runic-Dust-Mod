@@ -8,10 +8,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.logging.Level;
@@ -19,16 +17,8 @@ import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 
-import org.lwjgl.opengl.GL11;
-
-import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GLAllocation;
-import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.resources.DefaultResourcePack;
-import net.minecraft.client.resources.ResourcePackRepository;
-import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
 import dustmod.DustItemManager;
 import dustmod.DustMod;
@@ -75,10 +65,10 @@ public class PageHelper
         images = new HashMap<String, BufferedImage>();
         try
         {
-            background = getImage(DustMod.path + "/pages" + "/background.png");
-            backgroundIns = getImage(DustMod.path + "/pages" + "/backgroundIns.png");
-            shade = getImage(DustMod.path + "/pages" + "/shade.png");
-            colors = getImage(DustMod.path + "/pages" + "/colors.png");
+            background = getImage("pages" + "/background.png");
+            backgroundIns = getImage("pages" + "/backgroundIns.png");
+            shade = getImage("pages" + "/shade.png");
+            colors = getImage("pages" + "/colors.png");
 
             bgw = background.getWidth();
             bgh = background.getHeight();
@@ -86,8 +76,8 @@ public class PageHelper
 //            boolean success = new File(folder).mkdir();
 //            if (success)
 //            {
-//            	DustMod.log(Level.INFO,"LexIIcon Folder " + new File(folder).getAbsolutePath() + " created.");
-//                System.out.println("[DustMod] LexIIcon Folder " + new File(folder).getAbsolutePath() + " created.");
+//            	DustMod.log(Level.INFO,"Lexicon Folder " + new File(folder).getAbsolutePath() + " created.");
+//                System.out.println("[DustMod] Lexicon Folder " + new File(folder).getAbsolutePath() + " created.");
 //            }
 //            new File(runeFolder).mkdirs();
 //            new File(insFolder).mkdirs();
@@ -111,8 +101,8 @@ public class PageHelper
         
 //        File file = new File(insFolder + name + ".png");
 //        if(file.exists()) return;
-//        DustMod.log(Level.INFO, "LexIIcon Inscription entry for " + name + " not found! Generating... [" + file.getAbsolutePath() + "]");
-//        System.out.println("[DustMod] LexIIcon Inscription entry for " + name + " not found! Generating...");
+//        DustMod.log(Level.INFO, "Lexicon Inscription entry for " + name + " not found! Generating... [" + file.getAbsolutePath() + "]");
+//        System.out.println("[DustMod] Lexicon Inscription entry for " + name + " not found! Generating...");
         
         int[][]values = event.referenceDesign;
         int width = values[0].length;
@@ -241,8 +231,8 @@ public class PageHelper
         
 //        File file = new File(runeFolder + name + ".png");
 //        if(file.exists()) return;
-//        DustMod.log(Level.FINEST, "LexIIcon Rune entry for " + name + " not found! Generating...");
-//        System.out.println("[DustMod] LexIIcon Rune entry for " + name + " not found! Generating...");
+//        DustMod.log(Level.FINEST, "Lexicon Rune entry for " + name + " not found! Generating...");
+//        System.out.println("[DustMod] Lexicon Rune entry for " + name + " not found! Generating...");
         
         int[][][] values = shape.data;
         int width = shape.data[0][0].length;

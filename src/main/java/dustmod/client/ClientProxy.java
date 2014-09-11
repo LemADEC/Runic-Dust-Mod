@@ -44,12 +44,12 @@ public class ClientProxy extends CommonProxy {
 	
 	@Override
 	public void checkRunePage(DustShape shape) {
-		PageHelper.instance.checkRuneImage(shape);
+		PageHelper.checkRuneImage(shape);
 	}
 	
 	@Override
 	public void checkInscriptionPage(InscriptionEvent shape) {
-		PageHelper.instance.checkInscriptionImage(shape);
+		PageHelper.checkInscriptionImage(shape);
 	}
 	
 	@Override

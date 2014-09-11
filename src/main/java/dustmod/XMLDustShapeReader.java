@@ -1,10 +1,7 @@
 package dustmod;
 
-import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.logging.Level;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -36,14 +33,14 @@ public class XMLDustShapeReader extends DefaultHandler {
 	private DustEvent event;
 	private String runeFile;
 	
-	public static void readAndRegiterShape(String runeFile, DustEvent e){
+	public static void readAndRegisterShape(String runeFile, DustEvent e){
 		new XMLDustShapeReader(runeFile,e).run();
 	}
 	
 	private XMLDustShapeReader(String runeFile, DustEvent e) {
 		super();
 		this.event = e;
-		this.runeFile = (!runeFile.startsWith("/") ? "/":"") + runeFile;
+		this.runeFile = runeFile;
 	}
 	
 	private void run(){
@@ -53,12 +50,12 @@ public class XMLDustShapeReader extends DefaultHandler {
 			xr.setErrorHandler(this);
 
 			
-			InputStream fileStream = XMLDustShapeReader.class
+			InputStream fileStream = this.getClass().getClassLoader()
 					.getResourceAsStream(runeFile);
 
 			xr.parse(new InputSource(fileStream));
 		} catch (Exception ex) {
-			DustMod.logger.error("Unable to read rune XML file! " + runeFile, ex.getMessage());
+			DustMod.logger.error("Unable to read rune XML file! " + runeFile, ex);
 			ex.printStackTrace();
 		}
 	}

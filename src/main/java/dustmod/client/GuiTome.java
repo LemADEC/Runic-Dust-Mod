@@ -306,7 +306,7 @@ public class GuiTome extends GuiScreen
 //    	System.out.println("RAWR " + DustManager.isEmpty() + " " + InscriptionManager.isEmpty());
         //int i = mc.renderEngine.getTexture(DustMod.path + "/tomeGui.png");
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        mc.renderEngine.bindTexture(new ResourceLocation("dustmod", DustMod.path + "/tomeGui.png"));
+        mc.renderEngine.bindTexture(new ResourceLocation("dustmod", "tomeGui.png"));
 //        mc.renderEngine.bindTexture(mc.renderEngine.getTexture(RenderDustTable.getPagePath(page)));
         int j = (width - xSize) / 2 - offX;
         int k = (height - ySize) / 2;
@@ -328,18 +328,18 @@ public class GuiTome extends GuiScreen
         if(isRunes()){
 	        if(getRunePage() == 0){
 	        	if(DustManager.isEmpty()){
-	        		mc.renderEngine.bindTexture(new ResourceLocation("dustmod", DustMod.path + "/pages" + "/no_runes.png"));
+	        		mc.renderEngine.bindTexture(new ResourceLocation("dustmod", "pages/no_runes.png"));
 	        	}else {
-	        		mc.renderEngine.bindTexture(new ResourceLocation("dustmod", DustMod.path + "/pages/info.png"));
+	        		mc.renderEngine.bindTexture(new ResourceLocation("dustmod", "pages/info.png"));
 	        	}
 	        }
 	        else PageHelper.bindPage(RenderDustTable.getRunePageName(getRunePage()));
         }else {
 	        if(getInsPage() == 0){
 	        	if(InscriptionManager.isEmpty()){
-	        		mc.renderEngine.bindTexture(new ResourceLocation("dustmod", DustMod.path + "/pages" + "/no_inscriptions.png"));
+	        		mc.renderEngine.bindTexture(new ResourceLocation("dustmod", "pages/no_inscriptions.png"));
 	        	}else {
-	        		mc.renderEngine.bindTexture(new ResourceLocation("dustmod", DustMod.path + "/pages" + "/info.png"));
+	        		mc.renderEngine.bindTexture(new ResourceLocation("dustmod", "pages/info.png"));
 	        	}
 	        }
 	        else PageHelper.bindPage(InscriptionManager.getEventInOrder(getInsPage() -1).getIDName());
@@ -349,10 +349,10 @@ public class GuiTome extends GuiScreen
         GL11.glPopMatrix();
         
         if(isRunes()){
-        	mc.renderEngine.bindTexture(new ResourceLocation("dustmod", DustMod.path + "/tomeGui.png"));
+        	mc.renderEngine.bindTexture(new ResourceLocation("dustmod", "tomeGui.png"));
         	drawTexturedModalRect(j-6,k,12,0,12,ySize);
         }else {
-        	mc.renderEngine.bindTexture(new ResourceLocation("dustmod", DustMod.path + "/tomeGui.png"));
+        	mc.renderEngine.bindTexture(new ResourceLocation("dustmod", "tomeGui.png"));
         	drawTexturedModalRect(j-6,k,0,0,12,ySize);
         }
     }

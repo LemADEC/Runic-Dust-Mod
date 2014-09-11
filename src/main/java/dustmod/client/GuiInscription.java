@@ -39,7 +39,7 @@ public class GuiInscription extends GuiContainer {
 	protected void drawGuiContainerBackgroundLayer(float var1, int var2,
 			int var3) {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.renderEngine.bindTexture(new ResourceLocation("dustmod", DustMod.path + "/inscription.png"));
+        this.mc.renderEngine.bindTexture(new ResourceLocation("dustmod", "inscription.png"));
         int x = (width - xSize) / 2;
         int y = (height - ySize) / 2;
         this.drawTexturedModalRect(x, y, 0, 0, xSize, ySize);
@@ -56,7 +56,7 @@ public class GuiInscription extends GuiContainer {
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.renderEngine.bindTexture(new ResourceLocation("dustmod", DustMod.path + "/inscription.png"));
+        this.mc.renderEngine.bindTexture(new ResourceLocation("dustmod", "inscription.png"));
 
 		Slot info = this.inventorySlots.getSlot(0);
 		if(info.getHasStack() && insc.canEdit()){

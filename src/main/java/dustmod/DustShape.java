@@ -124,7 +124,7 @@ public class DustShape {
 
 		if (w > 32 || l > 32) {
 			throw new IllegalArgumentException("Rune dimensions too big! "
-					+ name + " Max:22x32");
+					+ name + " Max:32x32");
 		}
 
 		this.id = id;
