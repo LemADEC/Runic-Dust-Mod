@@ -149,6 +149,7 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
                     
                     renderblocks.setRenderBoundsFromBlock(block);
                     renderblocks.renderStandardBlockWithColorMultiplier(block, i, j, k, r, g, b);
+                    //renderblocks.setOverrideBlockTexture(p_147757_1_);
                     
                     if(drawHightlight){
                         if(meta == BlockDust.ACTIVATING_DUST) {

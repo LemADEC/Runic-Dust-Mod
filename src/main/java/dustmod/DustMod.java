@@ -5,18 +5,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -24,13 +18,15 @@ import net.minecraft.item.Item.ToolMaterial;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.event.world.WorldEvent;
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.FMLCommonHandler;
+
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -43,7 +39,6 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.common.registry.EntityRegistry;
-import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
@@ -179,13 +174,10 @@ public class DustMod {
 		}
 
 		dust = new BlockDust();
-		//GameRegistry.registerBlock(dust, "block.dust");
 		
 		idust = (DustModItem) (new ItemDust(dust)).setUnlocalizedName("idust").setCreativeTab(creativeTab);
-		//GameRegistry.registerItem(idust, "item.dust");
 		
 		dustTable = ((Block) new BlockDustTable()).setBlockName("dustTable").setCreativeTab(creativeTab);
-		//GameRegistry.registerBlock(dustTable, "block.dustTable");
 		
 		tome = (DustModItem) (new ItemRunicTome()).setUnlocalizedName("dustlibrary").setCreativeTab(creativeTab);
 		
@@ -225,6 +217,10 @@ public class DustMod {
 		GameRegistry.registerBlock(dust, ItemBlock.class, dust.getUnlocalizedName());
 		GameRegistry.registerBlock(dustTable, ItemBlock.class, dustTable.getUnlocalizedName());
 		GameRegistry.registerBlock(rutBlock, ItemBlock.class, rutBlock.getUnlocalizedName());
+		
+		GameRegistry.registerItem(idust, idust.getUnlocalizedName());
+		GameRegistry.registerItem(tome, tome.getUnlocalizedName());
+		GameRegistry.registerItem(chisel, chisel.getUnlocalizedName());
 
 		GameRegistry.registerTileEntity(TileEntityDust.class, "dusttileentity");
 		GameRegistry.registerTileEntity(TileEntityDustTable.class,

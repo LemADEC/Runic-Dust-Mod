@@ -597,7 +597,8 @@ public class BlockDust extends BlockContainer {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public void func_94332_a(IIconRegister iconRegister) {
+	@Override
+	public void registerBlockIcons(IIconRegister iconRegister) {
 		this.topTexture = iconRegister.registerIcon(DustMod.spritePath + "dust_top");
 		this.sideTexture = iconRegister.registerIcon(DustMod.spritePath + "dust_side");
 	}

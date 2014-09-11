@@ -161,13 +161,13 @@ public class ItemDust extends DustModItem
     }
 
     @SideOnly(Side.CLIENT)
-
+    @Override
     /**
      * Gets an IIcon index based on an item's damage value and the given render pass
      */
-    public IIcon getIIconFromDamageForRenderPass(int meta, int rend)
+    public IIcon getIcon(ItemStack stack, int pass)
     {
-    	if(rend == 0) return mainIIcon;
+    	if(pass == 0) return mainIIcon;
     	else return subIIcon;
     }
     
