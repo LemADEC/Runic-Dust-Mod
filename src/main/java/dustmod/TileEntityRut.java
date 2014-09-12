@@ -13,6 +13,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.fluids.FluidRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
 
@@ -29,9 +30,8 @@ public class TileEntityRut extends TileEntity
     public int maskMeta;
     public Block prevFluid;
     public Block fluid;
-    public int[] ruts;
+    public boolean[] ruts;
     public boolean isBeingUsed = false;
-    public boolean isDead = false;
     public int ticksExisted = 0;
     
     public int dustEntID;
@@ -39,28 +39,15 @@ public class TileEntityRut extends TileEntity
     private boolean hasFlame = false;
     private int fr,fg,fb; //flame rgb
     
-    public boolean[][][] neighborSolid = null;
-
-    public boolean changed = true;
+    public boolean[] neighborSolid = null;
 
     public TileEntityRut()
     {
     	if(hardnessStandard == -1){
     		 hardnessStandard = Blocks.gravel.getBlockHardness(worldObj,xCoord,yCoord,zCoord);
     	}
-        ruts = new int[RUT_COUNT * RUT_COUNT * RUT_COUNT];
-
-        for (int i = 0; i < RUT_COUNT * RUT_COUNT * RUT_COUNT; i++)
-        {
-            ruts[i] = 0;
-        }
-    }
-
-    public boolean hasChanged()
-    {
-        boolean rtn = changed;
-        changed = false;
-        return rtn;
+    	
+        ruts = new boolean[RUT_COUNT * RUT_COUNT * RUT_COUNT];
     }
 
     @Override
@@ -70,13 +57,11 @@ public class TileEntityRut extends TileEntity
 
         if (neighborSolid == null)
         {
-            neighborSolid = new boolean[3][3][3];
             updateNeighbors();
         }
 
         if (isEmpty() || (maskBlock instanceof BlockFalling && BlockFalling.func_149831_e(worldObj, xCoord, yCoord - 1, zCoord)))
         {
-            isDead = true;
             worldObj.setBlock(xCoord, yCoord, zCoord, maskBlock, maskMeta, 3);
             this.invalidate();
             return;
@@ -173,21 +158,23 @@ public class TileEntityRut extends TileEntity
         if (neighborSolid == null)
         {
         	rtn = true;
-            neighborSolid = new boolean[3][3][3];
+            neighborSolid = new boolean[3 * 3 * 3];
         }
 
-        changed = true;
+        for (int x = -1; x <= 1; x++) {
+            for (int y = -1; y <= 1; y++) {
+                for (int z = -1; z <= 1; z++) {
+					boolean prev = neighborSolid[(x + 1) * 9 + (y + 1) * 3 + z + 1];
+					Block block = worldObj.getBlock(xCoord + x, yCoord + y, zCoord + z);
+					boolean next = (block != null && (block.isOpaqueCube() || block == DustMod.rutBlock));
 
-        for (int i = -1; i <= 1; i++)
-            for (int j = -1; j <= 1; j++)
-                for (int k = -1; k <= 1; k++)
-                {
-                	boolean prev = neighborSolid[i + 1][j + 1][k + 1]; 
-                    Block block = worldObj.getBlock(xCoord + i, yCoord + j, zCoord + k);
-                    boolean next = (block != null && (block.isOpaqueCube() || block == DustMod.rutBlock));
-                    if(prev != next) rtn = true;
-                    neighborSolid[i + 1][j + 1][k + 1] = next;
+					if (prev != next)
+						rtn = true;
+
+					neighborSolid[(x + 1) * 9 + (y + 1) * 3 + z + 1] = next;
                 }
+            }
+        }
         return rtn;
     }
 
@@ -198,7 +185,7 @@ public class TileEntityRut extends TileEntity
             updateNeighbors();
         }
 
-        return neighborSolid[ix + 1][iy + 1][iz + 1];
+        return neighborSolid[(ix + 1) * 9 + (iy + 1) * 3 + iz + 1];
     }
 
     @Override
@@ -214,12 +201,25 @@ public class TileEntityRut extends TileEntity
         UniqueIdentifier maskIdent = GameRegistry.findUniqueIdentifierFor(maskBlock);
         UniqueIdentifier fluidIdent = GameRegistry.findUniqueIdentifierFor(fluid);
 
-        tag.setString("maskBlock", maskIdent.modId + ":" + maskIdent.name);
-        tag.setInteger("maskMeta", maskMeta);
-        tag.setString("fluid", fluidIdent.modId + ":" + fluidIdent.name);
+        if (maskIdent != null) {
+        	tag.setString("maskBlock", maskIdent.modId + ":" + maskIdent.name);
+        	tag.setInteger("maskMeta", maskMeta);
+        }
+        if (fluidIdent != null) {
+        	tag.setString("fluid", fluidIdent.modId + ":" + fluidIdent.name);
+        }
+        
         tag.setBoolean("isBeingUsed", isBeingUsed);
         
-        tag.setIntArray("ruts", ruts);
+        int rutValue = 0;
+        
+        for (int i = 0; i < RUT_COUNT * RUT_COUNT * RUT_COUNT; i++) {
+        	if (ruts[i]) {
+        		rutValue |= 1 << i;
+        	}
+        }
+        
+        tag.setInteger("ruts", rutValue);
         
         tag.setBoolean("flame", hasFlame);
         tag.setInteger("flameR", fr);
@@ -264,7 +264,7 @@ public class TileEntityRut extends TileEntity
         }
         else
         {
-            fluid = Blocks.water;
+            fluid = null;
         }
 
         if (tag.hasKey("isBeingUsed"))
@@ -274,7 +274,11 @@ public class TileEntityRut extends TileEntity
         
         if (tag.hasKey("ruts"))
         {
-        	ruts = tag.getIntArray("ruts");
+        	int rutValue = tag.getInteger("ruts");
+        	
+            for (int i = 0; i < RUT_COUNT * RUT_COUNT * RUT_COUNT; i++) {
+            	ruts[i] = (rutValue & (1 << i)) != 0;
+            }
         }
         
         if(tag.hasKey("flame")){
@@ -292,7 +296,7 @@ public class TileEntityRut extends TileEntity
 //        return b == null || (!b.isOpaqueCube() && b != mod_DustMod.rutBlock);
 //    }
 
-    public void setRut(EntityPlayer p, int i, int j, int k, int l)
+    public void setRut(EntityPlayer p, int x, int y, int z, boolean value)
     {
     	if(p != null && !worldObj.canMineBlock(p, this.xCoord, this.yCoord, this.zCoord)) return;
         if (isBeingUsed)
@@ -300,30 +304,61 @@ public class TileEntityRut extends TileEntity
             return;
         }
 
-        changed = true;
+        if (canEdit())
+        {
+        	// Center
+        	if (x == 1 && y == 1 && z == 1) {
+        		return;
+        	}
+        	
+        	// Edges
+        	if (x != 1 && y != 1 && z != 1) {
+        		return;
+        	}
+
+        	int index = x + y * RUT_COUNT + z * RUT_COUNT * RUT_COUNT;
+        	if (ruts[index] != value) {
+        		ruts[index] = value;
+        		markDirty();
+        		worldObj.notifyBlockChange(xCoord, yCoord, zCoord, worldObj.getBlock(xCoord, yCoord, zCoord));
+                worldObj.markBlockForUpdate(xCoord,yCoord,zCoord);
+        	}
+        }
+    }
+    
+    public void toggleRut(EntityPlayer p, int x, int y, int z) {
+    	if (p != null && !worldObj.canMineBlock(p, this.xCoord, this.yCoord, this.zCoord)) return;
+        if (isBeingUsed)
+        {
+            return;
+        }
 
         if (canEdit())
         {
-            if ((i == 0 || i == 2) && i == j && (k == 0 || k == 2))
-            {
-                return;
-            }
+        	// Center
+        	if (x == 1 && y == 1 && z == 1) {
+        		return;
+        	}
+        	
+        	// Edges
+        	if (x != 1 && y != 1 && z != 1) {
+        		return;
+        	}
 
-            if ((i == 0 || i == 2) && (j == 0 || j == 2) && i != j && (k == 0 || k == 2))
-            {
-                return;
-            }
-
-            ruts[i * RUT_COUNT * RUT_COUNT + j * RUT_COUNT + k] = l;
+        	int index = x + y * RUT_COUNT + z * RUT_COUNT * RUT_COUNT;
+        	
+            ruts[index] = !ruts[index];
+            
+            markDirty();
+            worldObj.notifyBlockChange(xCoord, yCoord, zCoord, worldObj.getBlock(xCoord, yCoord, zCoord));
+            worldObj.markBlockForUpdate(xCoord,yCoord,zCoord);
         }
-
-//        System.out.println("Setting [" + i + "," + j + "," + k + "]");
-        worldObj.notifyBlockChange(xCoord, yCoord, zCoord, worldObj.getBlock(xCoord, yCoord, zCoord));
-        worldObj.markBlockForUpdate(xCoord,yCoord,zCoord);
+        
     }
-    public int getRut(int i, int j, int k)
+    
+    public boolean getRut(int x, int y, int z)
     {
-        return ruts[i * RUT_COUNT * RUT_COUNT + j * RUT_COUNT + k];
+        return ruts[x + y * RUT_COUNT + z * RUT_COUNT * RUT_COUNT];
     }
 
     public void setRenderFlame(boolean val, int r, int g, int b){
@@ -343,13 +378,13 @@ public class TileEntityRut extends TileEntity
     
     public void resetBlock()
     {
-        isDead = true;
-        worldObj.setBlock(xCoord, yCoord, zCoord, maskBlock, maskMeta,3);
+        this.invalidate();
+        worldObj.setBlock(xCoord, yCoord, zCoord, maskBlock, maskMeta, 3);
     }
 
     public boolean fluidIsFluid()
     {
-        return (fluid == null || fluid == Blocks.water || fluid == Blocks.lava);
+    	return FluidRegistry.lookupFluidForBlock(fluid) != null;
     }
 
     public void setFluid(Block fluid)
@@ -357,31 +392,23 @@ public class TileEntityRut extends TileEntity
         if (this.fluid != fluid)
         {
             this.fluid = fluid;
+            markDirty();
             worldObj.notifyBlockChange(xCoord, yCoord, zCoord, worldObj.getBlock(xCoord, yCoord, zCoord));
-            changed = true;
             worldObj.markBlockForUpdate(xCoord,yCoord,zCoord);
         }
     }
     public boolean canEdit()
     {
-        return (fluidIsFluid() || fluid.getBlockHardness(worldObj,xCoord,yCoord,zCoord) <= hardnessStandard || DustMod.Enable_Decorative_Ruts) && !isBeingUsed;
+        return (fluid == null || fluidIsFluid() || fluid.getBlockHardness(worldObj,xCoord,yCoord,zCoord) <= hardnessStandard || DustMod.Enable_Decorative_Ruts) && !isBeingUsed;
     }
 
     public boolean isEmpty()
     {
-        for (int i = 0; i < 3; i++)
-        {
-            for (int j = 0; j < 3; j++)
-            {
-                for (int k = 0; k < 3; k++)
-                {
-                    if (getRut(i, j, k) != 0)
-                    {
-                        return false;
-                    }
-                }
-            }
-        }
+    	for (boolean rut: ruts) {
+    		if (rut) {
+    			return false;
+    		}
+    	}
 
         return true;
     }

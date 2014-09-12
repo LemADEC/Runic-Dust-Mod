@@ -62,7 +62,6 @@ public class GuiInscription extends GuiContainer {
 		if(info.getHasStack() && insc.canEdit()){
 			ItemStack stack = info.getStack();
 			int slot = stack.getItemDamage();// slot = 259;
-			int id = stack.getItemDamage();
 //			System.out.println("AKSNFASNF " + slot);
 			Slot highlightSlot = this.inventorySlots.getSlot(slot+1);
 			this.drawTexturedModalRect(highlightSlot.xDisplayPosition-2, highlightSlot.yDisplayPosition-2, 0, ySize+6, 20, 20);

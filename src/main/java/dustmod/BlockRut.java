@@ -4,6 +4,7 @@ import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.BlockStaticLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,10 +16,12 @@ import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.BlockFluidBase;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidStack;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -52,7 +55,7 @@ public class BlockRut extends BlockContainer
     @Override
     public void onNeighborBlockChange(World world, int x, int y, int z, Block block)
     {
-        boolean notified = false;
+        boolean notify = false;
         //DustModBouncer.notifyBlockChange(world, i, j, k, 0);
         for (int ix = -1; ix <= 1; ix++)
         {
@@ -60,44 +63,36 @@ public class BlockRut extends BlockContainer
             {
                 for (int iz = -1; iz <= 1; iz++)
                 {
-                    if (ix == iy || ix == iz || iy == iz)
+                    if (ix != 0 || iy != 0 || iz != 0)
                     {
                         TileEntityRut ter = (TileEntityRut)world.getTileEntity(x, y, z);
                         Block check = world.getBlock(x + ix, y + iy, z + iz);
 
-                        if (ter.fluid == Blocks.air)
+                        if (ter.fluid == null)
                         {
-                            if (check == Blocks.lava)
-                            {
-                                ter.setFluid(Blocks.lava);
-                                notified = true;
-//                                mod_DustMod.notifyBlockChange(world, i, j, k, 0);
+                            if (check instanceof BlockStaticLiquid) {
+                                ter.setFluid(check);
+                                notify = true;
                             }
-                            else if (check == Blocks.water)
-                            {
-                                ter.setFluid(Blocks.water);
-                                notified = true;
-//                                mod_DustMod.notifyBlockChange(world, i, j, k, 0);
+                            else if (check instanceof BlockFluidBase) {
+                            	ter.setFluid(check);
+                            	notify = true;
                             }
                         }
-
-                        if (ter.fluid == Blocks.water)
+                        else if (ter.fluid == Blocks.water)
                         {
-                            if (check == Blocks.lava)
+                            if (check == Blocks.lava || check == Blocks.flowing_lava)
                             {
                                 ter.setFluid(Blocks.cobblestone);
-                                notified = true;
-//                                mod_DustMod.notifyBlockChange(world, i, j, k, 0);
+                                notify = true;
                             }
                         }
-
-                        if (ter.fluid == Blocks.lava)
+                        else if (ter.fluid == Blocks.lava)
                         {
-                            if (check == Blocks.water)
+                            if (check == Blocks.water || check == Blocks.flowing_water)
                             {
                                 ter.setFluid(Blocks.obsidian);
-                                notified = true;
-//                                mod_DustMod.notifyBlockChange(world, i, j, k, 0);
+                                notify = true;
                             }
                         }
                     }
@@ -114,10 +109,11 @@ public class BlockRut extends BlockContainer
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int face, float cx, float cy, float cz)
     {
 
-		if(!world.canMineBlock(player, x, y, z)) return false;
-		
-        ItemStack playerItemStack = player.getCurrentEquippedItem();
-        boolean isNull = (playerItemStack == null);
+		if (!world.canMineBlock(player, x, y, z)) {
+			return false;
+		}
+
+        ItemStack current = player.inventory.getCurrentItem();
 
         TileEntityRut ter = (TileEntityRut)world.getTileEntity(x, y, z);
 
@@ -125,61 +121,49 @@ public class BlockRut extends BlockContainer
         {
             return false;
         }
-
-//        ter.fluid = Block.obsidian.blockID;
         
-        if (/*ter.fluid == 0 && */!isNull && playerItemStack.getItem() == Items.water_bucket)
-        {
-            if (!player.capabilities.isCreativeMode)
-            {
-            	player.setCurrentItemOrArmor(0, new ItemStack(Items.bucket));
-            }
-
-            ter.setFluid(Blocks.water);
-            return true;
-        }
-
-        if (/*ter.fluid == 0 && */!isNull && playerItemStack.getItem() == Items.lava_bucket)
-        {
-            if (!player.capabilities.isCreativeMode)
-            {
-            	player.setCurrentItemOrArmor(0, new ItemStack(Items.bucket));
-            }
-
-            ter.setFluid(Blocks.lava);
-            return true;
-        }
-
-        if (!isNull && (ter.fluid == Blocks.air || ter.fluidIsFluid()))
-        {
-            if (playerItemStack.getItem() instanceof ItemBlock)
-            {
-                Block b = Block.getBlockFromItem(playerItemStack.getItem());
-
-                if (b.renderAsNormalBlock() && b.isOpaqueCube() && (b.getBlockHardness(world, x,y,z) <= TileEntityRut.hardnessStandard || DustMod.Enable_Decorative_Ruts))
+        if (current != null) {
+        	
+        	if (FluidContainerRegistry.isBucket(current)) {
+        		
+        		FluidStack fluid = FluidContainerRegistry.getFluidForFilledItem(current);
+        		if (fluid.getFluid().canBePlacedInWorld()) {
+        			ter.setFluid(fluid.getFluid().getBlock());
+        			
+        			if (!player.capabilities.isCreativeMode) {
+        				player.inventory.setInventorySlotContents(player.inventory.currentItem, new ItemStack(Items.bucket));
+        			}
+        			
+        			return true;
+        		}
+        		
+        	} else if (ter.fluid == null || ter.fluidIsFluid()) {
+        		
+        		if (current.getItem() instanceof ItemBlock) {
+        			Block block = Block.getBlockFromItem(current.getItem());
+        			
+        			if (block.renderAsNormalBlock() && block.isOpaqueCube() && (DustMod.Enable_Decorative_Ruts || block.getBlockHardness(world, x,y,z) <= TileEntityRut.hardnessStandard)) {
+        				ter.setFluid(block);
+        				
+        				if (!player.capabilities.isCreativeMode)
+                        {
+                            current.stackSize--;
+                        }
+        				
+        				return true;
+        			}
+        		}
+        	} else if (ter.fluid != null && !ter.fluidIsFluid() && (ter.fluid.getBlockHardness(world, x,y,z) <= TileEntityRut.hardnessStandard || DustMod.Enable_Decorative_Ruts)) {
+                if (current.getItem() instanceof ItemSpade)
                 {
-                    if (!player.capabilities.isCreativeMode)
-                    {
-                        playerItemStack.stackSize--;
-                    }
-
-                    ter.setFluid(b);
+                    this.dropBlockAsItem(world, x, y + 1, z, new ItemStack(ter.fluid, 1, 0));
+                    ter.setFluid(Blocks.air);
                     return true;
                 }
-            }
+        	}
         }
 
-        if (!isNull && ter.fluid != Blocks.air && !ter.fluidIsFluid() && (ter.fluid.getBlockHardness(world, x,y,z) <= TileEntityRut.hardnessStandard || DustMod.Enable_Decorative_Ruts))
-        {
-            if (playerItemStack.getItem() instanceof ItemSpade)
-            {
-                this.dropBlockAsItem(world, x, y + 1, z, new ItemStack(ter.fluid, 1, 0));
-                ter.setFluid(Blocks.air);
-                return true;
-            }
-        }
-
-        if (isNull || playerItemStack.getItem() != DustMod.chisel)
+        if (current == null || current.getItem() != DustMod.chisel)
         {
             return false;
         }
@@ -196,56 +180,13 @@ public class BlockRut extends BlockContainer
         by = (int)Math.min(2, by);
         bz = (int)Math.min(2, bz);
         
-        toggleRut(ter, player, bx,by,bz);
+        ter.toggleRut(player, bx, by, bz);
+        
+        if (ter.isEmpty()) {
+        	ter.resetBlock();
+        }
         
         return true;
-    }
-
-    public void toggleRut(TileEntityRut rut, EntityPlayer p, int x, int y, int z)
-    {
-        rut.setRut(p, x, y, z, rut.getRut(x, y, z) == 0 ? 1 : 0);
-
-        if (rut.isEmpty())
-        {
-            rut.resetBlock();
-        }
-    }
-
-    private static int determineOrientation(World world, int x, int y, int z, EntityPlayer entityplayer)
-    {
-        if (MathHelper.abs((float)entityplayer.posX - (float)x) < 2.0F && MathHelper.abs((float)entityplayer.posZ - (float)z) < 2.0F)
-        {
-            double d = (entityplayer.posY + 1.8200000000000001D) - (double)entityplayer.yOffset;
-
-            if (d - (double)y > 2D)
-            {
-                return 1;
-            }
-
-            if ((double)y - d > 0.0D)
-            {
-                return 0;
-            }
-        }
-
-        int l = MathHelper.floor_double((double)((entityplayer.rotationYaw * 4F) / 360F) + 0.5D) & 3;
-
-        if (l == 0)
-        {
-            return 2;
-        }
-
-        if (l == 1)
-        {
-            return 5;
-        }
-
-        if (l == 2)
-        {
-            return 3;
-        }
-
-        return l != 3 ? 0 : 4;
     }
 
     @Override
@@ -256,7 +197,7 @@ public class BlockRut extends BlockContainer
 //		}
         TileEntityRut ter = (TileEntityRut)world.getTileEntity(x, y, z);
 
-        if (ter.isDead)
+        if (ter == null || ter.isInvalid())
         {
         	super.breakBlock(world, x, y, z, b, m);
             return;

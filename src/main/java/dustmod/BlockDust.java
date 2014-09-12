@@ -218,8 +218,8 @@ public class BlockDust extends BlockContainer {
 				return true;
 			}
 
-			for (int dx = 0; dx < TileEntityDust.size; dx++) {
-				for (int dy = 0; dy < TileEntityDust.size; dy++) {
+			for (int dx = 0; dx < TileEntityDust.SIZE; dx++) {
+				for (int dy = 0; dy < TileEntityDust.SIZE; dy++) {
 					int dust = ted.getDust(dx, dy);
 
 					if (dust > 0) {
@@ -248,7 +248,7 @@ public class BlockDust extends BlockContainer {
 
 		ItemStack itemStack = player.getCurrentEquippedItem();
 
-		if (itemStack.getItem() == DustMod.chisel) {
+		if (itemStack != null && itemStack.getItem() == DustMod.chisel) {
 			if (world.getBlock(x, y - 1, z) == DustMod.rutBlock) {
 				return DustMod.rutBlock.onBlockActivated(world, x, y - 1, z, player, face, cx, cy, cz);
 			}
@@ -263,7 +263,7 @@ public class BlockDust extends BlockContainer {
 		}
 
 		if (player.isSneaking()) {
-			if (itemStack.getItem() != DustMod.tome) {
+			if (itemStack != null && itemStack.getItem() != DustMod.tome) {
 				onBlockClicked(world, x, y, z, player);
 			}
 
@@ -276,7 +276,7 @@ public class BlockDust extends BlockContainer {
 			return true;
 		}
 
-		if (itemStack.getItem() != DustMod.idust && itemStack.getItem() != DustMod.pouch) {
+		if (itemStack == null || (itemStack.getItem() != DustMod.idust && itemStack.getItem() != DustMod.pouch)) {
 			return false;
 		}
 
@@ -285,7 +285,7 @@ public class BlockDust extends BlockContainer {
 		if (isPouch)
 			dust = ItemPouch.getValue(itemStack);
 
-		// XXX WTH?
+		// Dust Migration
 		if (dust < 5)
 			dust *= 100;
 
@@ -293,10 +293,10 @@ public class BlockDust extends BlockContainer {
 			return false;
 		}
 
-		int rx = (int) Math.floor(cx * TileEntityDust.size);
-		int rz = (int) Math.floor(cz * TileEntityDust.size);
-		rx = Math.min(TileEntityDust.size - 1, rx);
-		rz = Math.min(TileEntityDust.size - 1, rz);
+		int rx = (int) Math.floor(cx * TileEntityDust.SIZE);
+		int rz = (int) Math.floor(cz * TileEntityDust.SIZE);
+		rx = Math.min(TileEntityDust.SIZE - 1, rx);
+		rz = Math.min(TileEntityDust.SIZE - 1, rz);
 
 		// DustMod.logger.debug("Result: {} {}", rx, rz);
 		TileEntityDust ted = (TileEntityDust) world.getTileEntity(x, y, z);
@@ -365,17 +365,17 @@ public class BlockDust extends BlockContainer {
 					int iz = z + j;
 
 					if (ix < 0) {
-						ix = TileEntityDust.size - 1;
+						ix = TileEntityDust.SIZE - 1;
 						wx--;
-					} else if (ix >= TileEntityDust.size) {
+					} else if (ix >= TileEntityDust.SIZE) {
 						ix = 0;
 						wx++;
 					}
 
 					if (iz < 0) {
-						iz = TileEntityDust.size - 1;
+						iz = TileEntityDust.SIZE - 1;
 						wz--;
-					} else if (iz >= TileEntityDust.size) {
+					} else if (iz >= TileEntityDust.SIZE) {
 						iz = 0;
 						wz++;
 					}
@@ -412,15 +412,15 @@ public class BlockDust extends BlockContainer {
 			if (ty - (double) y <= 0.02) {
 				double dx = Math.abs(tx - (double) x) - 0.02;
 				double dz = Math.abs(tz - (double) z) - 0.02;
-				int rx = (int) Math.floor(dx * TileEntityDust.size);
-				int rz = (int) Math.floor(dz * TileEntityDust.size);
+				int rx = (int) Math.floor(dx * TileEntityDust.SIZE);
+				int rz = (int) Math.floor(dz * TileEntityDust.SIZE);
 
-				if (rx >= TileEntityDust.size) {
-					rx = TileEntityDust.size - 1;
+				if (rx >= TileEntityDust.SIZE) {
+					rx = TileEntityDust.SIZE - 1;
 				}
 
-				if (rz >= TileEntityDust.size) {
-					rz = TileEntityDust.size - 1;
+				if (rz >= TileEntityDust.SIZE) {
+					rz = TileEntityDust.SIZE - 1;
 				}
 
 				if (rx < 0) {
@@ -501,7 +501,7 @@ public class BlockDust extends BlockContainer {
 			}
 		}
 
-		int size = TileEntityDust.size;
+		int size = TileEntityDust.SIZE;
 		int dx = mx - sx;
 		int dz = mz - sz;
 		int[][] map = new int[(mx - sx + 1) * size][(mz - sz + 1) * size];

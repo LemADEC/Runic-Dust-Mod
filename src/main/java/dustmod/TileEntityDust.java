@@ -6,7 +6,6 @@ package dustmod;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -25,7 +24,7 @@ import net.minecraft.tileentity.TileEntity;
  */
 public class TileEntityDust extends TileEntity implements IInventory
 {
-    public static final int size = 4;
+    public static final int SIZE = 4;
     public boolean active = false;
     private int[] pattern;
     private boolean[] dusts;
@@ -42,7 +41,7 @@ public class TileEntityDust extends TileEntity implements IInventory
 
     public TileEntityDust()
     {
-        pattern = new int[size * size];
+        pattern = new int[SIZE * SIZE];
     }
 
     public void setEntityDust(EntityDust ed)
@@ -103,7 +102,7 @@ public class TileEntityDust extends TileEntity implements IInventory
     	if(p != null && !worldObj.canMineBlock(p, this.xCoord, this.yCoord, this.zCoord)) return;
     	int last = getDust(i,j);
     	if(dust >= 1000) dust = 999;
-        pattern[i * size + j] = dust;
+        pattern[i + j * SIZE] = dust;
         dusts = null;
         
         if(dust != 0 && last != dust){
@@ -132,7 +131,7 @@ public class TileEntityDust extends TileEntity implements IInventory
 
     public int getDust(int i, int j)
     {
-    	int rtn = pattern[i * size + j];
+    	int rtn = pattern[i + j * SIZE];
     	if(rtn >= 1000){
     		return 999;
     	}
@@ -180,15 +179,15 @@ public class TileEntityDust extends TileEntity implements IInventory
                 worldObj.spawnParticle("smoke", (double) xCoord + Math.random(), (double) yCoord + Math.random() / 2D, (double) zCoord + Math.random(), 0.07, 0.01D, 0.07D);
             }
 
-            List<Integer> d = new ArrayList<Integer>();
+            List<Integer> d = new ArrayList<Integer>(SIZE * SIZE);
 
-            for (int i = 0; i < size; i++)
+            for (int i = 0; i < SIZE; i++)
             {
-                for (int j = 0; j < size; j++)
+                for (int j = 0; j < SIZE; j++)
                 {
                     if (getDust(i, j) != 0)
                     {
-                        d.add(i * 4 + j);
+                        d.add(i + j * SIZE);
                     }
                 }
             }
@@ -200,7 +199,7 @@ public class TileEntityDust extends TileEntity implements IInventory
             }
 
             int ind = d.get(rand.nextInt(d.size()));
-            this.setDust(null, (int) Math.floor(ind / size), ind % size, 0);
+            this.setDust(null, (int) Math.floor(ind % SIZE), ind / SIZE, 0);
             toDestroy = (int) Math.round(Math.random() * 200D + 100D);
             worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 
@@ -245,12 +244,12 @@ public class TileEntityDust extends TileEntity implements IInventory
 
     public int[][][] getRendArrays()
     {
-        int[][][] rtn = new int[3][size + 1][size + 1];
-        int[][] n = new int[size + 2][size + 2]; //neighbors
+        int[][][] rtn = new int[3][SIZE + 1][SIZE + 1];
+        int[][] n = new int[SIZE + 2][SIZE + 2]; //neighbors
 
-        for (int x = 0; x < size; x++)
+        for (int x = 0; x < SIZE; x++)
         {
-            for (int z = 0; z < size; z++)
+            for (int z = 0; z < SIZE; z++)
             {
                 n[x + 1][z + 1] = getDust(x,z);
                 rtn[0][x][z] = getDust(x,z);
@@ -261,9 +260,9 @@ public class TileEntityDust extends TileEntity implements IInventory
         {
             TileEntityDust ted = (TileEntityDust) worldObj.getTileEntity(xCoord - 1, yCoord, zCoord);
 
-            for (int i = 0; i < size; i++)
+            for (int i = 0; i < SIZE; i++)
             {
-                n[0][i + 1] = ted.getDust(size - 1,i);
+                n[0][i + 1] = ted.getDust(SIZE - 1,i);
             }
         }
 
@@ -271,9 +270,9 @@ public class TileEntityDust extends TileEntity implements IInventory
         {
             TileEntityDust ted = (TileEntityDust) worldObj.getTileEntity(xCoord + 1, yCoord, zCoord);
 
-            for (int i = 0; i < size; i++)
+            for (int i = 0; i < SIZE; i++)
             {
-                n[size + 1][i + 1] = ted.getDust(0,i);
+                n[SIZE + 1][i + 1] = ted.getDust(0,i);
             }
         }
 
@@ -281,9 +280,9 @@ public class TileEntityDust extends TileEntity implements IInventory
         {
             TileEntityDust ted = (TileEntityDust) worldObj.getTileEntity(xCoord, yCoord, zCoord - 1);
 
-            for (int i = 0; i < size; i++)
+            for (int i = 0; i < SIZE; i++)
             {
-                n[i + 1][0] = ted.getDust(i,size - 1);
+                n[i + 1][0] = ted.getDust(i,SIZE - 1);
             }
         }
 
@@ -291,17 +290,17 @@ public class TileEntityDust extends TileEntity implements IInventory
         {
             TileEntityDust ted = (TileEntityDust) worldObj.getTileEntity(xCoord, yCoord, zCoord + 1);
 
-            for (int i = 0; i < size; i++)
+            for (int i = 0; i < SIZE; i++)
             {
-                n[i + 1][size + 1] = ted.getDust(i,0);
+                n[i + 1][SIZE + 1] = ted.getDust(i,0);
             }
         }
 
 //        System.out.println("DERP " + Arrays.deepToString(n));
         //horiz
-        for (int x = 0; x < size; x++)
+        for (int x = 0; x < SIZE; x++)
         {
-            for (int y = 0; y < size + 1; y++)
+            for (int y = 0; y < SIZE + 1; y++)
             {
                 if (n[x + 1][y] == n[x + 1][y + 1])
                 {
@@ -311,9 +310,9 @@ public class TileEntityDust extends TileEntity implements IInventory
         }
 
         //vert
-        for (int x = 0; x < size + 1; x++)
+        for (int x = 0; x < SIZE + 1; x++)
         {
-            for (int y = 0; y < size; y++)
+            for (int y = 0; y < SIZE; y++)
             {
                 if (n[x][y + 1] == n[x + 1][y + 1])
                 {
@@ -327,9 +326,9 @@ public class TileEntityDust extends TileEntity implements IInventory
 
     public boolean isEmpty()
     {
-        for (int i = 0; i < size; i++)
+        for (int i = 0; i < SIZE; i++)
         {
-            for (int j = 0; j < size; j++)
+            for (int j = 0; j < SIZE; j++)
             {
                 if (getDust(i,j) != 0)
                 {
@@ -345,9 +344,9 @@ public class TileEntityDust extends TileEntity implements IInventory
     {
         int amt = 0;
 
-        for (int i = 0; i < size; i++)
+        for (int i = 0; i < SIZE; i++)
         {
-            for (int j = 0; j < size; j++)
+            for (int j = 0; j < SIZE; j++)
             {
                 if (getDust(i,j) != 0)
                 {
@@ -365,9 +364,9 @@ public class TileEntityDust extends TileEntity implements IInventory
         {
             dusts = new boolean[1000];
 
-            for (int i = 0; i < size; i++)
+            for (int i = 0; i < SIZE; i++)
             {
-                for (int j = 0; j < size; j++)
+                for (int j = 0; j < SIZE; j++)
                 {
                     if (getDust(i,j) >= 0)
                     {
@@ -407,9 +406,9 @@ public class TileEntityDust extends TileEntity implements IInventory
 
     public void empty()
     {
-        for (int i = 0; i < size; i++)
+        for (int i = 0; i < SIZE; i++)
         {
-            for (int j = 0; j < size; j++)
+            for (int j = 0; j < SIZE; j++)
             {
                 setDust(null, i, j, 0);
             }
@@ -418,9 +417,9 @@ public class TileEntityDust extends TileEntity implements IInventory
 
     public void copyTo(TileEntityDust ted)
     {
-        ted.dusts = Arrays.copyOf(dusts, dusts.length);
+        ted.dusts = dusts.clone();
 
-        ted.pattern = Arrays.copyOf(pattern, pattern.length);
+        ted.pattern = pattern.clone();
 
         ted.toDestroy = toDestroy;
         ted.ticksExisted = ticksExisted;
@@ -433,14 +432,14 @@ public class TileEntityDust extends TileEntity implements IInventory
     @Override
     public int getSizeInventory()
     {
-        return size * size;
+        return SIZE * SIZE;
     }
 
     @Override
     public ItemStack getStackInSlot(int loc)
     {
-        int y = loc % size;
-        int x = (loc - size) / size;
+        int y = loc % SIZE;
+        int x = (loc - SIZE) / SIZE;
 
         if (getDust(x,y) == 0)
         {
@@ -448,17 +447,17 @@ public class TileEntityDust extends TileEntity implements IInventory
         }
         else
         {
-            return new ItemStack(DustMod.idust, 1, pattern[x * size + y]);
+            return new ItemStack(DustMod.idust, 1, pattern[x + y * SIZE]);
         }
     }
 
     @Override
     public ItemStack decrStackSize(int loc, int amt)
     {
-        int y = loc % size;
-        int x = (loc - size) / size;
+        int y = loc % SIZE;
+        int x = (loc - SIZE) / SIZE;
 //        if(amt > 0){
-        pattern[x * size + y] = 0;
+        pattern[x + y * SIZE] = 0;
         return null;
 //        }else if(amt < 0){
 //            pattern[x][y] = 1;
@@ -481,14 +480,14 @@ public class TileEntityDust extends TileEntity implements IInventory
     @Override
     public void setInventorySlotContents(int loc, ItemStack item)
     {
-        int y = loc % size;
-        int x = (loc - size) / size;
+        int y = loc % SIZE;
+        int x = (loc - SIZE) / SIZE;
         int size = item.stackSize;
         int meta = item.getItemDamage();
 
         if (item.getItem() == DustMod.idust && size > 0)
         {
-            pattern[x * size + y] = meta;
+            pattern[x + y * SIZE] = meta;
         }
     }
     

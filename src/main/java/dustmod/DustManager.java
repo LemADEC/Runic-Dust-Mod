@@ -241,7 +241,7 @@ public class DustManager
      * @param shape the DustShape to register.
      */
     public static void registerRemoteDustShape(DustShape shape){
-        String name = shape.name;
+    	
         shapesRemote.add(shape);
         namesRemote.add(shape.name);
         DustMod.proxy.checkRunePage(shape);
