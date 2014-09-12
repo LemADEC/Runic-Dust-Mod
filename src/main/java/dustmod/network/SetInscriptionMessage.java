@@ -20,7 +20,7 @@ public class SetInscriptionMessage implements IMessage {
 		design = new int[16*16];
 		
 		for (int i = 0; i < design.length; i++) {
-			buf.writeInt(design[i]);
+			design[i] = buf.readInt();
 		}
 	}
 

@@ -55,7 +55,7 @@ public class RuneDeclarationMessage implements IMessage {
 			manRot[i] = buf.readInt();
 		}
 
-		DustShape shape = new DustShape(w, l, name, solid, ox, oy, cx, cy, pageNumber, id);
+		shape = new DustShape(w, l, name, solid, ox, oy, cx, cy, pageNumber, id);
 		shape.setData(design);
 		shape.setRuneName(pName);
 		shape.setNotes(notes);
