@@ -7,10 +7,10 @@ package dustmod.client;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.ResourceLocation;
 import dustmod.DustItemManager;
@@ -32,9 +33,6 @@ import dustmod.InscriptionEvent;
 public class PageHelper
 {
 
-//	public static String folder = "\\dust_pages\\";
-//    public static String runeFolder = "\\dust_pages\\runes\\";
-//    public static String insFolder = "\\dust_pages\\inscriptions\\";
     public static BufferedImage background;
     public static BufferedImage backgroundIns;
     public static BufferedImage shade;
@@ -43,18 +41,11 @@ public class PageHelper
     public static PageHelper instance;
     private static BufferedImage missingExternalTextureImage;
  
-    private static HashMap<String, BufferedImage> images;
+    private static Map<String, BufferedImage> images;
+    private static Map<String, ResourceLocation> pageTextures;
     
     public PageHelper()
-    {
-    	String minecraftPath = DustMod.suggestedConfig.getParent();
-    	File file = new File(minecraftPath);
-    	minecraftPath = file.getParent();
-    	
-//    	folder = minecraftPath + folder;
-//    	runeFolder = minecraftPath + runeFolder;
-//    	insFolder = minecraftPath + insFolder;
-    	
+    {    	
         missingExternalTextureImage = new BufferedImage(64, 64, 2);
         Graphics var3 = missingExternalTextureImage.getGraphics();
         var3.setColor(Color.WHITE);
@@ -63,6 +54,7 @@ public class PageHelper
         var3.drawString("missingEXTtex", 1, 10);
         var3.dispose();
         images = new HashMap<String, BufferedImage>();
+        pageTextures = new HashMap<String, ResourceLocation>();
         try
         {
             background = getImage("pages" + "/background.png");
@@ -72,16 +64,6 @@ public class PageHelper
 
             bgw = background.getWidth();
             bgh = background.getHeight();
-
-//            boolean success = new File(folder).mkdir();
-//            if (success)
-//            {
-//            	DustMod.log(Level.INFO,"Lexicon Folder " + new File(folder).getAbsolutePath() + " created.");
-//                System.out.println("[DustMod] Lexicon Folder " + new File(folder).getAbsolutePath() + " created.");
-//            }
-//            new File(runeFolder).mkdirs();
-//            new File(insFolder).mkdirs();
-
         } catch (IOException ex)
         {
             Logger.getLogger(PageHelper.class.getName()).log(Level.SEVERE, null, ex);
@@ -109,18 +91,8 @@ public class PageHelper
         int height = values.length;
 //        System.out.println("Checking " + name + " " + width + " " + height);
 
-
-        int pxwMax = bgw - 6;
-        int pxhMax = bgh- 6;
-
-        int pxWidth = 0;
-        int pxHeight = 0;
-
         int dW = 1; //dotWidth
         int sW = 1; //spaceWidth
-
-        pxWidth = 34;//width * dW + (width - 1) * sW;
-        pxHeight = 34;//height * dW + (height - 1) * sW;
 
         //Dust
         for (int x = 0; x < width; x++)
@@ -545,20 +517,22 @@ public class PageHelper
     }
     
     public static void bindPage(String name){
-        TextureManager re = Minecraft.getMinecraft().renderEngine;
-        re.bindTexture(new ResourceLocation("dustmod", name));
-
-        /*int tex = GLAllocation.generateTextureNames();
+        TextureManager tm = Minecraft.getMinecraft().getTextureManager();
         
-        try
-        {
-            BufferedImage image = getImage(name);
-            re.setupTexture(image, tex);
-        } catch (IOException ex)
-        {
-            Logger.getLogger(PageHelper.class.getName()).log(Level.SEVERE, null, ex);
+        ResourceLocation loc = pageTextures.get(name);
+        if (loc == null) {
+        	BufferedImage image;
+        	try {
+				image = getImage(name);
+			} catch (IOException e) {
+				DustMod.logger.catching(e);
+				image = missingExternalTextureImage;
+			}
+        	
+        	loc = tm.getDynamicTextureLocation("page_" + name, new DynamicTexture(image));
+        	pageTextures.put(name, loc);
         }
-//        re.bindTexture(tex);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, tex);*/
+        
+        tm.bindTexture(loc);
     }
 }
