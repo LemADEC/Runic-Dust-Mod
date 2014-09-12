@@ -1,6 +1,6 @@
 package dustmod;
 
-import java.util.Random;
+import java.util.ArrayList;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -10,7 +10,6 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
@@ -188,41 +187,19 @@ public class BlockRut extends BlockContainer
         
         return true;
     }
-
+    
     @Override
-    public void breakBlock(World world, int x, int y, int z, Block b, int m) {
-//		if (world.isRemote) {
-//        	super.breakBlock(world, i, j, k, b, m);
-//			return;
-//		}
+    public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune) {
+    	
         TileEntityRut ter = (TileEntityRut)world.getTileEntity(x, y, z);
 
         if (ter == null || ter.isInvalid())
         {
-        	super.breakBlock(world, x, y, z, b, m);
-            return;
+        	return new ArrayList<ItemStack>();
         }
-
-        super.onBlockDestroyedByPlayer(world, x, y, z, m);
-        int meta = ter.maskMeta;
-        Item drop = ter.maskBlock.getItemDropped(meta, new Random(), 0);
-        int mdrop = ter.maskBlock.damageDropped(meta);
-        int qdrop = ter.maskBlock.quantityDropped(new Random());
-        this.dropBlockAsItem(world, x, y, z, new ItemStack(drop, qdrop, mdrop));
-
-        if (ter.fluid != Blocks.air && !ter.fluidIsFluid() && ter.canEdit())
-        {
-            this.dropBlockAsItem(world, x, y, z, new ItemStack(ter.fluid, 1, 0));
-        }
-    	super.breakBlock(world, x, y, z, b, m);
+        
+        return ter.maskBlock.getDrops(world, x, y, z, metadata, fortune);
     }
-
-    /*
-    @Override
-    public int idDropped(int i, Random random, int j)
-    {
-        return 0;
-    }*/
 
     @Override
     public TileEntity createNewTileEntity(World world, int par2)
@@ -265,7 +242,6 @@ public class BlockRut extends BlockContainer
     public int getLightValue(IBlockAccess world, int x, int y, int z)
     {
         TileEntityRut ter = (TileEntityRut)world.getTileEntity(x, y, z);
-
         
         Block mask = ter.maskBlock;
         Block fluid = ter.fluid;
