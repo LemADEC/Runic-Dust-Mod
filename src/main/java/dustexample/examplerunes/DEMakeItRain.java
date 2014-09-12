@@ -61,10 +61,11 @@ public class DEMakeItRain extends DustEvent
         //Takes 2 full hearts (4 halves) from the closest player
         if(this.takeLife(e, 4, true)){
             
-            if(world.isRaining()){
-                world.setRainStrength(0F);
+            if(world.getWorldInfo().isRaining()){
+            	world.getWorldInfo().setRainTime(world.rand.nextInt(168000) + 12000);
+            	world.getWorldInfo().setRaining(false);
             }else{
-                world.setRainStrength((float)(Math.random()*0.8F) + 0.2F);
+            	world.getWorldInfo().setRainTime(0);
             }
         }
     }

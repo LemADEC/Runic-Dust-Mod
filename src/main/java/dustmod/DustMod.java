@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
@@ -128,6 +129,7 @@ public class DustMod {
 	public static CommonProxy proxy;
 	public static CommonMouseHandler keyHandler = new CommonMouseHandler();
 	public static InscriptionManager inscriptionManager = new InscriptionManager();
+	public static Random random = new Random();
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
