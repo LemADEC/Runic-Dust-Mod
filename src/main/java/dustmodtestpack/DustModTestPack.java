@@ -4,10 +4,10 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import dustmod.DustShape;
-import dustmod.InscriptionEvent;
-import dustmod.InscriptionManager;
-import dustmod.inscriptions.ForesightInscription;
+import dustmod.defaults.inscriptions.ForesightInscription;
+import dustmod.inscriptions.InscriptionEvent;
+import dustmod.inscriptions.InscriptionManager;
+import dustmod.runes.RuneShape;
 import dustmodtestpack.inscriptions.ErfBendInscription;
 import dustmodtestpack.inscriptions.FireballInscription;
 import dustmodtestpack.inscriptions.GlideInscription;
@@ -45,10 +45,10 @@ public class DustModTestPack {
 		int G = 200;
 		int L = 300;
 		int B = 400;
-		DustShape s;
+		RuneShape s;
 		int[][][] values;
 
-		s = new DustShape(4, 4, "launchtest", false, 0, 0, 0, 0, 200);
+		s = new RuneShape(4, 4, "launchtest", false, 0, 0, 0, 0, 200);
 		values = new int[][][] { { { G, 0, 0, G }, { 0, G, G, 0 },
 				{ 0, G, G, 0 }, { G, 0, 0, G } } };
 		s.setData(values);

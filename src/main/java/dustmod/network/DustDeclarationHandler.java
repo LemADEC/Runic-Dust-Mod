@@ -3,8 +3,8 @@ package dustmod.network;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
-import dustmod.Dust;
-import dustmod.DustItemManager;
+import dustmod.dusts.Dust;
+import dustmod.dusts.DustItemManager;
 
 public class DustDeclarationHandler implements IMessageHandler<DustDeclarationMessage, IMessage> {
 

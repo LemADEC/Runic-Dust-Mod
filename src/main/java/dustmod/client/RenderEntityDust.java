@@ -21,7 +21,7 @@ import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
 import dustmod.DustMod;
-import dustmod.EntityDust;
+import dustmod.runes.EntityRune;
 
 /**
  *
@@ -34,7 +34,7 @@ public class RenderEntityDust extends Render implements IRenderLast
     	this.setRenderManager(RenderManager.instance);
     }
 
-    public void renderStar(EntityDust g, float f, float ri, float gi, float bi, float ro, float go, float bo, float scale)
+    public void renderStar(EntityRune g, float f, float ri, float gi, float bi, float ro, float go, float bo, float scale)
     {
         Tessellator tessellator = Tessellator.instance;
         RenderHelper.disableStandardItemLighting();
@@ -55,10 +55,10 @@ public class RenderEntityDust extends Render implements IRenderLast
         
         float yOffset = 0;
         
-        if(g.justBorn && ticks < EntityDust.birthLength){
+        if(g.justBorn && ticks < EntityRune.birthLength){
         	double offset = g.posY - Math.floor(g.posY); 
         	double offsetPerc = offset/(1-0.1875);
-        	double perc = ((double)ticks / (double) EntityDust.birthLength);
+        	double perc = ((double)ticks / (double) EntityRune.birthLength);
         	scale *= Math.min(perc+0.2,1);
 //        	System.out.println(offset + " " + perc);
         	yOffset = (float)perc*(float)offsetPerc-(float)offset;
@@ -113,7 +113,7 @@ public class RenderEntityDust extends Render implements IRenderLast
         RenderHelper.enableStandardItemLighting();
     }
 
-    public void renderBeam1(EntityDust e, double x, double y, double z, double i, double j, double k, float f)
+    public void renderBeam1(EntityRune e, double x, double y, double z, double i, double j, double k, float f)
     {
 //        float f2 = (float)entitydragon.field_41013_bH.field_41032_a + f1;
 //        float f3 = MathHelper.sin(f2 * 0.2F) / 2.0F + 0.5F;
@@ -129,8 +129,8 @@ public class RenderEntityDust extends Render implements IRenderLast
         float f8 = MathHelper.sqrt_float(f4 * f4 + f5 * f5 + f6 * f6);
         GL11.glPushMatrix();
 
-        if(e.justBorn && ticks < EntityDust.birthLength){
-        	double perc = ((double)ticks / (double) EntityDust.birthLength);
+        if(e.justBorn && ticks < EntityRune.birthLength){
+        	double perc = ((double)ticks / (double) EntityRune.birthLength);
         	y += 64 - perc*64D;
         }  
         
@@ -172,7 +172,7 @@ public class RenderEntityDust extends Render implements IRenderLast
         GL11.glPopAttrib();
     }
 
-    public void renderBeam2(EntityDust e, double x, double y, double z, double i, double j, double k, float f)
+    public void renderBeam2(EntityRune e, double x, double y, double z, double i, double j, double k, float f)
     {
         float var9 = 1f;
 
@@ -287,7 +287,7 @@ public class RenderEntityDust extends Render implements IRenderLast
         }
     }
     
-    public void renderFlames(EntityDust e, float par2)
+    public void renderFlames(EntityRune e, float par2)
     {
     	System.out.println("BASIFM wat" + DustMod.Enable_Render_Flames_On_Dust + " " + e.renderFlamesDust + " " + (e.dustPoints == null));
     	
@@ -510,7 +510,7 @@ public class RenderEntityDust extends Render implements IRenderLast
     public void doRender(Entity e, double d, double d1, double d2, float f, float f1)
     {
 //    	System.out.println("Render entity dust");
-        EntityDust dust = (EntityDust)e;
+        EntityRune dust = (EntityRune)e;
         float ri = (float)dust.ri / 255F;
         float gi = (float)dust.gi / 255F;
         float bi = (float)dust.bi / 255F;
@@ -560,7 +560,7 @@ public class RenderEntityDust extends Render implements IRenderLast
 
     public void renderLast(Object[] params, float frame)
     {
-        EntityDust dust = (EntityDust)params[0];
+        EntityRune dust = (EntityRune)params[0];
         double d = (Double)params[1];
         double d1 = (Double)params[2];
         double d2 = (Double)params[3];

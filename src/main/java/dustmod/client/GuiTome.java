@@ -13,11 +13,11 @@ import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
-import dustmod.DustManager;
 import dustmod.DustMod;
-import dustmod.DustShape;
-import dustmod.InscriptionEvent;
-import dustmod.InscriptionManager;
+import dustmod.inscriptions.InscriptionEvent;
+import dustmod.inscriptions.InscriptionManager;
+import dustmod.runes.RuneManager;
+import dustmod.runes.RuneShape;
 
 /**
  *
@@ -118,7 +118,7 @@ public class GuiTome extends GuiScreen
 
         if ((isRunes() && getRunePage() == 0) || (!isRunes() && getInsPage() == 0))
         {
-            name = "Legend: " + (isRunes() ? DustManager.namesRemote.size():InscriptionManager.eventsRemote.size()) + " installed";
+            name = "Legend: " + (isRunes() ? RuneManager.namesRemote.size():InscriptionManager.eventsRemote.size()) + " installed";
             notes = "\n\n\n"
                     + "Meat: Pork, Beef, or Chicken raw or cooked.\n---\n"
                     + "Drops: Any item corresponding to a particular mob.\n---\n"
@@ -130,7 +130,7 @@ public class GuiTome extends GuiScreen
         else
         {
         	if(isRunes()){
-	            DustShape shape = DustManager.getShape(getRunePage() - 1);
+	            RuneShape shape = RuneManager.getShape(getRunePage() - 1);
 	            name = shape.getRuneName();
 	            notes = showSacrifices ? shape.getNotes() : shape.getDescription();
 	            author = "by " + shape.getAuthor();
@@ -260,7 +260,7 @@ public class GuiTome extends GuiScreen
 	//        itemstack.setItemDamage(itemstack.getItemDamage() + 1);
 	    	setRunePage(getRunePage() + 1);
 	
-	        if (getRunePage() >= DustManager.getShapes().size() - DustMod.numSec + 1)
+	        if (getRunePage() >= RuneManager.getShapes().size() - DustMod.numSec + 1)
 	        {
 	        	setRunePage(0);
 	        }
@@ -282,7 +282,7 @@ public class GuiTome extends GuiScreen
 	
 	        if (getRunePage() < 0)
 	        {
-	        	setRunePage(DustManager.getShapes().size() - DustMod.numSec);
+	        	setRunePage(RuneManager.getShapes().size() - DustMod.numSec);
 	//        	itemstack.setItemDamage(DustManager.getShapes().size() - DustMod.numSec);
 	//            page = DustManager.getShapes().size() - DustMod.numSec;
 	        }
@@ -327,7 +327,7 @@ public class GuiTome extends GuiScreen
 //        System.out.println("Scale " + scalex + " " + scaley);
         if(isRunes()){
 	        if(getRunePage() == 0){
-	        	if(DustManager.isEmpty()){
+	        	if(RuneManager.isEmpty()){
 	        		mc.renderEngine.bindTexture(new ResourceLocation("dustmod", "pages/no_runes.png"));
 	        	}else {
 	        		mc.renderEngine.bindTexture(new ResourceLocation("dustmod", "pages/info.png"));

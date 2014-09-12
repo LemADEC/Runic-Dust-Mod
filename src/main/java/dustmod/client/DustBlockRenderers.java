@@ -5,10 +5,10 @@ import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.world.IBlockAccess;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
-import dustmod.BlockDust;
-import dustmod.DustItemManager;
-import dustmod.TileEntityDust;
-import dustmod.TileEntityRut;
+import dustmod.blocks.BlockDust;
+import dustmod.blocks.TileEntityDust;
+import dustmod.blocks.TileEntityRut;
+import dustmod.dusts.DustItemManager;
 
 
 /**

@@ -11,7 +11,7 @@ import net.minecraft.entity.Entity;
 
 import org.lwjgl.opengl.GL11;
 
-import dustmod.EntityBlock;
+import dustmod.entities.EntityBlock;
 
 /**
  *

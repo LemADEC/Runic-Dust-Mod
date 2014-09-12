@@ -21,10 +21,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.ResourceLocation;
-import dustmod.DustItemManager;
 import dustmod.DustMod;
-import dustmod.DustShape;
-import dustmod.InscriptionEvent;
+import dustmod.dusts.DustItemManager;
+import dustmod.inscriptions.InscriptionEvent;
+import dustmod.runes.RuneShape;
 
 /**
  *
@@ -188,7 +188,7 @@ public class PageHelper
         images.put(name, result);
     }
 
-    public static void checkRuneImage(DustShape shape)
+    public static void checkRuneImage(RuneShape shape)
     {
 
         BufferedImage dust = new BufferedImage(bgw, bgh, BufferedImage.TYPE_INT_ARGB);

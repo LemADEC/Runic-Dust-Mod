@@ -6,10 +6,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import dustmod.DustEvent;
 import dustmod.DustMod;
-import dustmod.EntityDust;
-import dustmod.InscriptionEvent;
+import dustmod.inscriptions.InscriptionEvent;
+import dustmod.runes.RuneEvent;
+import dustmod.runes.EntityRune;
 
 public class GlideInscription extends InscriptionEvent {
 
@@ -44,7 +44,7 @@ public class GlideInscription extends InscriptionEvent {
 	}
 	
 	@Override
-	public boolean callSacrifice(DustEvent rune, EntityDust e, ItemStack item) {
+	public boolean callSacrifice(RuneEvent rune, EntityRune e, ItemStack item) {
 		// TODO Auto-generated method stub
 		
 		if(power == 1){

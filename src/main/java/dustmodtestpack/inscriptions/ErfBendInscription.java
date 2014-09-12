@@ -21,11 +21,11 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.world.World;
-import dustmod.DustEvent;
 import dustmod.DustMod;
-import dustmod.EntityBlock;
-import dustmod.EntityDust;
-import dustmod.InscriptionEvent;
+import dustmod.entities.EntityBlock;
+import dustmod.inscriptions.InscriptionEvent;
+import dustmod.runes.RuneEvent;
+import dustmod.runes.EntityRune;
 
 public class ErfBendInscription extends InscriptionEvent {
 
@@ -41,7 +41,7 @@ public class ErfBendInscription extends InscriptionEvent {
 	}
 	
 	@Override
-	public boolean callSacrifice(DustEvent rune, EntityDust e, ItemStack item) {
+	public boolean callSacrifice(RuneEvent rune, EntityRune e, ItemStack item) {
 		ItemStack[] req = rune.sacrifice(e, new ItemStack[] {new ItemStack(Blocks.iron_block, 8, -1)});
 
         if (req[0].stackSize != 0)

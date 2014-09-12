@@ -43,6 +43,31 @@ import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
+import dustmod.blocks.BlockDust;
+import dustmod.blocks.BlockDustTable;
+import dustmod.blocks.BlockRut;
+import dustmod.blocks.TileEntityDust;
+import dustmod.blocks.TileEntityDustTable;
+import dustmod.blocks.TileEntityRut;
+import dustmod.common.CommonMouseHandler;
+import dustmod.common.CommonProxy;
+import dustmod.common.GuiHandler;
+import dustmod.defaults.runes.VoidStorageManager;
+import dustmod.defaults.runes.VoidTeleManager;
+import dustmod.dusts.DustItemManager;
+import dustmod.entities.EntityBlock;
+import dustmod.inscriptions.InscriptionManager;
+import dustmod.items.DustModItem;
+import dustmod.items.ItemChisel;
+import dustmod.items.ItemDust;
+import dustmod.items.ItemInk;
+import dustmod.items.ItemInscription;
+import dustmod.items.ItemPlaceScroll;
+import dustmod.items.ItemPouch;
+import dustmod.items.ItemRunicTome;
+import dustmod.items.ItemSpiritPickaxe;
+import dustmod.items.ItemSpiritSword;
+import dustmod.items.ItemWornInscription;
 import dustmod.network.DustDeclarationHandler;
 import dustmod.network.DustDeclarationMessage;
 import dustmod.network.InscriptionDeclarationHandler;
@@ -61,6 +86,9 @@ import dustmod.network.SetVelocityHandler;
 import dustmod.network.SetVelocityMessage;
 import dustmod.network.UseInkHandler;
 import dustmod.network.UseInkMessage;
+import dustmod.runes.RuneManager;
+import dustmod.runes.EntityRune;
+import dustmod.runes.EntityRuneManager;
 
 @Mod(modid = DustMod.MOD_ID, name = "Runic Dust Mod", version = "2.0.0")
 public class DustMod {
@@ -350,7 +378,7 @@ public class DustMod {
 					new ItemStack(idust, 1, i));
 		}
 
-		EntityRegistry.registerModEntity(EntityDust.class, "dustentity",
+		EntityRegistry.registerModEntity(EntityRune.class, "dustentity",
 				ENTITY_FireSpriteID, this, 192, 2, false);
 		// EntityRegistry.registerGlobalEntityID(EntityDust.class, "dustentity",
 		// ENTITY_FireSpriteID);
@@ -364,7 +392,7 @@ public class DustMod {
 		proxy.registerRenderInformation();
 
 		DustItemManager.registerDefaultDusts();
-		DustManager.registerDefaultShapes();
+		RuneManager.registerDefaultShapes();
 		InscriptionManager.registerDefaultInscriptions();
 		lang.addStringLocalization("inscblank.name", "Doodle");
 
@@ -404,7 +432,7 @@ public class DustMod {
 
 		VoidStorageManager.load(savePath);
 		VoidTeleManager.load(savePath);
-		EntityDustManager.load(savePath);
+		EntityRuneManager.load(savePath);
 	}
 
 	public static void spawnParticles(World world, String type, double x,

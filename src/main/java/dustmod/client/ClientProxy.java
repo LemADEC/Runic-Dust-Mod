@@ -8,13 +8,13 @@ import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
-import dustmod.CommonProxy;
 import dustmod.DustMod;
-import dustmod.DustShape;
-import dustmod.EntityBlock;
-import dustmod.EntityDust;
-import dustmod.InscriptionEvent;
-import dustmod.TileEntityDustTable;
+import dustmod.blocks.TileEntityDustTable;
+import dustmod.common.CommonProxy;
+import dustmod.entities.EntityBlock;
+import dustmod.inscriptions.InscriptionEvent;
+import dustmod.runes.RuneShape;
+import dustmod.runes.EntityRune;
 
 public class ClientProxy extends CommonProxy {
 	
@@ -42,7 +42,7 @@ public class ClientProxy extends CommonProxy {
 	}
 	
 	@Override
-	public void checkRunePage(DustShape shape) {
+	public void checkRunePage(RuneShape shape) {
 		PageHelper.checkRuneImage(shape);
 	}
 	
@@ -74,7 +74,7 @@ public class ClientProxy extends CommonProxy {
         RenderingRegistry.registerBlockHandler(new DustBlockRenderers(DustBlockRenderers.dustModelID));
         RenderingRegistry.registerBlockHandler(new DustBlockRenderers(DustBlockRenderers.rutModelID));
         
-        RenderingRegistry.registerEntityRenderingHandler(EntityDust.class, new RenderEntityDust());
+        RenderingRegistry.registerEntityRenderingHandler(EntityRune.class, new RenderEntityDust());
         RenderingRegistry.registerEntityRenderingHandler(EntityBlock.class, new RenderEntityBlock());
         MinecraftForge.EVENT_BUS.register(new RenderLastHandler());
 	}

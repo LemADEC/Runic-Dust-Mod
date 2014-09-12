@@ -5,7 +5,7 @@ import net.minecraft.item.ItemStack;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
-import dustmod.ItemInk;
+import dustmod.items.ItemInk;
 
 public class UseInkHandler implements IMessageHandler<UseInkMessage, IMessage> {
 

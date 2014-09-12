@@ -10,15 +10,15 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-import dustmod.DustItemManager;
 import dustmod.DustMod;
-import dustmod.InscriptionGuiContainer;
-import dustmod.InventoryInscription;
-import dustmod.ItemInk;
+import dustmod.dusts.DustItemManager;
+import dustmod.inscriptions.InscriptionGuiContainer;
+import dustmod.inscriptions.InscriptionInventory;
+import dustmod.items.ItemInk;
 
 public class GuiInscription extends GuiContainer {
 
-	public InventoryInscription insc;
+	public InscriptionInventory insc;
 	public InventoryPlayer playerInv;
 	public EntityPlayer player;
 	
@@ -28,7 +28,7 @@ public class GuiInscription extends GuiContainer {
 	public int buttonUpDelay = 0;
 	
 	
-	public GuiInscription(EntityPlayer player, InventoryInscription insc) {
+	public GuiInscription(EntityPlayer player, InscriptionInventory insc) {
 		super(new InscriptionGuiContainer(player.inventory, insc));
 		 this.insc = insc;
 		 this.playerInv = player.inventory;

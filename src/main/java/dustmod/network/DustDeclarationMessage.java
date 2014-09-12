@@ -2,7 +2,7 @@ package dustmod.network;
 
 import io.netty.buffer.ByteBuf;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import dustmod.Dust;
+import dustmod.dusts.Dust;
 
 public class DustDeclarationMessage implements IMessage {
 
@@ -24,11 +24,12 @@ public class DustDeclarationMessage implements IMessage {
 		int primaryColor = buf.readInt();
 		int secondaryColor = buf.readInt();
 		int floorColor = buf.readInt();
+		int lightLevel = buf.readInt();
 		
 		String id = NetworkUtil.readString(buf);
 		String name = NetworkUtil.readString(buf);
 		
-		dust = new Dust(id, name, primaryColor, secondaryColor, floorColor);
+		dust = new Dust(id, name, primaryColor, secondaryColor, floorColor, lightLevel);
 	}
 
 	@Override
@@ -38,6 +39,7 @@ public class DustDeclarationMessage implements IMessage {
 		buf.writeInt(dust.getPrimaryColor());
 		buf.writeInt(dust.getSecondaryColor());
 		buf.writeInt(dust.getFloorColor());
+		buf.writeInt(dust.getLightLevel());
 
 		NetworkUtil.writeString(buf, dust.getId());
 		NetworkUtil.writeString(buf, dust.getName());

@@ -4,26 +4,26 @@ import java.util.List;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import dustmod.DustEvent;
-import dustmod.EntityDust;
+import dustmod.runes.RuneEvent;
+import dustmod.runes.EntityRune;
 
-public class LaunchTestRune extends DustEvent {
+public class LaunchTestRune extends RuneEvent {
 
 	
 	@Override
-	protected void onInit(EntityDust e) {
+	protected void onInit(EntityRune e) {
 		// TODO Auto-generated method stub
 		super.onInit(e);
 	}
 	
 	@Override
-	protected void initGraphics(EntityDust e) {
+	protected void initGraphics(EntityRune e) {
 		// TODO Auto-generated method stub
 		super.initGraphics(e);
 	}
 	
 	@Override
-	protected void onTick(EntityDust e) {
+	protected void onTick(EntityRune e) {
 		super.onTick(e);
 		
 		List<Entity> ents = this.getEntities(e);

@@ -10,8 +10,8 @@ import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
-import dustmod.DustManager;
-import dustmod.TileEntityDustTable;
+import dustmod.blocks.TileEntityDustTable;
+import dustmod.runes.RuneManager;
 
 public class RenderDustTable extends TileEntitySpecialRenderer
 {
@@ -108,7 +108,7 @@ public class RenderDustTable extends TileEntitySpecialRenderer
 
     public static String getRunePageName(int page)
     {
-        List<String> names = DustManager.getNames();
+        List<String> names = RuneManager.getNames();
         if(page == 0){
 //            URL test = RenderDustTable.class.getResource("C:/Users/CJohnson/Documents/mcmodding/reorganize/smp/");
 //            System.out.println("TESTING RenderDustTable " + test + " File::" +test.getFile() + " Path::" + test.getPath());

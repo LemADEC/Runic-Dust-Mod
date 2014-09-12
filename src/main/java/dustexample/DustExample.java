@@ -12,17 +12,17 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
-import dustexample.examplerunes.DEChestNom;
-import dustexample.examplerunes.DEIceSprite;
-import dustexample.examplerunes.DEMakeBlockFromDustLevel;
-import dustexample.examplerunes.DEMakeBlockFromItem;
-import dustexample.examplerunes.DEMakeItRain;
-import dustexample.examplerunes.DEPain;
-import dustmod.DustItemManager;
-import dustmod.DustManager;
+import dustexample.examplerunes.REChestNom;
+import dustexample.examplerunes.REIceSprite;
+import dustexample.examplerunes.REMakeBlockFromDustLevel;
+import dustexample.examplerunes.REMakeBlockFromItem;
+import dustexample.examplerunes.REMakeItRain;
+import dustexample.examplerunes.REPain;
 import dustmod.DustMod;
-import dustmod.DustShape;
-import dustmod.XMLDustShapeReader;
+import dustmod.dusts.DustItemManager;
+import dustmod.runes.RuneManager;
+import dustmod.runes.RuneShape;
+import dustmod.runes.XMLRuneShapeReader;
 
 /**
  * 
@@ -54,7 +54,7 @@ public class DustExample {
 
 	public void registerDusts() {
 		DustItemManager.registerDust(350, "Glowing Runic Dust", "glowdust",
-				0xEEEE00, 0xFFFF00, 0xFFFF00);
+				0xEEEE00, 0xFFFF00, 0xFFFF00, 15);
 
 		// Register recipe for our dust (2xGlowstoneDust + 1xCoal)
 		GameRegistry.addShapelessRecipe(new ItemStack(DustMod.getItemDust(), 4,
@@ -71,22 +71,22 @@ public class DustExample {
 		// dependent upon the order by which they are registered into the system.
 
 		//Read and load properties from the XML file for the rune, then register it to the DustEvent.
-		XMLDustShapeReader.readAndRegisterShape("assets/dustexample/examplerunes/data/omnom.xml", new DEChestNom());
+		XMLRuneShapeReader.readAndRegisterShape("assets/dustexample/examplerunes/data/omnom.xml", new REChestNom());
 
-		XMLDustShapeReader.readAndRegisterShape("assets/dustexample/examplerunes/data/cheating1_make_block.xml", new DEMakeBlockFromItem());
+		XMLRuneShapeReader.readAndRegisterShape("assets/dustexample/examplerunes/data/cheating1_make_block.xml", new REMakeBlockFromItem());
 
-		XMLDustShapeReader.readAndRegisterShape("assets/dustexample/examplerunes/data/rain_maker.xml", new DEMakeItRain());
+		XMLRuneShapeReader.readAndRegisterShape("assets/dustexample/examplerunes/data/rain_maker.xml", new REMakeItRain());
 
-		XMLDustShapeReader.readAndRegisterShape("assets/dustexample/examplerunes/data/pain.xml", new DEPain());
+		XMLRuneShapeReader.readAndRegisterShape("assets/dustexample/examplerunes/data/pain.xml", new REPain());
 
-		XMLDustShapeReader.readAndRegisterShape("assets/dustexample/examplerunes/data/sprite.ice.xml", new DEIceSprite());
+		XMLRuneShapeReader.readAndRegisterShape("assets/dustexample/examplerunes/data/sprite.ice.xml", new REIceSprite());
 		
 		// Note that the solid flag is now changed to true because it is all variable and 
 		// we don't want people cheating the rune by making some blaze and some plant
 		
 		// There is also a new tag <allowedVariable> which specifies which types of dusts 
 		// are allowed to substitute the variable dust
-		XMLDustShapeReader.readAndRegisterShape("assets/dustexample/examplerunes/data/cheating2_change_block.xml", new DEMakeBlockFromDustLevel());
+		XMLRuneShapeReader.readAndRegisterShape("assets/dustexample/examplerunes/data/cheating2_change_block.xml", new REMakeBlockFromDustLevel());
 		
 		// ******Notes for reanimation*******
 		// Adding numbers to the end of your rune's IDName (or just changing the

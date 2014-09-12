@@ -8,10 +8,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
-import dustmod.DustEvent;
 import dustmod.DustMod;
-import dustmod.EntityDust;
-import dustmod.InscriptionEvent;
+import dustmod.inscriptions.InscriptionEvent;
+import dustmod.runes.RuneEvent;
+import dustmod.runes.EntityRune;
 
 public class WaterAffinity extends InscriptionEvent {
 	public WaterAffinity(int[][] design, String idName, String properName,
@@ -24,7 +24,7 @@ public class WaterAffinity extends InscriptionEvent {
 	}
 
 	@Override
-	public boolean callSacrifice(DustEvent rune, EntityDust e, ItemStack item) {
+	public boolean callSacrifice(RuneEvent rune, EntityRune e, ItemStack item) {
 		// TODO Auto-generated method stub
 		return super.callSacrifice(rune, e, item);
 	}

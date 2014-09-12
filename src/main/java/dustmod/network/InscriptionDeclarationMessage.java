@@ -2,7 +2,7 @@ package dustmod.network;
 
 import io.netty.buffer.ByteBuf;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import dustmod.InscriptionEvent;
+import dustmod.inscriptions.InscriptionEvent;
 
 public class InscriptionDeclarationMessage implements IMessage {
 

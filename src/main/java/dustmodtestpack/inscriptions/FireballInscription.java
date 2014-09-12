@@ -10,9 +10,9 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
-import dustmod.DustEvent;
-import dustmod.EntityDust;
-import dustmod.InscriptionEvent;
+import dustmod.inscriptions.InscriptionEvent;
+import dustmod.runes.RuneEvent;
+import dustmod.runes.EntityRune;
 
 public class FireballInscription extends InscriptionEvent {
 
@@ -27,7 +27,7 @@ public class FireballInscription extends InscriptionEvent {
 		}
 		
 		@Override
-		public boolean callSacrifice(DustEvent rune, EntityDust e, ItemStack item) {
+		public boolean callSacrifice(RuneEvent rune, EntityRune e, ItemStack item) {
 			// TODO Auto-generated method stub
 			return super.callSacrifice(rune, e, item);
 		}

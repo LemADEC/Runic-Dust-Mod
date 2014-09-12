@@ -2,17 +2,17 @@ package dustmod.network;
 
 import io.netty.buffer.ByteBuf;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import dustmod.DustShape;
+import dustmod.runes.RuneShape;
 
 public class RuneDeclarationMessage implements IMessage {
 
-	private DustShape shape;
+	private RuneShape shape;
 
 	public RuneDeclarationMessage() {
 		this.shape = null;
 	}
 
-	public RuneDeclarationMessage(DustShape shape) {
+	public RuneDeclarationMessage(RuneShape shape) {
 		this.shape = shape;
 	}
 
@@ -55,7 +55,7 @@ public class RuneDeclarationMessage implements IMessage {
 			manRot[i] = buf.readInt();
 		}
 
-		shape = new DustShape(w, l, name, solid, ox, oy, cx, cy, pageNumber, id);
+		shape = new RuneShape(w, l, name, solid, ox, oy, cx, cy, pageNumber, id);
 		shape.setData(design);
 		shape.setRuneName(pName);
 		shape.setNotes(notes);
@@ -100,7 +100,7 @@ public class RuneDeclarationMessage implements IMessage {
 		}
 	}
 
-	public DustShape getShape() {
+	public RuneShape getShape() {
 		return shape;
 	}
 

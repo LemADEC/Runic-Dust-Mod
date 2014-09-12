@@ -8,10 +8,10 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
-import dustmod.DustEvent;
 import dustmod.DustMod;
-import dustmod.EntityDust;
-import dustmod.InscriptionEvent;
+import dustmod.inscriptions.InscriptionEvent;
+import dustmod.runes.RuneEvent;
+import dustmod.runes.EntityRune;
 
 public class MountainCutterInscription extends InscriptionEvent {
 
@@ -27,7 +27,7 @@ public class MountainCutterInscription extends InscriptionEvent {
 	}
 	
 	@Override
-	public boolean callSacrifice(DustEvent rune, EntityDust e, ItemStack item) {
+	public boolean callSacrifice(RuneEvent rune, EntityRune e, ItemStack item) {
 		ItemStack[] req = rune.sacrifice(e, new ItemStack[] {new ItemStack(Blocks.iron_block, 8, -1)});
 
         if (req[0].stackSize != 0)
