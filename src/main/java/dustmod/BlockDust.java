@@ -188,7 +188,8 @@ public class BlockDust extends BlockContainer {
 		}
 
 		TileEntityDust ted = (TileEntityDust) world.getTileEntity(x, y, z);
-		ted.onNeighborBlockChange();
+		if (ted != null)
+			ted.onNeighborBlockChange();
 
 		super.onNeighborBlockChange(world, x, y, z, block);
 	}
