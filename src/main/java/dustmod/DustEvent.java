@@ -460,13 +460,13 @@ public abstract class DustEvent {
 				if (c.getItem() == is.getItem()
 						&& (c.getItemDamage() == -1 || c.getItemDamage() == is
 								.getItemDamage())) {
-					DustMod.log("check1");
+
 					if(c.hasTagCompound() == is.hasTagCompound() || c.getItemDamage() == -1){
 						boolean match = false;
-						DustMod.log("check2");
+
 						if(c.hasTagCompound() && c.getItemDamage() != -1){
-							match = c.getTagCompound().equals(is.getTagCompound());
-							DustMod.log("check3");
+							//WTF? match = c.getTagCompound().equals(is.getTagCompound());
+							
 							match = c.getTagCompound().equals(is.getTagCompound());
 							NBTTagCompound cTag = c.getTagCompound();
 							NBTTagCompound isTag = is.getTagCompound();
