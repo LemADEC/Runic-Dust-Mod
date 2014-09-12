@@ -50,7 +50,9 @@ public class CommonProxy implements IGuiHandler{
 		FMLCommonHandler.instance().bus().register(tick);
 		
 		// TODO GameRegistry.registerCraftingHandler(handler);
-		MinecraftForge.EVENT_BUS.register(new PlayerEventHandler());
+		PlayerEventHandler handler = new PlayerEventHandler();
+		MinecraftForge.EVENT_BUS.register(handler);
+		FMLCommonHandler.instance().bus().register(handler);
 	}
 
 
