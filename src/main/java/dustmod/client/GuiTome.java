@@ -72,8 +72,8 @@ public class GuiTome extends GuiScreen
     {
         super.drawScreen(par1, par2, par3);
         drawDefaultBackground();
-        drawGuIIcontainerBackgroundLayer(par3, par1, par2);
-        drawGuIIcontainerForegroundLayer();
+        drawGuiContainerBackgroundLayer(par3, par1, par2);
+        drawGuiContainerForegroundLayer();
 
         for (int i = 0; i < buttonList.size(); i++)
         {
@@ -107,9 +107,9 @@ public class GuiTome extends GuiScreen
     		"The QubeTubers are cool!", "Try Minecraft:Ars Magica!", "Play outside!"};
     int randAuthor = (int)(Math.random()*derp.length);
     /**
-     * Draw the foreground layer for the GuIIcontainer (everythin in front of the items)
+     * Draw the foreground layer for the GuiContainer (everythin in front of the items)
      */
-    protected void drawGuIIcontainerForegroundLayer()
+    protected void drawGuiContainerForegroundLayer()
     {
         String name = "";
         String author = "";
@@ -299,9 +299,9 @@ public class GuiTome extends GuiScreen
     }
 
     /**
-     * Draw the background layer for the GuIIcontainer (everything behind the items)
+     * Draw the background layer for the GuiContainer (everything behind the items)
      */
-    protected void drawGuIIcontainerBackgroundLayer(float par1, int par2, int par3)
+    protected void drawGuiContainerBackgroundLayer(float par1, int par2, int par3)
     {
 //    	System.out.println("RAWR " + DustManager.isEmpty() + " " + InscriptionManager.isEmpty());
         //int i = mc.renderEngine.getTexture(DustMod.path + "/tomeGui.png");
