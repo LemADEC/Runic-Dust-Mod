@@ -71,22 +71,22 @@ public class DustExample {
 		// dependent upon the order by which they are registered into the system.
 
 		//Read and load properties from the XML file for the rune, then register it to the DustEvent.
-		XMLDustShapeReader.readAndRegisterShape("/dustexample/examplerunes/data/omnom.xml", new DEChestNom());
+		XMLDustShapeReader.readAndRegisterShape("assets/dustexample/examplerunes/data/omnom.xml", new DEChestNom());
 
-		XMLDustShapeReader.readAndRegisterShape("/dustexample/examplerunes/data/cheating1_make_block.xml", new DEMakeBlockFromItem());
+		XMLDustShapeReader.readAndRegisterShape("assets/dustexample/examplerunes/data/cheating1_make_block.xml", new DEMakeBlockFromItem());
 
-		XMLDustShapeReader.readAndRegisterShape("/dustexample/examplerunes/data/rain_maker.xml", new DEMakeItRain());
+		XMLDustShapeReader.readAndRegisterShape("assets/dustexample/examplerunes/data/rain_maker.xml", new DEMakeItRain());
 
-		XMLDustShapeReader.readAndRegisterShape("/dustexample/examplerunes/data/pain.xml", new DEPain());
+		XMLDustShapeReader.readAndRegisterShape("assets/dustexample/examplerunes/data/pain.xml", new DEPain());
 
-		XMLDustShapeReader.readAndRegisterShape("/dustexample/examplerunes/data/sprite.ice.xml", new DEIceSprite());
+		XMLDustShapeReader.readAndRegisterShape("assets/dustexample/examplerunes/data/sprite.ice.xml", new DEIceSprite());
 		
 		// Note that the solid flag is now changed to true because it is all variable and 
 		// we don't want people cheating the rune by making some blaze and some plant
 		
 		// There is also a new tag <allowedVariable> which specifies which types of dusts 
 		// are allowed to substitute the variable dust
-		XMLDustShapeReader.readAndRegisterShape("/dustexample/examplerunes/data/cheating2_change_block.xml", new DEMakeBlockFromDustLevel());
+		XMLDustShapeReader.readAndRegisterShape("assets/dustexample/examplerunes/data/cheating2_change_block.xml", new DEMakeBlockFromDustLevel());
 		
 		// ******Notes for reanimation*******
 		// Adding numbers to the end of your rune's IDName (or just changing the
@@ -96,17 +96,6 @@ public class DustExample {
 	}
 
 	public void registerInscriptions() {
-	}
-
-	/**
-	 * Tell forge that your mod content pack requires the Runic Dust mod to be
-	 * installed and to let the Runic Dust mod to load and initialize first.
-	 * (Because I am the king and I get to go first.)
-	 * 
-	 * @return
-	 */
-	public String getPriorities() {
-		return "required-after:mod_DustMod";
 	}
 
 }
