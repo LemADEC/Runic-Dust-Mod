@@ -594,10 +594,18 @@ public class BlockDust extends BlockContainer {
 	 */
 	public int getLightValue(IBlockAccess world, int x, int y, int z) {
 		int meta = world.getBlockMetadata(x, y, z);
-		if (meta == ACTIVE_DUST || meta == ACTIVATING_DUST) {
-			return 8;
+		int light = lightValue;
+		TileEntityDust ted = (TileEntityDust) world.getTileEntity(x, y, z);
+		
+		if (ted != null) {
+			
 		}
-		return lightValue;
+		
+		if (meta == ACTIVE_DUST || meta == ACTIVATING_DUST) {
+			if (light < 8) light = 8;
+		}
+		
+		return light;
 	}
 
 	@SideOnly(Side.CLIENT)

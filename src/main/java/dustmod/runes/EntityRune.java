@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
-import org.apache.logging.log4j.Level;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;

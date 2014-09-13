@@ -227,13 +227,15 @@ public class DustMod {
 		
 		inscription = (ItemInscription) (new ItemInscription()).setUnlocalizedName("runicinscription").setCreativeTab(creativeTab);
 		
-		ink = new ItemInk();
+		ink = (ItemInk) new ItemInk().setUnlocalizedName("itemInk");
 		
 		wornInscription = new ItemWornInscription();
 		wornInscription.setCreativeTab(creativeTab);
+		wornInscription.setUnlocalizedName("wornInscription");
 		
 		pouch = new ItemPouch(dust);
 		pouch.setCreativeTab(creativeTab);
+		pouch.setUnlocalizedName("dustPouch");
 
 	}
 
@@ -250,7 +252,16 @@ public class DustMod {
 		
 		GameRegistry.registerItem(idust, idust.getUnlocalizedName());
 		GameRegistry.registerItem(tome, tome.getUnlocalizedName());
+		GameRegistry.registerItem(negateSacrifice, negateSacrifice.getUnlocalizedName());
+		GameRegistry.registerItem(runicPaper, runicPaper.getUnlocalizedName());
+		GameRegistry.registerItem(dustScroll, dustScroll.getUnlocalizedName());
 		GameRegistry.registerItem(chisel, chisel.getUnlocalizedName());
+		GameRegistry.registerItem(spiritPickaxe, spiritPickaxe.getUnlocalizedName());
+		GameRegistry.registerItem(spiritSword, spiritSword.getUnlocalizedName());
+		GameRegistry.registerItem(inscription, inscription.getUnlocalizedName());
+		GameRegistry.registerItem(ink, ink.getUnlocalizedName());
+		GameRegistry.registerItem(wornInscription, wornInscription.getUnlocalizedName());
+		GameRegistry.registerItem(pouch, pouch.getUnlocalizedName());
 
 		GameRegistry.registerTileEntity(TileEntityDust.class, "dusttileentity");
 		GameRegistry.registerTileEntity(TileEntityDustTable.class,

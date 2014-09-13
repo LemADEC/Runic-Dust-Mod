@@ -13,6 +13,7 @@ import dustmod.DustMod;
 import dustmod.blocks.TileEntityDust;
 import dustmod.blocks.TileEntityRut;
 import net.minecraft.block.Block;
+import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -279,8 +280,7 @@ public abstract class RuneEvent {
 		return true;
 	}
 
-	@SuppressWarnings("rawtypes")
-	public List getEntities(World world, double x, double y, double z) {
+	public List<Entity> getEntities(World world, double x, double y, double z) {
 		return getEntities(world, x, y, z, 1D);
 	}
 
@@ -292,8 +292,7 @@ public abstract class RuneEvent {
 	 * @return A list of all entities within 1 block of the given entity's
 	 *         position (including the entity itself)
 	 */
-	@SuppressWarnings("rawtypes")
-	public List getEntities(Entity e) {
+	public List<Entity> getEntities(Entity e) {
 		return getEntities(e.worldObj, e.posX, e.posY - e.yOffset, e.posZ, 1D);
 	}
 
@@ -307,8 +306,7 @@ public abstract class RuneEvent {
 	 * @return A list containing all entities within the radius of the given
 	 *         Entity's position (including the entity itself)
 	 */
-	@SuppressWarnings("rawtypes")
-	public List getEntities(Entity e, double r) {
+	public List<Entity> getEntities(Entity e, double r) {
 		return getEntities(e.worldObj, e.posX, e.posY - e.yOffset, e.posZ, r);
 	}
 
@@ -328,26 +326,33 @@ public abstract class RuneEvent {
 	 * @return A list containing all entities within the radius of the
 	 *         coordinates
 	 */
-	@SuppressWarnings("rawtypes")
-	public List getEntities(World world, double x, double y, double z,
+	@SuppressWarnings("unchecked")
+	public List<Entity> getEntities(World world, double x, double y, double z,
 			double radius) {
-		List l = world.getEntitiesWithinAABBExcludingEntity(
+		List<Entity> l = world.getEntitiesWithinAABBExcludingEntity(
 				null,
 				AxisAlignedBB.getBoundingBox(x, y, z, x + 1.0D, y + 1.0D,
 						z + 1.0D).expand(radius, radius, radius));
 		return l;
 	}
 
-	@SuppressWarnings("rawtypes")
-	public List getEntities(World world, Class entType, double x, double y,
+	@SuppressWarnings("unchecked")
+	public <T extends Entity> List<? extends T> getEntities(World world, Class<T> entType, double x, double y,
 			double z, double radius) {
-		List l = world.getEntitiesWithinAABB(
+		List<? extends T> l = world.getEntitiesWithinAABB(
 				entType,
 				AxisAlignedBB.getBoundingBox(x, y, z, x + 1.0D, y + 1.0D,
 						z + 1.0D).expand(radius, radius, radius));
-		// System.out.println("Retrieving entities " +
-		// world.worldProvider.worldType + " [" + x + "," + y + "," + z + "] " +
-		// l.size());
+		return l;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T extends Entity> List<? extends T> getEntities(World world, Class<T> entType, double x, double y,
+			double z, double radius, IEntitySelector selector) {
+		List<? extends T> l = world.selectEntitiesWithinAABB(
+				entType,
+				AxisAlignedBB.getBoundingBox(x, y, z, x + 1.0D, y + 1.0D, z + 1.0D).expand(radius, radius, radius),
+				selector);
 		return l;
 	}
 
@@ -1345,7 +1350,7 @@ public abstract class RuneEvent {
 					if (block == DustMod.rutBlock) {
 						TileEntityRut ter = (TileEntityRut) w.getTileEntity(x + i, y + j, z + k);
 
-						if (!ter.isBeingUsed && ter.fluid == fluid) {
+						if (!ter.isBeingUsed && ter.fluidBlock == fluid) {
 							ter.isBeingUsed = true;
 							ruts.add(new Integer[] { x + i, y + j, z + k });
 							checkNeighbors(w, ruts, x + i, y + j, z + k);

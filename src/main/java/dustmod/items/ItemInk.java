@@ -16,7 +16,7 @@ import dustmod.dusts.DustItemManager;
 
 public class ItemInk extends DustModItem {
 	
-	public static final int maxAmount = 32;
+	public static final int MAX_AMOUNT = 32;
 	
 	private IIcon bottle;
 	private IIcon[] main;
@@ -27,35 +27,23 @@ public class ItemInk extends DustModItem {
         super();
         setHasSubtypes(true);
         
-        //[non-forge]
-//        plantTex = ModLoader.addOverride("/gui/items.png", mod_DustMod.path + "/plantdust.png");
-//        gunTex = ModLoader.addOverride("/gui/items.png", mod_DustMod.path + "/gundust.png");
-//        lapisTex = ModLoader.addOverride("/gui/items.png", mod_DustMod.path + "/lapisdust.png");
-//        blazeTex = ModLoader.addOverride("/gui/items.png", mod_DustMod.path + "/blazedust.png");
-        
-        //[forge]
         this.setMaxStackSize(1);
         this.setCreativeTab(DustMod.creativeTab);
     }
 	
 
-    
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * returns a list of items with the same ID, but different meta (eg: dye returns 16 items)
-     */
-    public void getSubItems(int par1, CreativeTabs par2CreativeTabs, List par3List)
-    {
+	@SuppressWarnings( { "unchecked", "rawtypes" } )
+	@SideOnly(Side.CLIENT)
+    @Override
+    public void getSubItems(Item item, CreativeTabs tabs, List list) {
+		
         for (int i = 5; i < 1000; ++i) //i > 4 for migration from old system
         {
         	if(DustItemManager.hasDust(i)){
-                par3List.add(getInk(i));
+                list.add(getInk(i));
         	}
         }
     }
-    
 
     @Override
     public String getUnlocalizedName(ItemStack itemstack)
@@ -79,19 +67,15 @@ public class ItemInk extends DustModItem {
     {
         return true;
     }
-
+    
     @SideOnly(Side.CLIENT)
-
-    /**
-     * Gets an IIcon index based on an item's damage value and the given render pass
-     */
-    public IIcon getIIconFromDamageForRenderPass(int meta, int rend)
-    {
+    @Override
+    public IIcon getIconFromDamageForRenderPass(int meta, int rend) {
     	if(rend == 0) return bottle;
     	
-    	int off = (maxAmount-1)-meta%maxAmount;
+    	int off = (MAX_AMOUNT-1)-meta%MAX_AMOUNT;
     	
-    	off /= (maxAmount/8);
+    	off /= (MAX_AMOUNT/8);
     	
     	if(rend == 1){
     		return main[off];
@@ -100,19 +84,19 @@ public class ItemInk extends DustModItem {
     }
     
     public static ItemStack getInk(int dustID){
-    	return new ItemStack(DustMod.ink, 1, dustID*maxAmount + maxAmount-1);
+    	return new ItemStack(DustMod.ink, 1, dustID*MAX_AMOUNT + MAX_AMOUNT-1);
     }
     
     public static int getDustID(ItemStack item){
     	return getDustID(item.getItemDamage());
     }
     public static int getDustID(int meta){
-    	return (meta - (meta%maxAmount)) / maxAmount; 
+    	return (meta - (meta%MAX_AMOUNT)) / MAX_AMOUNT; 
     }
     
     public static boolean reduce(EntityPlayer p, ItemStack item, int amt){
     	if(p.capabilities.isCreativeMode) return true;
-    	int fill = item.getItemDamage()%maxAmount;
+    	int fill = item.getItemDamage()%MAX_AMOUNT;
     	int level = item.getItemDamage() - fill;
     	if(fill < amt) return false;
     	fill -= amt;

@@ -12,7 +12,6 @@ import dustmod.runes.EntityRune;
 import dustmod.runes.EntityRuneManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
-import net.minecraft.block.BlockSand;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;

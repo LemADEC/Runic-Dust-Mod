@@ -225,6 +225,16 @@ public class DustItemManager {
 
 		return rtn;
 	}
+	
+	public static float[] getFloorRenderColor(int value) {
+		if (value <= 0)
+			return new float[] { 206 / 255.0F, 0, 224 / 255.0F }; // 00CE00E0 variable
+
+		if (value >= remoteDusts.length || remoteDusts[value] == null)
+			return new float[] { 0, 0, 0 };
+		
+		return remoteDusts[value].getFloorRenderColors();
+	}
 
 	public static void reset() {
 		DustMod.logger.debug("Reseting remote dusts.");

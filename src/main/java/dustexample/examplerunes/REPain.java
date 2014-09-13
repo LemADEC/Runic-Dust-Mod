@@ -106,7 +106,8 @@ public class REPain extends PoweredEvent //This is a Powered rune
             }
             
             //Get all entities within radius
-            List<Entity> ents = this.getEntities(e, rad);
+            @SuppressWarnings("unchecked")
+			List<Entity> ents = this.getEntities(e, rad);
             for(Entity i: ents){
                 if(i instanceof EntityPlayer){
                     //Check if it is the summoning player
@@ -162,7 +163,7 @@ public class REPain extends PoweredEvent //This is a Powered rune
     }
 
     /**
-     * Get the amoung of fuel this rune should try to have if possible.
+     * Get the amount of fuel this rune should try to have if possible.
      * If over this amount, power relay runes will put this rune on low priority
      * under others that might still need power
      * @param e EntityDust instance
@@ -175,7 +176,7 @@ public class REPain extends PoweredEvent //This is a Powered rune
     }
 
     /**
-     * Return true if the rune should be paused and therefore not conusming fuel.
+     * Return true if the rune should be paused and therefore not consuming fuel.
      * @param e EntityDust instance
      * @return True if paused, false otherwise
      */

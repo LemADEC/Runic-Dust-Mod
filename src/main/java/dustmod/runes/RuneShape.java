@@ -6,7 +6,6 @@ package dustmod.runes;
 
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.logging.Level;
 
 import dustmod.DustMod;
 import dustmod.blocks.BlockDust;
@@ -87,10 +86,8 @@ public class RuneShape {
 	 * @param id
 	 *            unique rune id
 	 */
-	public RuneShape(int w, int l, String name, boolean solid, int ox, int oy,
-			int cx, int cy, int id) {
-		this(w, l, name, solid, ox, oy, cx, cy,
-				RuneManager.getNextPageNumber(), id);
+	public RuneShape(int w, int l, String name, boolean solid, int ox, int oy, int cx, int cy, int id) {
+		this(w, l, name, solid, ox, oy, cx, cy, RuneManager.getNextPageNumber(), id);
 	}
 
 	/**
@@ -124,12 +121,10 @@ public class RuneShape {
 	 * @param id
 	 *            unique rune id
 	 */
-	public RuneShape(int w, int l, String name, boolean solid, int ox, int oy,
-			int cx, int cy, int page, int id) {
+	public RuneShape(int w, int l, String name, boolean solid, int ox, int oy, int cx, int cy, int page, int id) {
 
 		if (w > 32 || l > 32) {
-			throw new IllegalArgumentException("Rune dimensions too big! "
-					+ name + " Max:32x32");
+			throw new IllegalArgumentException("Rune dimensions too big! " + name + " Max:32x32");
 		}
 
 		this.id = id;
@@ -154,8 +149,7 @@ public class RuneShape {
 		}
 
 		if (ox < 0 || oy < 0) {
-			throw new IllegalArgumentException(
-					"Dust offset cannot be negative.");
+			throw new IllegalArgumentException("Dust offset cannot be negative.");
 		}
 
 		blocks = new ArrayList();
@@ -240,8 +234,7 @@ public class RuneShape {
 			allowedVariable.add(i);
 
 		if (desc.contains("\n----\nAllowed Variable Dusts:\n")) {
-			setDesc(desc.substring(0,
-					desc.indexOf("\n----\nAllowed Variable Dusts:\n")));
+			setDesc(desc.substring(0, desc.indexOf("\n----\nAllowed Variable Dusts:\n")));
 		}
 
 		return this;
@@ -250,8 +243,7 @@ public class RuneShape {
 	public RuneShape addAllowedVariable(ArrayList<Integer> values) {
 		allowedVariable.addAll(values);
 		if (desc.contains("\n----\nAllowed Variable Dusts:\n")) {
-			setDesc(desc.substring(0,
-					desc.indexOf("\n----\nAllowed Variable Dusts:\n")));
+			setDesc(desc.substring(0, desc.indexOf("\n----\nAllowed Variable Dusts:\n")));
 		}
 		return this;
 	}
@@ -264,8 +256,7 @@ public class RuneShape {
 		blocks = updateData(data, oy, ox);
 	}
 
-	private ArrayList<ArrayList<int[][]>> updateData(int[][][] tdata, int tox,
-			int toy) {
+	private ArrayList<ArrayList<int[][]>> updateData(int[][][] tdata, int tox, int toy) {
 		int w = tdata[0].length;
 		int l = tdata[0][0].length;
 
@@ -279,7 +270,6 @@ public class RuneShape {
 		int bwidth = test[0] + 2; // (int)Math.ceil((((double)w+Math.abs(oy))/4.0));
 		int bheight = test[1] + 2; // (int)Math.ceil(((double)(l+Math.abs(ox))/4.0));
 
-		// System.out.println("fuckitalllll " + bwidth + " " + bheight);
 		for (int i = 0; i < bwidth; i++) {
 			tblocks.add(new ArrayList());
 
@@ -300,8 +290,7 @@ public class RuneShape {
 						to = -2;
 					}
 
-					// System.out.println("what the dick " +
-					// Arrays.toString(c));
+
 					tblocks.get(c[0]).get(c[1])[c[2]][c[3]] = to;
 
 					if (to >= 0) {
@@ -311,8 +300,6 @@ public class RuneShape {
 			}
 
 		return tblocks;
-		// System.out.println("Dust amount registered " + name + " " +
-		// Arrays.toString(dustAmt));
 	}
 
 	public int[] getBlockCoord(int x, int z) {
@@ -448,12 +435,8 @@ public class RuneShape {
 				for (int z = 0; z < l && equal; z++) {
 					try {
 
-						if (x >= width
-								|| z >= length
-								|| (d[x][z] != data[oy][x + ox][z + oz] && (d[x][z] == 0 || data[oy][x
-										+ ox][z + oz] != -1))
-								|| (data[oy][x + ox][z + oz] == -1 && !this
-										.isDustAllowedAsVariable(d[x][z]))) {
+						if (x >= width || z >= length || (d[x][z] != data[oy][x + ox][z + oz] && (d[x][z] == 0 || data[oy][x + ox][z + oz] != -1))
+								|| (data[oy][x + ox][z + oz] == -1 && !this.isDustAllowedAsVariable(d[x][z]))) {
 							equal = false;
 							break kill;
 						}
@@ -489,12 +472,8 @@ public class RuneShape {
 			for (int x = 0; x < w && equal; x++) {
 				for (int z = 0; z < l && equal; z++) {
 					try {
-						if (x >= width
-								|| z >= length
-								|| (d[x][z] != data[oy][x + ox][z + oz] && !(d[x][z] != 0 && data[oy][x
-										+ ox][z + oz] == -1))
-								|| (data[oy][x + ox][z + oz] == -1 && !this
-										.isDustAllowedAsVariable(d[x][z]))) {
+						if (x >= width || z >= length || (d[x][z] != data[oy][x + ox][z + oz] && !(d[x][z] != 0 && data[oy][x + ox][z + oz] == -1))
+								|| (data[oy][x + ox][z + oz] == -1 && !this.isDustAllowedAsVariable(d[x][z]))) {
 							equal = false;
 							break kill;
 						}
@@ -542,8 +521,7 @@ public class RuneShape {
 		return rtn;
 	}
 
-	public boolean drawOnWorldWhole(World w, int i, int j, int k,
-			EntityPlayer p, int r) {
+	public boolean drawOnWorldWhole(World w, int i, int j, int k, EntityPlayer p, int r) {
 
 		if (w.isRemote)
 			return false;
@@ -557,8 +535,7 @@ public class RuneShape {
 
 		j++;
 		r = (5 - r) % 4;
-		// yes, I know this rotation code is bull, but i'm getting fed up with
-		// it
+		// yes, I know this rotation code is bull, but i'm getting fed up with it
 
 		ArrayList<ArrayList<int[][]>> tblocks;
 
@@ -638,8 +615,8 @@ public class RuneShape {
 
 				Block otherBlock = w.getBlock(si + x, j, sk + z);
 				int meta = w.getBlockMetadata(si + x, j, sk + z);
-				if (otherBlock.getMaterial() != Material.air && !(DustMod.isDust(otherBlock)/* && meta == 2 */)
-						&& otherBlock != Blocks.tallgrass) {
+
+				if (!otherBlock.getMaterial().isReplaceable() && !DustMod.isDust(otherBlock)) {
 					continue;
 				}
 
@@ -652,15 +629,18 @@ public class RuneShape {
 				}
 
 				if (otherBlock != DustMod.dust) {
-					w.setBlock(si + x, j, sk + z,
-							DustMod.dust, 0, 2);
+					w.setBlock(si + x, j, sk + z, DustMod.dust, BlockDust.UNUSED_DUST, 2);
+				} else if (meta != BlockDust.UNUSED_DUST) {
+					w.setBlockMetadataWithNotify(si + x, j, sk + z, BlockDust.UNUSED_DUST, 2);
 				}
+				
 				TileEntityDust ted;
 				TileEntity te = w.getTileEntity(si + x, j, sk + z);
 
 				if (te != null && te instanceof TileEntityDust) {
 					ted = (TileEntityDust) te;
 				} else {
+					DustMod.logger.info("CREATING TE 2");
 					ted = new TileEntityDust();
 					w.setTileEntity(si + i, j, sk + k, ted);
 				}
@@ -690,8 +670,7 @@ public class RuneShape {
 		for (int x = 0; x < tblocks.size(); x++) {
 			for (int z = 0; z < tblocks.get(0).size(); z++) {
 				if (DustMod.isDust(w.getBlock(si + x, j, sk + z))) {
-					TileEntityDust ted = (TileEntityDust) w.getTileEntity(
-							si + x, j, sk + z);
+					TileEntityDust ted = (TileEntityDust) w.getTileEntity(si + x, j, sk + z);
 
 					if (ted.isEmpty()) {
 						w.setBlockToAir(si + x, j, sk + z);
@@ -708,8 +687,7 @@ public class RuneShape {
 					ItemStack is = p.inventory.mainInventory[sind];
 
 					if (is != null && reduceDustAmount[id] > 0) {
-						if (is.getItem() == DustMod.idust
-								&& is.getItemDamage() == id) {
+						if (is.getItem() == DustMod.idust && is.getItemDamage() == id) {
 							while (reduceDustAmount[id] > 0 && is.stackSize > 0) {
 								is.stackSize--;
 
@@ -722,8 +700,7 @@ public class RuneShape {
 						} else if (is.getItem() == DustMod.pouch) {
 							int did = ItemPouch.getValue(is);
 							if (did == id) {
-								while (reduceDustAmount[id] > 0
-										&& ItemPouch.getDustAmount(is) > 0) {
+								while (reduceDustAmount[id] > 0 && ItemPouch.getDustAmount(is) > 0) {
 									ItemPouch.subtractDust(is, 1);
 
 									reduceDustAmount[id]--;
@@ -745,8 +722,7 @@ public class RuneShape {
 		return true;
 	}
 
-	public boolean drawOnWorldPart(World w, int i, int j, int k,
-			EntityPlayer p, int r, int itemUse) {
+	public boolean drawOnWorldPart(World w, int i, int j, int k, EntityPlayer p, int r, int itemUse) {
 		if (w.isRemote)
 			return false;
 
@@ -759,8 +735,7 @@ public class RuneShape {
 
 		j++;
 		r = (5 - r) % 4;
-		// yes, I know this rotation code is bull, but i'm getting fed up with
-		// it
+		// yes, I know this rotation code is bull, but i'm getting fed up with it
 
 		ArrayList<ArrayList<int[][]>> tblocks;
 
@@ -824,8 +799,7 @@ public class RuneShape {
 		int hasDrawn = 1;
 
 		Random rand = new Random();
-		for (int check = 0; check < this.width * this.height * 2
-				&& hasDrawn > 0; check++) {
+		for (int check = 0; check < this.width * this.height * 2 && hasDrawn > 0; check++) {
 			int x = rand.nextInt(tblocks.size());
 			int z = rand.nextInt(tblocks.get(0).size());
 			int[][] block = tblocks.get(x).get(z);
@@ -843,8 +817,7 @@ public class RuneShape {
 
 			Block otherBlock = w.getBlock(si + x, j, sk + z);
 			int meta = w.getBlockMetadata(si + x, j, sk + z);
-			if (otherBlock.getMaterial() != Material.air && !(DustMod.isDust(otherBlock)/* && meta == 2 */)
-					&& otherBlock != Blocks.tallgrass) {
+			if (!otherBlock.getMaterial().isReplaceable() && !DustMod.isDust(otherBlock)) {
 				continue;
 			}
 
@@ -857,22 +830,20 @@ public class RuneShape {
 			}
 
 			if (otherBlock != DustMod.dust) {
-				w.setBlock(si + x, j, sk + z,
-						DustMod.dust, 0, 2);
-			}else if(meta == BlockDust.DEAD_DUST){
-				w.setBlock(si + x, j, sk + z,
-						Blocks.air, 0, 2);
-				w.setBlock(si + x, j, sk + z,
-						DustMod.dust, 0, 2);
-			}else if(meta != BlockDust.UNUSED_DUST){
+				w.setBlock(si + x, j, sk + z, DustMod.dust, 0, 2);
+			} else if (meta == BlockDust.DEAD_DUST) {
+				w.setBlockMetadataWithNotify(si + x, j, sk + z, BlockDust.UNUSED_DUST, 2);
+			} else if (meta != BlockDust.UNUSED_DUST) {
 				continue;
 			}
+			
 			TileEntityDust ted;
 			TileEntity te = w.getTileEntity(si + x, j, sk + z);
 
 			if (te != null && te instanceof TileEntityDust) {
 				ted = (TileEntityDust) te;
 			} else {
+				DustMod.logger.info("CREATING TE");
 				ted = new TileEntityDust();
 				w.setTileEntity(si + i, j, sk + k, ted);
 			}
@@ -883,8 +854,7 @@ public class RuneShape {
 			int iz = rand.nextInt(4);
 
 			int check2 = 16;
-			while ((ted.getDust(ix, iz) != 0 || block[ix][iz] == 0)
-					&& check2 > 0) {
+			while ((ted.getDust(ix, iz) != 0 || block[ix][iz] == 0) && check2 > 0) {
 				ix = rand.nextInt(4);
 				iz = rand.nextInt(4);
 				check2--;
@@ -910,8 +880,7 @@ public class RuneShape {
 		for (int x = 0; x < tblocks.size(); x++) {
 			for (int z = 0; z < tblocks.get(0).size(); z++) {
 				if (DustMod.isDust(w.getBlock(si + x, j, sk + z))) {
-					TileEntityDust ted = (TileEntityDust) w.getTileEntity(
-							si + x, j, sk + z);
+					TileEntityDust ted = (TileEntityDust) w.getTileEntity(si + x, j, sk + z);
 
 					if (ted.isEmpty()) {
 						w.setBlockToAir(si + x, j, sk + z);
@@ -928,8 +897,7 @@ public class RuneShape {
 					ItemStack is = p.inventory.mainInventory[sind];
 
 					if (is != null && reduceDustAmount[id] > 0) {
-						if (is.getItem() == DustMod.idust
-								&& is.getItemDamage() == id) {
+						if (is.getItem() == DustMod.idust && is.getItemDamage() == id) {
 							while (reduceDustAmount[id] > 0 && is.stackSize > 0) {
 								is.stackSize--;
 
@@ -942,8 +910,7 @@ public class RuneShape {
 						} else if (is.getItem() == DustMod.pouch) {
 							int did = ItemPouch.getValue(is);
 							if (did == id) {
-								while (reduceDustAmount[id] > 0
-										&& ItemPouch.getDustAmount(is) > 0) {
+								while (reduceDustAmount[id] > 0 && ItemPouch.getDustAmount(is) > 0) {
 									ItemPouch.subtractDust(is, 1);
 
 									reduceDustAmount[id]--;

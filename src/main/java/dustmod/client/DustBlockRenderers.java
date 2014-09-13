@@ -3,6 +3,7 @@ package dustmod.client;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.init.Blocks;
 import net.minecraft.world.IBlockAccess;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import dustmod.blocks.BlockDust;
@@ -76,7 +77,7 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
 //	        renderGlow(renderblocks,iblock,Block.woodSingleSlab,i,j,k);
 //    	}
 //        System.out.println("render");
-        int size = TileEntityDust.SIZE;
+        final int size = TileEntityDust.SIZE;
         float px = 1F / 16F;
         float cellWidth = 1F / size;
         float h = 0.025F;
@@ -94,17 +95,14 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
         int[][] horizArray = rendArray[1]; //horizontal connectors
         int[][] vertArray = rendArray[2]; //vertical connectors
         float bx, bz, bw, bl;
-        int[] col;
+        float[] col;
         float r, g, b;
         
-//        if(ted.hasFlame()){
-//        	RenderManager.instance.renderEngine.bindTexture(RenderManager.instance.renderEngine.getTexture("./terrain.png"));
-//        	System.out.println("waaat");
-//        	block.setBlockBounds(0,0,0,1,0.5f,1);
-//        	
-//            renderblocks.setRenderBoundsFromBlock(block);
-//        	renderblocks.renderBlockFire(block, i, j, k);
-//        }
+		if (ted.hasFlame()) {
+			renderblocks.overrideBlockBounds(0, 0, 0, 1, 0.5f, 1);
+			renderblocks.renderBlockFire(Blocks.fire, i, j, k);
+			renderblocks.unlockBlockBounds();
+		}
         
         float highlightHeight = 0.125f;
 
@@ -115,47 +113,39 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
                 float ox = x * cellWidth;
                 float oz = z * (cellWidth);
                 
-                //if(x < size && z < size){
                 if (midArray[x][z] != 0)
                 {
-
-                    col = DustItemManager.getFloorColorRGB(midArray[x][z]);
-                    r = (float)col[0];
-                    g = (float)col[1];
-                    b = (float)col[2];
-                    
-                    if(meta == BlockDust.ACTIVE_DUST || meta == BlockDust.ACTIVATING_DUST){
-                    	r = 255f;
-                    	g = 0f;
-                    	b = 0f;
-                    }else if( meta == BlockDust.DEAD_DUST){
-                    	r = 178f;
-                    	g = 178f;
-                    	b = 178f;
-                    }
-                    
-                    r = r / 255;
-                    g = g / 255;
-                    b = b / 255;
-                    
+					if (meta == BlockDust.ACTIVE_DUST || meta == BlockDust.ACTIVATING_DUST) {
+						r = 255.0F / 255.0F;
+						g = 0F / 255.0F;
+						b = 0F / 255.0F;
+					} else if (meta == BlockDust.DEAD_DUST) {
+						r = 178F / 255.0F;
+						g = 178F / 255.0F;
+						b = 178F / 255.0F;
+					} else {
+						col = DustItemManager.getFloorRenderColor(midArray[x][z]);
+						r = col[0];
+						g = col[1];
+						b = col[2];
+					}
                     
                     bx = ox + px;
                     bz = oz + px;
                     bw = 2 * px;
                     bl = 2 * px;
-                    block.setBlockBounds(bx, t, bz, bx + bw, t + h, bz + bl);
                     
-                    renderblocks.setRenderBoundsFromBlock(block);
+                    renderblocks.setRenderBounds(bx, t, bz, bx + bw, t + h, bz + bl);
                     renderblocks.renderStandardBlockWithColorMultiplier(block, i, j, k, r, g, b);
                     
                     if(drawHightlight){
                         if(meta == BlockDust.ACTIVATING_DUST) {
                         	tes.setColorOpaque_F(1, 1, 1);
-                            block.setBlockBounds(bx, t, bz, bx + bw, highlightHeight, bz + bl);
+                        	renderblocks.setRenderBounds(bx, t, bz, bx + bw, highlightHeight, bz + bl);
                         }
                         else{
                         	tes.setColorOpaque_F(1, 0.68f, 0.68f);
-                            block.setBlockBounds(bx, t, bz, bx + bw, t+h, bz + bl);
+                        	renderblocks.setRenderBounds(bx, t, bz, bx + bw, t+h, bz + bl);
                         }
                         tes.setBrightness(15728880);
                     	this.renderGlowPoint(renderblocks,block,i,j,k,x,z,midArray[x][z],horizArray,vertArray);
@@ -165,25 +155,20 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
                 if (horizArray[x][z] != 0)
                 {
 
-                    col = DustItemManager.getFloorColorRGB(horizArray[x][z]);
-                    r = (float)col[0];
-                    g = (float)col[1];
-                    b = (float)col[2];
-                    
-                    if(meta == BlockDust.ACTIVE_DUST || meta == BlockDust.ACTIVATING_DUST){
-                    	r = 255f;
-                    	g = 0f;
-                    	b = 0f;
-                    }else if( meta == BlockDust.DEAD_DUST){
-                    	r = 178f;
-                    	g = 178f;
-                    	b = 178f;
-                    }
-                    
-                    r = r / 255;
-                    g = g / 255;
-                    b = b / 255;
-                    
+					if (meta == BlockDust.ACTIVE_DUST || meta == BlockDust.ACTIVATING_DUST) {
+						r = 255.0F / 255.0F;
+						g = 0F / 255.0F;
+						b = 0F / 255.0F;
+					} else if (meta == BlockDust.DEAD_DUST) {
+						r = 178F / 255.0F;
+						g = 178F / 255.0F;
+						b = 178F / 255.0F;
+					} else {
+						col = DustItemManager.getFloorRenderColor(horizArray[x][z]);
+						r = col[0];
+						g = col[1];
+						b = col[2];
+					}
                     
                     bx = ox + px;
                     bz = oz - px;
@@ -201,18 +186,16 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
                         bl = px;
                     }
 
-                    block.setBlockBounds(bx, t, bz, bx + bw, t + h, bz + bl);
-
-                    renderblocks.setRenderBoundsFromBlock(block);
+                    renderblocks.setRenderBounds(bx, t, bz, bx + bw, t + h, bz + bl);
                     renderblocks.renderStandardBlockWithColorMultiplier(block, i, j, k, r, g, b);
                         
                     if(drawHightlight){
                         if(meta == BlockDust.ACTIVATING_DUST) {
                         	tes.setColorOpaque_F(1, 1, 1);
-                            block.setBlockBounds(bx, t, bz, bx + bw, highlightHeight, bz + bl);
+                        	renderblocks.setRenderBounds(bx, t, bz, bx + bw, highlightHeight, bz + bl);
                         }else{
                         	tes.setColorOpaque_F(1, 0.68f, 0.68f);
-                            block.setBlockBounds(bx, t, bz, bx + bw, t+h, bz + bl);
+                        	renderblocks.setRenderBounds(bx, t, bz, bx + bw, t+h, bz + bl);
                         }
                         tes.setBrightness(15728880);
                     	this.renderGlowIgnoreSide(renderblocks,block,i,j,k,new boolean[]{true,true,false,false});
@@ -221,26 +204,20 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
 
                 if (vertArray[x][z] != 0)
                 {
-
-                    col = DustItemManager.getFloorColorRGB(vertArray[x][z]);
-                    r = (float)col[0];
-                    g = (float)col[1];
-                    b = (float)col[2];
-                    
-                    if(meta == BlockDust.ACTIVE_DUST || meta == BlockDust.ACTIVATING_DUST){
-                    	r = 255f;
-                    	g = 0f;
-                    	b = 0f;
-                    }else if( meta == BlockDust.DEAD_DUST){
-                    	r = 178f;
-                    	g = 178f;
-                    	b = 178f;
-                    }
-                    
-                    r = r / 255;
-                    g = g / 255;
-                    b = b / 255;
-                    
+					if (meta == BlockDust.ACTIVE_DUST || meta == BlockDust.ACTIVATING_DUST) {
+						r = 255.0F / 255.0F;
+						g = 0F / 255.0F;
+						b = 0F / 255.0F;
+					} else if (meta == BlockDust.DEAD_DUST) {
+						r = 178F / 255.0F;
+						g = 178F / 255.0F;
+						b = 178F / 255.0F;
+					} else {
+						col = DustItemManager.getFloorRenderColor(vertArray[x][z]);
+						r = col[0];
+						g = col[1];
+						b = col[2];
+					}
                     
                     bx = ox - px;
                     bz = oz + px;
@@ -258,101 +235,96 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
                         bw = px;
                     }
 
-                    block.setBlockBounds(bx, t, bz, bx + bw, t + h, bz + bl);
-                    
-                    renderblocks.setRenderBoundsFromBlock(block);
+                    renderblocks.setRenderBounds(bx, t, bz, bx + bw, t + h, bz + bl);
                     renderblocks.renderStandardBlockWithColorMultiplier(block, i, j, k, r, g, b);
                     
-                    if(drawHightlight){
-                        if(meta == 3) {
-                        	tes.setColorOpaque_F(1, 1, 1);
-                            block.setBlockBounds(bx, t, bz, bx + bw, highlightHeight, bz + bl);
-                        }else{
-                        	tes.setColorOpaque_F(1, 0.68f, 0.68f);
-                            block.setBlockBounds(bx, t, bz, bx + bw, t+h, bz + bl);
-                        }
-                        tes.setBrightness(15728880);
-                    	this.renderGlowIgnoreSide(renderblocks,block,i,j,k,new boolean[]{false,false,true,true});
-                    }
+					if (drawHightlight) {
+						if (meta == 3) {
+							tes.setColorOpaque_F(1, 1, 1);
+							renderblocks.setRenderBounds(bx, t, bz, bx + bw, highlightHeight, bz + bl);
+						} else {
+							tes.setColorOpaque_F(1, 0.68f, 0.68f);
+							renderblocks.setRenderBounds(bx, t, bz, bx + bw, t + h, bz + bl);
+						}
+						tes.setBrightness(15728880);
+						this.renderGlowIgnoreSide(renderblocks, block, i, j, k, new boolean[] { false, false, true, true });
+					}
                 }
             }
         }
 
 
+        /*
         block.setBlockBounds(0, 0, 0, 0, 0, 0);
         renderblocks.setRenderBoundsFromBlock(block);
-        renderblocks.renderStandardBlockWithColorMultiplier(block, i, j, k, 1, 1, 1);
-        
-//        tes.draw();
-//        tes.startDrawingQuads();
-//        Block.lightValue[block.blockID] = light;
-        renderblocks.overrideBlockTexture = null;
-        block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, h, 1.0F);
+        renderblocks.renderStandardBlockWithColorMultiplier(block, i, j, k, 1, 1, 1);*/
         return true;
     }
     
-    public boolean renderRut(RenderBlocks rb, IBlockAccess iblock, int i, int j, int k, Block block)
+    public boolean renderRut(RenderBlocks rb, IBlockAccess iblock, int i, int j, int k, Block ignored)
     {
-        //int size = TileEntityDust.size;
         TileEntityRut ter = (TileEntityRut)iblock.getTileEntity(i, j, k);
         boolean[] rut = ter.ruts;
-        if(rut == null) return false;
-        //float t = 0.02F;
-//        int light = Block.lightValue[rutBlock.blockID];
-//        Block.lightValue[rutBlock.blockID] = 15;
+        
+		if (rut == null)
+			return false;
+
+		Block block = ter.maskBlock;
+
+		if (block == null)
+			return false;
+        
         Tessellator tessellator = Tessellator.instance;
         tessellator.setBrightness(block.getMixedBrightnessForBlock(iblock, i, j, k));
-        block = ter.maskBlock;
-        if(block == null) return false;
-        Block fluid = ter.fluid;
+        
+        Block fluid = ter.fluidBlock;
         float bi = 2F / 16F; //baseInset
         float fi = 1F / 16F; //fluidInset
         float cw = 6F / 16F; //cornerWidth
         float rw = 4F / 16F; //rutWidth
-        int rendered = 0;
+        
+        rb.renderAllFaces = true;
 
-        ///the top of stuff
-        //y
+        /*
+         * TOP
+         */
+
+        // center
         if (!rut[1 + 0*3 + 1*9] && !rut[1 + 2*3 + 1*9])
         {
             rb.overrideBlockBounds(cw, 0, cw, cw + rw, 1F, cw + rw);
             rb.renderBlockByRenderType(block, i, j, k);
-            rendered++;
         }
         else if (!rut[1 + 0*3 + 1*9])
         {
         	rb.overrideBlockBounds(cw, 0, cw, cw + rw, bi, cw + rw);
             rb.renderBlockByRenderType(block, i, j, k);
-            rendered++;
         }
         else if (!rut[1 + 2*3 + 1*9])
         {
         	rb.overrideBlockBounds(cw, 1F - bi, cw, cw + rw, 1F, cw + rw);
             rb.renderBlockByRenderType(block, i, j, k);
-            rendered++;
         }
 
-        // Upper corners
+        // corners
         rb.overrideBlockBounds(0, 1F - cw, 0, cw, 1F, cw);
         rb.renderBlockByRenderType(block, i, j, k);
-        rendered++;
+        
         rb.overrideBlockBounds(1F - cw, 1F - cw, 0, 1F, 1F, cw);
         rb.renderBlockByRenderType(block, i, j, k);
-        rendered++;
+        
         rb.overrideBlockBounds(0, 1F - cw, 1F - cw, cw, 1F, 1F);
         rb.renderBlockByRenderType(block, i, j, k);
-        rendered++;
+        
         rb.overrideBlockBounds(1F - cw, 1F - cw, 1F - cw, 1F, 1F, 1F);
         rb.renderBlockByRenderType(block, i, j, k);
-        rendered++;
+        
 
-        //Top
         //n
         if (!rut[1 + 2*3 + 2*9])
         {
         	rb.overrideBlockBounds(cw, 1f - cw, 1f - cw, cw + rw, 1f, 1f);
             rb.renderBlockByRenderType(block, i, j, k);
-            rendered++;
         }
 
         //s
@@ -360,7 +332,6 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
         {
         	rb.overrideBlockBounds(cw, 1f - cw, 0F, cw + rw, 1f, cw);
             rb.renderBlockByRenderType(block, i, j, k);
-            rendered++;
         }
 
         //e
@@ -368,7 +339,6 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
         {
         	rb.overrideBlockBounds(1f - cw, 1f - cw, cw, 1f, 1f, cw + rw);
             rb.renderBlockByRenderType(block, i, j, k);
-            rendered++;
         }
 
         //w
@@ -376,25 +346,24 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
         {
         	rb.overrideBlockBounds(0F, 1f - cw, cw, cw, 1f, cw + rw);
             rb.renderBlockByRenderType(block, i, j, k);
-            rendered++;
         }
 
+        if (block == Blocks.grass) {
+        	block = Blocks.dirt;
+        }
+        
         //Lower corners
         rb.overrideBlockBounds(0, 0, 0, cw, cw, cw);
         rb.renderBlockByRenderType(block, i, j, k);
-        rendered++;
         
         rb.overrideBlockBounds(1F - cw, 0, 0, 1F, cw, cw);
         rb.renderBlockByRenderType(block, i, j, k);
-        rendered++;
         
         rb.overrideBlockBounds(0, 0, 1F - cw, cw, cw, 1F);
         rb.renderBlockByRenderType(block, i, j, k);
-        rendered++;
         
         rb.overrideBlockBounds(1F - cw, 0, 1F - cw, 1F, cw, 1F);
         rb.renderBlockByRenderType(block, i, j, k);
-        rendered++;
 
         //Base fluid
         if (fluid != null)
@@ -440,7 +409,6 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
             rb.unlockBlockBounds();
             rb.setRenderBounds(ix, iy, iz, iw, ih, il);
             rb.renderStandardBlock(fluid, i, j, k);
-            rendered++;
         }
         else
         {
@@ -485,7 +453,6 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
             //Base middle
             rb.overrideBlockBounds(ix, iy, iz, iw, ih, il);
             rb.renderBlockByRenderType(block, i, j, k);
-            rendered++;
         }
 
         //Centers
@@ -495,19 +462,16 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
         {
             rb.overrideBlockBounds(0, cw, cw, 1F, cw + rw, cw + rw);
             rb.renderBlockByRenderType(block, i, j, k);
-            rendered++;
         }
         else if (!rut[0 + 1*3 + 1*9])
         {
             rb.overrideBlockBounds(0, cw, cw, bi, cw + rw, cw + rw);
             rb.renderBlockByRenderType(block, i, j, k);
-            rendered++;
         }
         else if (!rut[2 + 1*3 + 1*9])
         {
             rb.overrideBlockBounds(1F - bi, cw, cw, 1F, cw + rw, cw + rw);
             rb.renderBlockByRenderType(block, i, j, k);
-            rendered++;
         }
 
         //z
@@ -515,26 +479,17 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
         {
             rb.overrideBlockBounds(cw, cw, 0F, cw + rw, cw + rw, 1F);
             rb.renderBlockByRenderType(block, i, j, k);
-            rendered++;
         }
         else if (!rut[1 + 1*3 + 0*9])
         {
             rb.overrideBlockBounds(cw, cw, 0F, cw + rw, cw + rw, bi);
             rb.renderBlockByRenderType(block, i, j, k);
-            rendered++;
         }
         else if (!rut[1 + 1*3 + 2*9])
         {
             rb.overrideBlockBounds(cw, cw, 1F - bi, cw + rw, cw + rw, 1F);
             rb.renderBlockByRenderType(block, i, j, k);
-            rendered++;
         }
-
-//        //d
-//        rb.overrideBlockBounds(0F, 0F, 0F, 0f, 0f, 0f);
-//        rb.renderBlockByRenderType(block, i, j, k);
-
-        //Edges
 
         //Bottom
         //n
@@ -542,7 +497,6 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
         {
             rb.overrideBlockBounds(cw, 0, 1f - cw, cw + rw, cw, 1f);
             rb.renderBlockByRenderType(block, i, j, k);
-            rendered++;
         }
 
         //s
@@ -550,7 +504,6 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
         {
             rb.overrideBlockBounds(cw, 0, 0F, cw + rw, cw, cw);
             rb.renderBlockByRenderType(block, i, j, k);
-            rendered++;
         }
 
         //e
@@ -558,7 +511,6 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
         {
             rb.overrideBlockBounds(1f - cw, 0, cw, 1f, cw, cw + rw);
             rb.renderBlockByRenderType(block, i, j, k);
-            rendered++;
         }
 
         //w
@@ -566,7 +518,6 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
         {
             rb.overrideBlockBounds(0F, 0, cw, cw, cw, cw + rw);
             rb.renderBlockByRenderType(block, i, j, k);
-            rendered++;
         }
 
         //Middle
@@ -575,7 +526,6 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
         {
             rb.overrideBlockBounds(0F, cw, 1f - cw, cw, cw + rw, 1f);
             rb.renderBlockByRenderType(block, i, j, k);
-            rendered++;
         }
 
         //ne
@@ -583,7 +533,6 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
         {
             rb.overrideBlockBounds(1f - cw, cw, 1f - cw, 1f, cw + rw, 1f);
             rb.renderBlockByRenderType(block, i, j, k);
-            rendered++;
         }
 
         //sw
@@ -591,7 +540,6 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
         {
             rb.overrideBlockBounds(0, cw, 0f, cw, cw + rw, cw);
             rb.renderBlockByRenderType(block, i, j, k);
-            rendered++;
         }
 
         //se
@@ -599,14 +547,10 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
         {
             rb.overrideBlockBounds(1f - cw, cw, 0f, 1f, cw + rw, cw);
             rb.renderBlockByRenderType(block, i, j, k);
-            rendered++;
         }
         
         rb.unlockBlockBounds();
-
-//
-//        Block.lightValue[rutBlock.blockID] = light;
-//        System.out.println("render " + rendered);
+        rb.renderAllFaces = false;
 
         return true;
     }

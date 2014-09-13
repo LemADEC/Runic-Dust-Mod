@@ -56,15 +56,17 @@ public class TileEntityDust extends TileEntity implements IInventory
     public void writeToNBT(NBTTagCompound tag)
     {
         super.writeToNBT(tag);
+        
+        tag.setInteger("ticks", ticksExisted);
+        
         writeNetworkNBT(tag);
     }
     
     public void writeNetworkNBT(NBTTagCompound tag)
     {
     	tag.setIntArray("pattern", pattern);
-
-        tag.setInteger("toDestroy", toDestroy);
-        tag.setInteger("ticks", ticksExisted);
+    	
+    	tag.setInteger("toDestroy", toDestroy);
         
         tag.setBoolean("flame", hasFlame);
         tag.setInteger("flameR", fr);
@@ -75,21 +77,22 @@ public class TileEntityDust extends TileEntity implements IInventory
     public void readFromNBT(NBTTagCompound tag)
     {
         super.readFromNBT(tag);
+
+        if (tag.hasKey("ticks"))
+        {
+            ticksExisted = tag.getInteger("ticks");
+        }
+        
         readNetworkNBT(tag);
     }
     
     public void readNetworkNBT(NBTTagCompound tag)
     {
     	pattern = tag.getIntArray("pattern");
-
+    	
         if (tag.hasKey("toDestroy"))
         {
             toDestroy = tag.getInteger("toDestroy");
-        }
-
-        if (tag.hasKey("ticks"))
-        {
-            ticksExisted = tag.getInteger("ticks");
         }
         
         if(tag.hasKey("flame")){
@@ -142,92 +145,72 @@ public class TileEntityDust extends TileEntity implements IInventory
     }
 
     public void updateEntity()
-    {
-//        System.out.println("Update Dust");
-        super.updateEntity();
-        
-//        if(worldObj.isRemote) return;
-        if (ticksExisted > 2 && isEmpty() && worldObj.getBlockMetadata(xCoord, yCoord, zCoord) != 10)
+    {   
+        if (isEmpty())
         {
             worldObj.setBlockToAir(xCoord, yCoord, zCoord);
-//            DustMod.log("Killing, empty");
             this.invalidate();
             return;
         }
         
-        if(Math.random() < 0.12 && worldObj.getBlockMetadata(xCoord, yCoord, zCoord) == BlockDust.ACTIVE_DUST){
-//        	for(int i = 0; i < 1; i++){
-        		worldObj.spawnParticle("reddust", xCoord + Math.random(), yCoord, zCoord+Math.random(), 0, 0, 0);
-//        	}
+        if (this.getBlockMetadata() == BlockDust.ACTIVE_DUST && Math.random() < 0.12){
+        	worldObj.spawnParticle("reddust", xCoord + Math.random(), yCoord, zCoord+Math.random(), 0, 0, 0);
         }
 
         ticksExisted++;
 
-//        if (worldObj.getBlockMetadata(xCoord, yCoord, zCoord) != 10) {
-//            this.invalidate();
-//            System.out.println("dicks ted");
-//            return;
-//        }
-//        System.out.println("upd " + ticksExisted);
-        if (toDestroy == 0)
-        {
-            if (worldObj.getBlockMetadata(xCoord, yCoord, zCoord) != BlockDust.DEAD_DUST)
-            {
-                toDestroy = -1;
-                return;
-            }
-
-            for (int i1 = 0; (double) i1 < Math.random() * 2D + 2D; i1++)
-            {
-                worldObj.spawnParticle("smoke", (double) xCoord + Math.random(), (double) yCoord + Math.random() / 2D, (double) zCoord + Math.random(), 0.07, 0.01D, 0.07D);
-            }
-
-            List<Integer> d = new ArrayList<Integer>(SIZE * SIZE);
-
-            for (int i = 0; i < SIZE; i++)
-            {
-                for (int j = 0; j < SIZE; j++)
-                {
-                    if (getDust(i, j) != 0)
-                    {
-                        d.add(i + j * SIZE);
-                    }
-                }
-            }
-
-            Random rand = new Random();
-
-            if (d.size() == 0)
-            {
-            }
-
-            int ind = d.get(rand.nextInt(d.size()));
-            this.setDust(null, (int) Math.floor(ind % SIZE), ind / SIZE, 0);
-            toDestroy = (int) Math.round(Math.random() * 200D + 100D);
-            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-
-//            System.out.println("Floating away.....");
-        }
-        else if (toDestroy > 0)
-        {
-            toDestroy--;
-        }
-
-        if (ticksExisted % 100 == 0)
-        {
-            if (toDestroy <= -1 && this.getBlockMetadata() == BlockDust.DEAD_DUST)
-            {
-                toDestroy = (int) Math.round(Math.random() * 200D + 100D);
-//                System.out.println("SettingToDestroy " + toDestroy);
-            }
-
-//            System.out.println("else " + worldObj.getBlockMetadata(xCoord, yCoord, zCoord) + " " + toDestroy);
+        if (this.getBlockMetadata() == BlockDust.DEAD_DUST) {
+        	
+        	if (!worldObj.isRemote && toDestroy == -1 && ticksExisted % 100 == 0) 
+        	{
+        		toDestroy = (int) Math.round(Math.random() * 200D + 100D);
+        		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        	}
+        	else if (toDestroy == 0) 
+        	{
+	
+        		if (worldObj.isRemote) 
+        		{
+		            for (int i1 = 0; (double) i1 < Math.random() * 2D + 2D; i1++)
+		            {
+		                worldObj.spawnParticle("smoke", (double) xCoord + Math.random(), (double) yCoord + Math.random() / 2D, (double) zCoord + Math.random(), 0.07, 0.01D, 0.07D);
+		            }
+        		}
+        		else
+        		{
+		            List<Integer> d = new ArrayList<Integer>(SIZE * SIZE);
+		
+		            for (int i = 0; i < SIZE; i++)
+		            {
+		                for (int j = 0; j < SIZE; j++)
+		                {
+		                    if (getDust(i, j) != 0)
+		                    {
+		                        d.add(i + j * SIZE);
+		                    }
+		                }
+		            }
+		
+		            int ind = d.get(worldObj.rand.nextInt(d.size()));
+		            this.setDust(null, (int) Math.floor(ind % SIZE), ind / SIZE, 0);
+		            this.markDirty();
+		            
+		            toDestroy = (int) Math.round(Math.random() * 200D + 100D);
+		            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        		}
+	        }
+	        else if (toDestroy > 0)
+	        {
+	            toDestroy--;
+	        }
+        } else {
+        	toDestroy = -1;
         }
         
-        if(!this.hasMadeFirstPoweredCheck){
-        	this.isPowered = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
-        	this.hasMadeFirstPoweredCheck = true;
-        }
+		if (!this.hasMadeFirstPoweredCheck) {
+			this.isPowered = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
+			this.hasMadeFirstPoweredCheck = true;
+		}
     }
 
     public void onRightClick(EntityPlayer p)

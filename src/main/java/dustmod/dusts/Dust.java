@@ -14,6 +14,8 @@ public class Dust {
 	
 	private final int lightLevel;
 	
+	private final float[] floorRenderColors;
+	
 	public Dust(String id, String name, int primaryColor, int secondaryColor, int floorColor, int lightLevel) {
 		this.id = id;
 		this.name = name;
@@ -21,6 +23,11 @@ public class Dust {
 		this.secondaryColor = secondaryColor;
 		this.floorColor = floorColor;
 		this.lightLevel = lightLevel;
+		
+		floorRenderColors = new float[3];
+		floorRenderColors[0] = ((floorColor >> 16) & 0xFF) / 255.0F;
+		floorRenderColors[1] = ((floorColor >> 8) & 0xFF) / 255.0F;
+		floorRenderColors[2] = ((floorColor >> 0) & 0xFF) / 255.0F;
 	}
 	
 	public String getId() {
@@ -45,6 +52,10 @@ public class Dust {
 	
 	public int getLightLevel() {
 		return lightLevel;
+	}
+	
+	public float[] getFloorRenderColors() {
+		return floorRenderColors;
 	}
 
 }

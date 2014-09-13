@@ -124,11 +124,7 @@ public class BlockDustTable extends BlockContainer
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player,int dir, float cx, float cy, float cz)
     {
-        if (/*world.isRemote*/false)
-        {
-            return true;
-        }
-        else if (player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() == DustMod.runicPaper)
+        if (player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() == DustMod.runicPaper)
         {
             int page = (((TileEntityDustTable)world.getTileEntity(x, y, z)).page - 1);
 
@@ -155,6 +151,10 @@ public class BlockDustTable extends BlockContainer
         }
         else
         {
+        	if (world.isRemote) {
+        		return true;
+        	}
+        	
             if (player.isSneaking())
             {
                 onBlockClicked(world, x, y, z, player);
@@ -168,28 +168,31 @@ public class BlockDustTable extends BlockContainer
             {
                 tedt.page = RuneManager.getNames().size() - DustMod.numSec;
             }
+            
+            tedt.markDirty();
+            world.markBlockForUpdate(x, y, z);
 
             return true;
         }
     }
 
     @Override
-    public void onBlockClicked(World world, int i, int j, int k, EntityPlayer entityplayer)
+    public void onBlockClicked(World world, int x, int y, int z, EntityPlayer entityplayer)
     {
-        if (/*world.multiplayerWorld*/false)
-        {
-            return;
-        }
-        else
-        {
-            TileEntityDustTable tedt = (TileEntityDustTable)world.getTileEntity(i, j, k);
-            tedt.page++;
+    	if (world.isRemote) {
+    		return;
+    	}
+    	
+    	TileEntityDustTable tedt = (TileEntityDustTable)world.getTileEntity(x, y, z);
+        tedt.page++;
 
-            if (tedt.page >= RuneManager.getNames().size() - DustMod.numSec + 1)
-            {
-                tedt.page = 0;
-            }
+        if (tedt.page >= RuneManager.getNames().size() - DustMod.numSec + 1)
+        {
+            tedt.page = 0;
         }
+        
+        tedt.markDirty();
+        world.markBlockForUpdate(x, y, z);
     }
 
 	@Override

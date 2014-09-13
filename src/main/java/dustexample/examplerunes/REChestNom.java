@@ -195,10 +195,9 @@ public class REChestNom extends RuneEvent
             int y = e.getY();
             int z = e.getZ();
             
-            TileEntityChest tec = null;
             if(world.getBlock(x, y, z) == Blocks.chest)
             {
-                tec = (TileEntityChest)world.getTileEntity(x, y, z);
+            	TileEntityChest tec = (TileEntityChest)world.getTileEntity(x, y, z);
                 tec.closeInventory();
             }
         }

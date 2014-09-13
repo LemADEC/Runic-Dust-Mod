@@ -14,8 +14,6 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fluids.FluidRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
 import dustmod.DustMod;
 
 /**
@@ -30,7 +28,7 @@ public class TileEntityRut extends TileEntity
     public Block maskBlock;
     public int maskMeta;
     public Block prevFluid;
-    public Block fluid;
+    public Block fluidBlock;
     public boolean[] ruts;
     public boolean isBeingUsed = false;
     public int ticksExisted = 0;
@@ -54,13 +52,10 @@ public class TileEntityRut extends TileEntity
     @Override
     public void updateEntity()
     {
-        super.updateEntity();
-
-        if (neighborSolid == null)
-        {
-            updateNeighbors();
-        }
-
+    	if (this.worldObj.isRemote) {
+    		return;
+    	}
+    	
         if (isEmpty() || (maskBlock instanceof BlockFalling && BlockFalling.func_149831_e(worldObj, xCoord, yCoord - 1, zCoord)))
         {
             worldObj.setBlock(xCoord, yCoord, zCoord, maskBlock, maskMeta, 3);
@@ -68,11 +63,9 @@ public class TileEntityRut extends TileEntity
             return;
         }
 
-        if (worldObj.getWorldTime() % 14 == 0 && prevFluid == fluid && fluidIsFluid())
+        if (worldObj.getWorldTime() % 14 == 0 && prevFluid == fluidBlock && fluidIsFluid())
         {
-            worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, maskMeta,0);
             int i = xCoord, j = yCoord, k = zCoord;
-            super.updateEntity();
 
             for (int ix = -1; ix <= 1; ix++)
             {
@@ -99,16 +92,16 @@ public class TileEntityRut extends TileEntity
                         {
                             TileEntityRut ter = (TileEntityRut)worldObj.getTileEntity(i + ix, j + iy, k + iz);
 
-                            if (ter.fluid == null)
+                            if (ter.fluidBlock == null)
                             {
-                                ter.setFluid(this.fluid);
+                                ter.setFluid(this.fluidBlock);
                             }
-                            else if (ter.fluid == Blocks.water && this.fluid == Blocks.lava)
+                            else if (ter.fluidBlock == Blocks.water && this.fluidBlock == Blocks.lava)
                             {
                                 ter.setFluid(Blocks.cobblestone);
                                 this.setFluid(Blocks.cobblestone);
                             }
-                            else if (this.fluid == Blocks.water && ter.fluid == Blocks.lava)
+                            else if (this.fluidBlock == Blocks.water && ter.fluidBlock == Blocks.lava)
                             {
                                 ter.setFluid(Blocks.cobblestone);
                                 this.setFluid(Blocks.cobblestone);
@@ -119,7 +112,7 @@ public class TileEntityRut extends TileEntity
             }
         }
 
-        if (worldObj.getWorldTime() % 60 == 0 && fluid == Blocks.air)
+        if (worldObj.getWorldTime() % 60 == 0 && fluidBlock == Blocks.air)
         {
             for (int ix = -1; ix <= 1; ix++)
             {
@@ -131,26 +124,20 @@ public class TileEntityRut extends TileEntity
                         {
                             Block check = worldObj.getBlock(xCoord + ix, yCoord + iy, zCoord + iz);
 
-                            if (fluid == Blocks.air)
-                            {
-                                if (check == Blocks.lava)
-                                {
-                                    setFluid(Blocks.lava);
-//                                    mod_DustMod.notifyBlockChange(worldObj, xCoord, yCoord, zCoord, 0);
-                                }
-                                else if (check == Blocks.water)
-                                {
-                                    setFluid(Blocks.water);
-//                                    mod_DustMod.notifyBlockChange(worldObj, xCoord, yCoord, zCoord, 0);
-                                }
-                            }
+                        	if (FluidRegistry.lookupFluidForBlock(check) != null) {
+                        		setFluid(check);
+                        		
+                        		prevFluid = fluidBlock;
+                        		
+                        		return;
+                        	}
                         }
                     }
                 }
             }
         }
 
-        prevFluid = fluid;
+        prevFluid = fluidBlock;
     }
 
     public boolean updateNeighbors()
@@ -199,16 +186,12 @@ public class TileEntityRut extends TileEntity
     
     public void writeNetworkNBT(NBTTagCompound tag)
     {
-        UniqueIdentifier maskIdent = GameRegistry.findUniqueIdentifierFor(maskBlock);
-        UniqueIdentifier fluidIdent = GameRegistry.findUniqueIdentifierFor(fluid);
-
-        if (maskIdent != null) {
-        	tag.setString("maskBlock", maskIdent.modId + ":" + maskIdent.name);
-        	tag.setInteger("maskMeta", maskMeta);
-        }
-        if (fluidIdent != null) {
-        	tag.setString("fluid", fluidIdent.modId + ":" + fluidIdent.name);
-        }
+    	tag.setInteger("maskBlock", Block.getIdFromBlock(maskBlock));
+    	tag.setInteger("maskMeta", maskMeta);
+    	
+    	if (fluidBlock != null) {
+    		tag.setInteger("fluid", Block.getIdFromBlock(fluidBlock));
+    	}
         
         tag.setBoolean("isBeingUsed", isBeingUsed);
         
@@ -239,9 +222,7 @@ public class TileEntityRut extends TileEntity
     {
     	if (tag.hasKey("maskBlock"))
         {
-        	String[] ids = tag.getString("maskBlock").split(":", 2);
-        	
-            maskBlock = GameRegistry.findBlock(ids[0], ids[1]);
+            maskBlock = Block.getBlockById(tag.getInteger("maskBlock"));
         }
         else
         {
@@ -259,13 +240,11 @@ public class TileEntityRut extends TileEntity
 
         if (tag.hasKey("fluid"))
         {
-        	String[] ids = tag.getString("fluid").split(":", 2);
-        	
-        	fluid = GameRegistry.findBlock(ids[0], ids[1]);
+        	fluidBlock = Block.getBlockById(tag.getInteger("fluid"));
         }
         else
         {
-            fluid = null;
+            fluidBlock = null;
         }
 
         if (tag.hasKey("isBeingUsed"))
@@ -351,7 +330,6 @@ public class TileEntityRut extends TileEntity
             ruts[index] = !ruts[index];
             
             markDirty();
-            worldObj.notifyBlockChange(xCoord, yCoord, zCoord, worldObj.getBlock(xCoord, yCoord, zCoord));
             worldObj.markBlockForUpdate(xCoord,yCoord,zCoord);
         }
         
@@ -385,14 +363,14 @@ public class TileEntityRut extends TileEntity
 
     public boolean fluidIsFluid()
     {
-    	return FluidRegistry.lookupFluidForBlock(fluid) != null;
+    	return FluidRegistry.lookupFluidForBlock(fluidBlock) != null;
     }
 
     public void setFluid(Block fluid)
     {
-        if (this.fluid != fluid)
+        if (this.fluidBlock != fluid)
         {
-            this.fluid = fluid;
+            this.fluidBlock = fluid;
             markDirty();
             worldObj.notifyBlockChange(xCoord, yCoord, zCoord, worldObj.getBlock(xCoord, yCoord, zCoord));
             worldObj.markBlockForUpdate(xCoord,yCoord,zCoord);
@@ -400,7 +378,7 @@ public class TileEntityRut extends TileEntity
     }
     public boolean canEdit()
     {
-        return (fluid == null || fluidIsFluid() || fluid.getBlockHardness(worldObj,xCoord,yCoord,zCoord) <= hardnessStandard || DustMod.Enable_Decorative_Ruts) && !isBeingUsed;
+        return (fluidBlock == null || fluidIsFluid() || fluidBlock.getBlockHardness(worldObj,xCoord,yCoord,zCoord) <= hardnessStandard || DustMod.Enable_Decorative_Ruts) && !isBeingUsed;
     }
 
     public boolean isEmpty()
