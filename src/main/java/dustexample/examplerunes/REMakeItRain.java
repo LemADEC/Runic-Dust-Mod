@@ -59,15 +59,10 @@ public class REMakeItRain extends RuneEvent
         super.onRightClick(e, ted, p);
         World world = e.worldObj;
         //Takes 2 full hearts (4 halves) from the closest player
-        if(this.takeLife(e, 4, true)){
-            
-            if(world.getWorldInfo().isRaining()){
-            	world.getWorldInfo().setRainTime(world.rand.nextInt(168000) + 12000);
-            	world.getWorldInfo().setRaining(false);
-            }else{
-            	world.getWorldInfo().setRainTime(0);
-            }
-        }
+		if (this.takeLife(e, 4, true)) {
+			// Toggle rain
+			world.getWorldInfo().setRainTime(1);
+		}
     }
 
 	@Override
