@@ -558,9 +558,15 @@ public class BlockDust extends BlockContainer {
 	}
 
 	@SideOnly(Side.CLIENT)
+	@Override
 	public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z) {
-		Block block = world.getBlock(x, y, z); 
-		return block != null ? block.getPickBlock(target, world, x, y, z) : null;
+		TileEntityDust ted = (TileEntityDust) world.getTileEntity(target.blockX, target.blockY, target.blockZ);
+		
+		if (ted != null) {
+			
+		}
+		
+		return null;
 	};
 
 	/**

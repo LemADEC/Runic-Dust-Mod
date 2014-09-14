@@ -61,15 +61,15 @@ public class ItemWornInscription extends ItemArmor implements ISpecialArmor {
 
 	@Override
 	public String getArmorTexture(ItemStack stack, Entity entity, int slot, String type) {
-		return "wornInscription.png";
+		return DustMod.spritePath + "wornInscription.png";
 	}
 
 	@Override
 	public String getUnlocalizedName(ItemStack itemstack) {
 		if (itemstack.getItemDamage() == -1 || InscriptionManager.getEvent(itemstack) == null) {
-			return "inscblank";
+			return "item.inscblank";
 		}
-		return "insc." + InscriptionManager.getEvent(itemstack).idName;
+		return "item.insc." + InscriptionManager.getEvent(itemstack).idName;
 	}
 
 	@Override

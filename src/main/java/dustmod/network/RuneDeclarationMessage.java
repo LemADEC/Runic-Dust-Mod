@@ -18,27 +18,21 @@ public class RuneDeclarationMessage implements IMessage {
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
-		int w, h, l, id, ox, oy, cx, cy, pageNumber;
-		String name, pName, author, notes, desc;
-		boolean powered, solid;
+		int w = buf.readInt();
+		int h = buf.readInt();
+		int l = buf.readInt();
+		int id = buf.readInt();
+		int cx = buf.readInt();
+		int cy = buf.readInt();
+		int pageNumber = buf.readInt();
+		boolean powered = buf.readBoolean();
+		boolean solid = buf.readBoolean();
 
-		w = buf.readInt();
-		h = buf.readInt();
-		l = buf.readInt();
-		id = buf.readInt();
-		ox = buf.readInt();
-		oy = buf.readInt();
-		cx = buf.readInt();
-		cy = buf.readInt();
-		pageNumber = buf.readInt();
-		powered = buf.readBoolean();
-		solid = buf.readBoolean();
-
-		name = NetworkUtil.readString(buf);
-		pName = NetworkUtil.readString(buf);
-		author = NetworkUtil.readString(buf);
-		notes = NetworkUtil.readString(buf);
-		desc = NetworkUtil.readString(buf);
+		String name = NetworkUtil.readString(buf);
+		String pName = NetworkUtil.readString(buf);
+		String author = NetworkUtil.readString(buf);
+		String notes = NetworkUtil.readString(buf);
+		String desc = NetworkUtil.readString(buf);
 
 		int[][][] design = new int[h][w][l];
 
@@ -50,19 +44,12 @@ public class RuneDeclarationMessage implements IMessage {
 			}
 		}
 
-		int[] manRot = new int[8];
-		for (int i = 0; i < 8; i++) {
-			manRot[i] = buf.readInt();
-		}
-
-		shape = new RuneShape(w, l, name, solid, ox, oy, cx, cy, pageNumber, id);
-		shape.setData(design);
+		shape = new RuneShape(design, name, solid, cx, cy, pageNumber, id);
 		shape.setRuneName(pName);
 		shape.setNotes(notes);
 		shape.setDesc(desc);
 		shape.setAuthor(author);
 		shape.isPower = powered;
-		shape.rotationMatrix = manRot;
 
 		shape.isRemote = true;
 	}
@@ -73,10 +60,8 @@ public class RuneDeclarationMessage implements IMessage {
 		buf.writeInt(shape.height);
 		buf.writeInt(shape.length);
 		buf.writeInt(shape.id);
-		buf.writeInt(shape.ox);
-		buf.writeInt(shape.oy);
 		buf.writeInt(shape.cx);
-		buf.writeInt(shape.cy);
+		buf.writeInt(shape.cz);
 		buf.writeInt(shape.pageNumber);
 		buf.writeBoolean(shape.isPower);
 		buf.writeBoolean(shape.solid);
@@ -93,10 +78,6 @@ public class RuneDeclarationMessage implements IMessage {
 					buf.writeInt(shape.getDataAt(x, y, z));
 				}
 			}
-		}
-
-		for (int i = 0; i < 8; i++) {
-			buf.writeInt(shape.rotationMatrix[i]);
 		}
 	}
 

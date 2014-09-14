@@ -1,0 +1,16 @@
+tile.dust.name=Dust
+tile.dustTable.name=Runic Lexicon
+tile.dustrutblock.name=Rut Block
+
+item.dustlibrary.name=Runic Tome
+item.negateSacrifice.name=Negate Rune Sacrifice
+item.runicPaper.name=Scroll Paper
+item.spiritPickaxe.name=Spirit Pickaxe
+item.spiritSword.name=Spirit Sword
+item.itemdustchisel.name=Hammer & Chisel
+item.pouchblank.name=INVALID Runic Pouch
+item.wornInscription.name=INVALID Inscription
+item.emptyinsc.name=Blank Runic Inscription
+item.driedinsc.name=Dried Runic Inscription
+item.dryinginsc.name=Drying Runic Inscription
+item.inscblank=INVALID Inscription

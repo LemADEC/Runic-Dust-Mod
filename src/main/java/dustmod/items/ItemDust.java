@@ -128,9 +128,9 @@ public class ItemDust extends DustModItem
     public String getUnlocalizedName(ItemStack itemstack)
     {
     	String id = DustItemManager.getId(itemstack.getItemDamage());
-    	if(id != null) return "tile.dust." + id;
+    	if(id != null) return "item.dust." + id;
 
-        return "tile.dust";
+        return "item.dust";
     }
     
 

@@ -68,17 +68,17 @@ public class ItemPlaceScroll extends DustModItem
                 j--;
             }
 
-            try{
-             if(wielder.capabilities.isCreativeMode) {
-            	 ds.drawOnWorldWhole(world, i, j, k, (EntityPlayer)wielder, r);
-             }else{
-            	 ds.drawOnWorldPart(world, i, j, k, (EntityPlayer)wielder, r, ((EntityPlayer)wielder).getItemInUseCount());
-             }
-            } catch(Exception e){
-            	DustMod.logger.error("THE FUUUUCK " + e.getMessage(), e);
-            	e.printStackTrace();
-            }
-            ((EntityPlayer)wielder).inventory.markDirty();
+		try {
+			if (wielder.capabilities.isCreativeMode) {
+				ds.drawOnWorldWhole(world, i, j + 1, k, (EntityPlayer) wielder, r);
+			} else {
+				ds.drawOnWorldPart(world, i, j + 1, k, (EntityPlayer) wielder, r, ((EntityPlayer) wielder).getItemInUseCount());
+			}
+		} catch (Exception e) {
+			DustMod.logger.error("THE FUUUUCK " + e.getMessage(), e);
+			e.printStackTrace();
+		}
+		((EntityPlayer) wielder).inventory.markDirty();
 //    	}
     	return true;
     }

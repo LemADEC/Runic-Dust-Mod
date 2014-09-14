@@ -15,6 +15,8 @@ import dustmod.dusts.DustItemManager;
 import dustmod.inscriptions.InscriptionGuiContainer;
 import dustmod.inscriptions.InscriptionInventory;
 import dustmod.items.ItemInk;
+import dustmod.network.SetInscriptionMessage;
+import dustmod.network.UseInkMessage;
 
 public class GuiInscription extends GuiContainer {
 
@@ -61,8 +63,7 @@ public class GuiInscription extends GuiContainer {
 		Slot info = this.inventorySlots.getSlot(0);
 		if(info.getHasStack() && insc.canEdit()){
 			ItemStack stack = info.getStack();
-			int slot = stack.getItemDamage();// slot = 259;
-//			System.out.println("AKSNFASNF " + slot);
+			int slot = stack.getItemDamage();
 			Slot highlightSlot = this.inventorySlots.getSlot(slot+1);
 			this.drawTexturedModalRect(highlightSlot.xDisplayPosition-2, highlightSlot.yDisplayPosition-2, 0, ySize+6, 20, 20);
 		}
@@ -95,7 +96,7 @@ public class GuiInscription extends GuiContainer {
 			}
 		}
 		if(cont){
-			//XXX FMLClientHandler.instance().sendPacket(PacketHandler.getSetInscriptionPacket(insc.inv));
+			DustMod.networkWrapper.sendToServer(new SetInscriptionMessage(insc.inv));
 		}
 	}
 	
@@ -179,7 +180,9 @@ public class GuiInscription extends GuiContainer {
 				ItemStack stack = this.playerInv.getStackInSlot(slot);
 				if(getDust(x,y) != id && ItemInk.reduce(this.player,stack, 1)){
 					setDust(x,y,id);
-					//XXX FMLClientHandler.instance().sendPacket(PacketHandler.getUseInkPacket(slot, 1));
+					//TODO prevent cheating
+					DustMod.networkWrapper.sendToServer(new UseInkMessage(slot, 1));
+
 //					this.inventorySlots.putStackInSlot(slot, stack);
 					this.playerInv.setInventorySlotContents(slot, stack);
 					this.inventorySlots.putStackInSlot(slot+1, stack);

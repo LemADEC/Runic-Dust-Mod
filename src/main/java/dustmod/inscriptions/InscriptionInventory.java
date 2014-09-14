@@ -29,17 +29,14 @@ public class InscriptionInventory implements IInventory {
 
 		tag = inscription.getTagCompound();
 		
-        if (tag == null)
-        {
-        	tag = new NBTTagCompound();
-        	inscription.setTagCompound(tag);
-        }else{
-        	for(int i = 0; i < 16; i++){
-        		for(int j = 0; j < 16; j++){
-        			inv[i*16 + j] = tag.getInteger(i + "," + j);
-        		}
-        	}
-        }
+		if (tag == null) {
+			tag = new NBTTagCompound();
+			inscription.setTagCompound(tag);
+		} else {
+			if (tag.hasKey("design")) {
+				inv = tag.getIntArray("design").clone();
+			}
+		}
 		
 	}
 	

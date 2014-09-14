@@ -115,7 +115,7 @@ public class XMLRuneShapeReader extends DefaultHandler {
 			else
 				this.cy = -1;
 
-			this.design = new int[1][height][width];
+			this.design = new int[1][width][height];
 
 		} else if (currentTag.length() == 4 && currentTag.startsWith("rot")) {
 			int rot = Integer.parseInt(currentTag.charAt(3) + "");
@@ -181,7 +181,7 @@ public class XMLRuneShapeReader extends DefaultHandler {
 								
 							} catch (NumberFormatException e) {
 							}
-						design[0][y][x] = val;
+						design[0][x][y] = val;
 						x++;
 					}
 					x=0;
@@ -207,9 +207,8 @@ public class XMLRuneShapeReader extends DefaultHandler {
 
 	@Override
 	public void endDocument() throws SAXException {
-		RuneShape s = new RuneShape(width, height, idName, solid, ox,oy,cx,cy, id);
-		s.setData(design);
-		s.setRotationMatrix(rotationMatrix);
+		RuneShape s = new RuneShape(design, idName, solid, cx, cy, id);
+		//TODO Replacement for s.setRotationMatrix(rotationMatrix);
 		s.addAllowedVariable(allowedVariables);
 		s.setRuneName(displayName);
 		s.setNotes(sacrifices);

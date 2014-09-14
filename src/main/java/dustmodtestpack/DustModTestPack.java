@@ -4,7 +4,6 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import dustmod.defaults.inscriptions.ForesightInscription;
 import dustmod.inscriptions.InscriptionEvent;
 import dustmod.inscriptions.InscriptionManager;
 import dustmod.runes.RuneShape;
@@ -48,10 +47,15 @@ public class DustModTestPack {
 		RuneShape s;
 		int[][][] values;
 
-		s = new RuneShape(4, 4, "launchtest", false, 0, 0, 0, 0, 200);
-		values = new int[][][] { { { G, 0, 0, G }, { 0, G, G, 0 },
-				{ 0, G, G, 0 }, { G, 0, 0, G } } };
-		s.setData(values);
+		values = new int[][][] { 
+				{ 
+					{ G, 0, 0, G }, 
+					{ 0, G, G, 0 },
+					{ 0, G, G, 0 }, 
+					{ G, 0, 0, G } 
+				} };
+		s = new RuneShape(values, "launchtest", false, 0, 0, 200);
+		
 		s.setRuneName("Launch test Rune");
 		s.setNotes("Sacrifice:\n\n"
 				+ "-None: Normal torch spawn.\n"
@@ -61,7 +65,6 @@ public class DustModTestPack {
 		s.setDesc("Description:\n\n"
 				+ "Spawns a torch or, if a piece of flint is sacrficed, a beacon.");
 		s.setAuthor("billythegoat101 -TestPack");
-		s.setRotationMatrix(new int[] { 00, 00, 0, 0, 0, 0, 0, 0 });
 		// DustManager.registerLocalDustShape(s, new LaunchTestRune());
 	}
 

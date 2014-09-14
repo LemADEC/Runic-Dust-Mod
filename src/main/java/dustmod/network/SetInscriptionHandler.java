@@ -1,11 +1,12 @@
 package dustmod.network;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import dustmod.DustMod;
 
 public class SetInscriptionHandler implements IMessageHandler<SetInscriptionMessage, IMessage> {
 
@@ -14,11 +15,12 @@ public class SetInscriptionHandler implements IMessageHandler<SetInscriptionMess
 
 		int[] design = message.getDesign();
 
-		EntityPlayer ep = ctx.getServerHandler().playerEntity;
-		ItemStack stack = ep.getCurrentEquippedItem();
+		EntityPlayerMP ep = ctx.getServerHandler().playerEntity;
+		ItemStack stack = ep.inventory.getCurrentItem();
+		DustMod.logger.info("SetInscription");
 		
-		// TODO item check
-		if (stack != null) {
+		if (stack != null && stack.getItem() == DustMod.inscription) {
+			DustMod.logger.info("SetInscription 1");
 			if (stack.getItemDamage() == 0)
 				stack.setItemDamage(1);
 			
@@ -30,8 +32,10 @@ public class SetInscriptionHandler implements IMessageHandler<SetInscriptionMess
 			
 			tag.setIntArray("design", design);
 
-			// EntityPlayerMP mp = (EntityPlayerMP)player;
-			// mp.upsendInventoryToPlayer(); //TEST find replacement
+			ep.inventory.setInventorySlotContents(ep.inventory.currentItem, stack);
+			ep.inventory.markDirty();
+			//ep.inventoryContainer.
+			ep.sendContainerToPlayer(ep.inventoryContainer);
 		}
 
 		return null;

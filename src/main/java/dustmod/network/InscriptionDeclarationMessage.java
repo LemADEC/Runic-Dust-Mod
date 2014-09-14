@@ -31,11 +31,11 @@ public class InscriptionDeclarationMessage implements IMessage {
 		notes = NetworkUtil.readString(buf);
 		author = NetworkUtil.readString(buf);
 
-		int[][] design = new int[w][h];
+		int[][] design = new int[h][w];
 
-		for (int x = 0; x < w; x++) {
-			for (int y = 0; y < h; y++) {
-				design[x][y] = buf.readInt();
+		for (int y = 0; y < h; y++) {
+			for (int x = 0; x < w; x++) {
+				design[y][x] = buf.readInt();
 			}
 		}
 
@@ -47,8 +47,8 @@ public class InscriptionDeclarationMessage implements IMessage {
 
 	@Override
 	public void toBytes(ByteBuf buf) {
-		buf.writeInt(inscription.referenceDesign.length);
-		buf.writeInt(inscription.referenceDesign[0].length);
+		buf.writeInt(inscription.width);
+		buf.writeInt(inscription.height);
 		buf.writeInt(inscription.id);
 
 		NetworkUtil.writeString(buf, inscription.getIDName());
@@ -57,12 +57,8 @@ public class InscriptionDeclarationMessage implements IMessage {
 		NetworkUtil.writeString(buf, inscription.getNotes());
 		NetworkUtil.writeString(buf, inscription.getAuthor());
 
-		int w = inscription.referenceDesign.length;
-		int h = inscription.referenceDesign[0].length;
-		for (int x = 0; x < w; x++) {
-			for (int y = 0; y < h; y++) {
-				buf.writeInt(inscription.referenceDesign[x][y]);
-			}
+		for (int i = 0; i < inscription.width * inscription.height; i++) {
+			buf.writeInt(inscription.referenceDesign[i]);
 		}
 	}
 	

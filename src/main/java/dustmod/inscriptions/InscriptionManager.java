@@ -3,9 +3,8 @@ package dustmod.inscriptions;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
-import java.util.logging.Level;
 
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -14,7 +13,6 @@ import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.config.Configuration;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import dustmod.DustMod;
-import dustmod.dusts.DustItemManager;
 import dustmod.items.ItemInscription;
 
 public class InscriptionManager {
@@ -36,6 +34,8 @@ public class InscriptionManager {
 					+ evt.idName);
 		}
 		events.add(evt);
+		
+		LanguageRegistry.instance().addStringLocalization("item.insc." + evt.idName + ".name", "en_US", evt.properName);
 		
 		DustMod.logger.debug("Registering inscription " + evt.idName);
 //		System.out.println("[DustMod] Registering inscription " + evt.idName);
@@ -66,10 +66,14 @@ public class InscriptionManager {
 		eventsRemote.add(evt);
 		DustMod.logger.debug("Registering remote inscription " + evt.idName);
 //		System.out.println("[DustMod] Registering remote inscription " + evt.idName);
-		LanguageRegistry.instance().addStringLocalization(
-				"insc." + evt.idName + ".name", "en_US",
-				evt.properName);
-		DustItemManager.reloadLanguage();
+		
+		/*HashMap<String, String> langEntries = new HashMap<String, String>();
+		langEntries.put("item.insc." + evt.idName + ".name", evt.properName);
+		
+		LanguageRegistry.instance().injectLanguage("en_US", langEntries);*/
+		LanguageRegistry.instance().addStringLocalization("item.insc." + evt.idName + ".name", "en_US", evt.properName);
+		DustMod.logger.info("Add Loc {} for {}", evt.properName, "item.insc." + evt.idName + ".name");
+
 		DustMod.proxy.checkInscriptionPage(evt);
 		evt.isRemote = true;
 	}
@@ -145,7 +149,7 @@ public class InscriptionManager {
 			if (tag.hasKey("eventID")) {
 				return getEvent(tag.getInteger("eventID"));
 			} else {
-				int[][] ink;
+				int[] ink;
 				ink = ItemInscription.getDesign(item);
 				if (ink == null) {
 					return null;
@@ -154,14 +158,13 @@ public class InscriptionManager {
 				for (InscriptionEvent ievt : events) {
 					if (event != null)
 						break;
-					int[][] design = ievt.referenceDesign;
-					for (int i = 0; i <= ink[0].length - design.length
-							&& event == null; i++) {
-						for (int j = 0; j <= ink.length - design[0].length; j++) {
+					int[] design = ievt.referenceDesign;
+					for (int ix = 0; ix < 16 - ievt.width && event == null; ix++) {
+						for (int iy = 0; iy < 16 - ievt.height; iy++) {
 							boolean found = true;
-							for (int x = 0; x < design.length && found; x++) {
-								for (int y = 0; y < design[0].length; y++) {
-									if (design[x][y] != ink[j + y][i + x]) {
+							for (int dx = 0; dx < ievt.width && found; dx++) {
+								for (int dy = 0; dy < ievt.height; dy++) {
+									if (design[dx + dy * ievt.width] != ink[ix + iy * 16]) {
 										found = false;
 										break;
 									}
@@ -177,7 +180,6 @@ public class InscriptionManager {
 
 				if (event != null) {
 					DustMod.logger.debug("Inscription Identified: " + event.idName);
-//					System.out.println("[DustMod] Inscription Identified: " + event.idName);
 					tag = new NBTTagCompound();
 					item.setTagCompound(tag);
 					tag.setInteger("eventID", event.id);

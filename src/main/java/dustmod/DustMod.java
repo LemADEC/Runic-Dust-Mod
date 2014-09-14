@@ -41,7 +41,6 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import dustmod.blocks.BlockDust;
 import dustmod.blocks.BlockDustTable;
@@ -203,7 +202,7 @@ public class DustMod {
 			config.save();
 		}
 
-		dust = new BlockDust();
+		dust = new BlockDust().setBlockName("dust");
 		
 		idust = (DustModItem) (new ItemDust(dust)).setUnlocalizedName("idust").setCreativeTab(creativeTab);
 		
@@ -270,34 +269,6 @@ public class DustMod {
 				"dustruttileentity");
 
 		proxy.registerTileEntityRenderers();
-
-		LanguageRegistry lang = LanguageRegistry.instance();
-		lang.addStringLocalization("tile.dust.name", "en_US",
-				"[DustMod] :Do not use this");
-
-		lang.addStringLocalization(dustTable.getUnlocalizedName() + ".name", "en_US",
-				"Runic Lexicon");
-		lang.addStringLocalization(tome.getUnlocalizedName() + ".name", "en_US",
-				"Runic Tome");
-		lang.addStringLocalization(negateSacrifice.getUnlocalizedName() + ".name",
-				"en_US", "Negate Rune Sacrifice");
-		lang.addStringLocalization(runicPaper.getUnlocalizedName() + ".name", "en_US",
-				"Scroll Paper");
-		lang.addStringLocalization(spiritPickaxe.getUnlocalizedName() + ".name",
-				"en_US", "Spirit Pickaxe");
-		lang.addStringLocalization(spiritSword.getUnlocalizedName() + ".name",
-				"en_US", "Spirit Sword");
-		lang.addStringLocalization(chisel.getUnlocalizedName() + ".name", "en_US",
-				"Hammer&Chisel");
-		lang.addStringLocalization("pouchblank.name", "en_US",
-				"ERROR Runic Pouch");
-		// lang.addStringLocalization(inscription.getItemName() + ".name",
-		// "en_US", "Blank Runic Inscription");
-		lang.addStringLocalization("emptyinsc.name", "en_US",
-				"Blank Runic Inscription");
-		lang.addStringLocalization("driedinsc.name", "en_US", "Dried Drawing");
-		lang.addStringLocalization("dryinginsc.name", "en_US",
-				"Drying Inscription");
 
 		GameRegistry.addRecipe(new ItemStack(dustTable, 1), new Object[] {
 				"dwd", "wbw", "dwd", 'd', new ItemStack(idust, 1, -1), 'w',
@@ -405,7 +376,6 @@ public class DustMod {
 		DustItemManager.registerDefaultDusts();
 		RuneManager.registerDefaultShapes();
 		InscriptionManager.registerDefaultInscriptions();
-		lang.addStringLocalization("inscblank.name", "Doodle");
 
 		MinecraftForge.EVENT_BUS.register(this);
 	}
@@ -429,7 +399,6 @@ public class DustMod {
 
 		if (evt.world.isRemote)
 			return;
-		// System.out.println("World event Load " + evt.world);
 
 		ISaveHandler save = evt.world.getSaveHandler();
 		int nameLength = (new StringBuilder())
@@ -499,28 +468,6 @@ public class DustMod {
 		}
 
 		return -1;
-	}
-
-	/**
-	 * Syncs player inventory of the client with server. Theoretically.
-	 * 
-	 * @param p
-	 *            Player's inventory to sync.
-	 */
-	public static void sendPlayerInventory(EntityPlayer p) {
-
-		//TODO
-		/*int var1;
-
-		if (!p.worldObj.isRemote)
-			for (var1 = 0; var1 < 5; ++var1) {
-				ItemStack var2 = p.getCurrentItemOrArmor(var1);
-				((WorldServer) p.worldObj).getEntityTracker()
-						.sendPacketToAllPlayersTrackingEntity(
-								p,
-								new Packet5PlayerInventory(p.entityId, var1,
-										var2));
-			}*/
 	}
 
 	public static void sendEntMotionTraits(EntityLivingBase wearer) {

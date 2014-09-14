@@ -32,49 +32,22 @@ public class ItemInscription extends DustModItem {
 	public InscriptionInventory getInventory(ItemStack item){
 		return new InscriptionInventory(item);
 	}
-//	@Override
-//	@SideOnly(Side.CLIENT)
-//	public int getIIconFromDamage(int meta) {
-//		// TODO Auto-generated method stub
-//		return 38;//meta == max ? 37 : 38;
-//	}
-//	@Override
-//	public int getitemIcon(ItemStack stack, int renderPass,
-//			EntityPlayer player, ItemStack usingItem, int useRemaining) {
-//
-//		boolean isDried = isDried(stack);
-//		int damage = stack.getItemDamage();
-//		if(isDried || true) {
-//			return 38;
-//		}
-//		else {
-//			return 37;
-//		}
-//
-//	}
 	
 	@Override
 	public ItemStack onItemRightClick(ItemStack item, World world,
 			EntityPlayer player) {
-		// TODO Auto-generated method stub
 		player.openGui(DustMod.instance, 0, world, 0,0,0);
 
 		return item;
 	}
 	
-	public static int[][] getDesign(ItemStack item){
+	public static int[] getDesign(ItemStack item){
 		if(item == null || !item.hasTagCompound()) return null;
 		
-		int[][] rtn = new int[16][16];
-
 		NBTTagCompound tag = item.getTagCompound();
-		for(int i = 0; i < 16; i++){
-			for(int j = 0; j < 16; j++){
-				rtn[i][j] = tag.getInteger(i + "," + j);
-			}
-		}
-		
-		return rtn;
+		int[] design = tag.getIntArray("design");
+
+		return design != null ? design.clone() : null;
 	}
 	
 	public static void removeDesign(ItemStack item){
@@ -82,21 +55,20 @@ public class ItemInscription extends DustModItem {
 		if(item == null || !item.hasTagCompound()) return;
 
 		NBTTagCompound tag = item.getTagCompound();
-		for(int i = 0; i < 16; i++){
-			for(int j = 0; j < 16; j++){
-				tag.removeTag(i + "," + j);
-			}
-		}
+		tag.removeTag("design");
 	}
 	
 	public static boolean isDesignEmpty(ItemStack item){
 		if(item == null || !item.hasTagCompound()) return false;
+		
 		NBTTagCompound tag = item.getTagCompound();
-		for(int i = 0; i < 16; i++){
-			for(int j = 0; j < 16; j++){
-				int check = tag.getInteger(i + "," + j);
-				if(check != 0) return false;
-			}
+		int[] design = tag.getIntArray("design");
+		
+		if (design == null) 
+			return true;
+		
+		for (int i = 0; i < design.length; i++) {
+			if (design[i] != 0) return false;
 		}
 		
 		return true;
@@ -132,13 +104,12 @@ public class ItemInscription extends DustModItem {
 			//DUDE FUCKING LOOK AT THIS COMMENT NEXT TIME THIS DROVE ME MAD FOR 15 MINUTES****************************
 			//Get event also logs the EventID into the item's nbt
 			InscriptionEvent event = InscriptionManager.getEvent(item);
-			int id = -1;
-			if(event != null){
-				id = event.id;
-				InscriptionManager.onCreate((EntityPlayer)ent, item);
+
+			if (event != null) {
+				InscriptionManager.onCreate((EntityPlayer) ent, item);
 				item.func_150996_a(DustMod.getWornInscription());
 				item.setItemDamage(ItemInscription.max);
-			}else{
+			} else {
 				setDried(item);
 			}
 		}
@@ -168,11 +139,14 @@ public class ItemInscription extends DustModItem {
 
     public String getUnlocalizedName(ItemStack itemstack)
     {
-    	boolean isDried = isDried(itemstack);
-    	int damage = itemstack.getItemDamage();
-    	if(isDried) return "driedinsc";
-    	else if(damage != 0) return "dryinginsc";
-    	else return "emptyinsc";
+		boolean isDried = isDried(itemstack);
+		int damage = itemstack.getItemDamage();
+		if (isDried)
+			return "item.driedinsc";
+		else if (damage != 0)
+			return "item.dryinginsc";
+		else
+			return "item.emptyinsc";
     }
     
     @Override
@@ -183,12 +157,15 @@ public class ItemInscription extends DustModItem {
     
     @Override
     public IIcon getIcon(ItemStack stack, int renderPass) {
-    	int meta = stack.getItemDamage();
-    	boolean isDried = isDried(stack);
-    	int damage = stack.getItemDamage();
-    	if(isDried) return driedIIcon;
-    	else if(damage != 0) return dryingIIcon;
-    	else return blankIIcon;
+
+		boolean isDried = isDried(stack);
+		int damage = stack.getItemDamage();
+		if (isDried)
+			return driedIIcon;
+		else if (damage != 0)
+			return dryingIIcon;
+		else
+			return blankIIcon;
     }
     
     @Override

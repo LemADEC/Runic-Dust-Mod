@@ -86,9 +86,9 @@ public class PageHelper
 //        DustMod.log(Level.INFO, "Lexicon Inscription entry for " + name + " not found! Generating... [" + file.getAbsolutePath() + "]");
 //        System.out.println("[DustMod] Lexicon Inscription entry for " + name + " not found! Generating...");
         
-        int[][]values = event.referenceDesign;
-        int width = values[0].length;
-        int height = values.length;
+        int[]values = event.referenceDesign;
+        int width = event.width;
+        int height = event.height;
 //        System.out.println("Checking " + name + " " + width + " " + height);
 
         int dW = 1; //dotWidth
@@ -99,7 +99,7 @@ public class PageHelper
         {
             for (int y = 0; y < height; y++)
             {
-                int value = values[y][x];
+                int value = values[x + y * width];
                 if (value != 0)
                 {
                     int[] loc = getPosition(x, y, dW, sW, bgw, bgh, width, height);
@@ -111,7 +111,7 @@ public class PageHelper
                     colorCheck *= 2;
                     colorCheck += 2;
 
-                    if (x < width - 1 && values[y][x + 1] == value)
+                    if (x < width - 1 && values[x + 1 + y * width] == value)
                     {
                         int[] nextLoc = getPosition(x + 1, y, dW, sW, bgw, bgh, width, height);
                         for (int i = Math.min(loc[0], nextLoc[0]); i < Math.max(loc[0], nextLoc[0]); i++)
@@ -122,7 +122,7 @@ public class PageHelper
                             }
                         }
                     }
-                    if (y < height - 1 && values[y+1][x] == value)
+                    if (y < height - 1 && values[x + (y + 1) * width] == value)
                     {
                         int[] nextLoc = getPosition(x, y + 1, dW, sW, bgw, bgh, width, height);
                         for (int i = 0; i < dW; i++)
@@ -196,21 +196,10 @@ public class PageHelper
 
 
         String name = "" + shape.name;
-//        while (Character.isDigit(name.charAt(name.length() - 1)))
-//        {
-//            name = name.substring(0, name.length() - 1);
-//        }
-        
-//        File file = new File(runeFolder + name + ".png");
-//        if(file.exists()) return;
-//        DustMod.log(Level.FINEST, "Lexicon Rune entry for " + name + " not found! Generating...");
-//        System.out.println("[DustMod] Lexicon Rune entry for " + name + " not found! Generating...");
         
         int[][][] values = shape.data;
-        int width = shape.data[0][0].length;
-        int height = shape.data[0].length;
-//        System.out.println("Checking " + name + " " + width + " " + height);
-
+        int width = values[0].length;
+        int height = values[0][0].length;
 
         int pxwMax = bgw - 6;
         int pxhMax = bgh- 6;
@@ -246,8 +235,6 @@ public class PageHelper
                 }
             }
         }
-
-//        System.out.println("[" + pxWidth + "," + pxHeight + "] [" + bgw + "," + bgh + "]");
 
         //gold
         int tx = pxWidth / 2 + 2;
@@ -290,7 +277,7 @@ public class PageHelper
         {
             for (int y = 0; y < height; y++)
             {
-                int value = values[0][y][x];
+                int value = values[0][x][y];
                 if (value != 0)
                 {
                     int[] loc = getPosition(x, y, dW, sW, bgw, bgh, width, height);
@@ -302,9 +289,9 @@ public class PageHelper
                     colorCheck *= 2;
                     colorCheck += 2;
 
-                    if (x < width - 1 && values[0][y][x + 1] == value)
+                    if (y < height - 1 && values[0][x][y + 1] == value)
                     {
-                        int[] nextLoc = getPosition(x + 1, y, dW, sW, bgw, bgh, width, height);
+                        int[] nextLoc = getPosition(x, y + 1, dW, sW, bgw, bgh, width, height);
                         for (int i = Math.min(loc[0], nextLoc[0]); i < Math.max(loc[0], nextLoc[0]); i++)
                         {
                             for (int j = 0; j < dW; j++)
@@ -313,9 +300,9 @@ public class PageHelper
                             }
                         }
                     }
-                    if (y < height - 1 && values[0][y + 1][x] == value)
+                    if (x < width - 1 && values[0][x + 1][y] == value)
                     {
-                        int[] nextLoc = getPosition(x, y + 1, dW, sW, bgw, bgh, width, height);
+                        int[] nextLoc = getPosition(x + 1, y, dW, sW, bgw, bgh, width, height);
                         for (int i = 0; i < dW; i++)
                         {
                             for (int j = Math.min(loc[1], nextLoc[1]); j < Math.max(loc[1], nextLoc[1]); j++)

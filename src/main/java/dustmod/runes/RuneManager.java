@@ -75,7 +75,7 @@ public class RuneManager
 //        result.posZ = z;
 //        result.dustPoints = points;
         for(int i = 0; i < rot; i++){
-        	map = RuneShape.rotateMatrix(map);
+        	map = RuneShape.rotateMatrixLeft(map);
         }
         result.dusts = map;
         result.runeWidth = map[0].length/4;
@@ -252,6 +252,7 @@ public class RuneManager
 		DustMod.logger.debug("Registering remote rune: " + shape.name);
 //        System.out.println("[DustMod] Registering remote rune " + shape.name);
         LanguageRegistry.instance().addStringLocalization("tile.scroll" + shape.name + ".name", "en_US", shape.getRuneName() + " Placing Scroll");
+        DustMod.logger.info("Add Loc {} for {}", shape.getRuneName() + " Placing Scroll", "tile.scroll" + shape.name + ".name");
         DustItemManager.reloadLanguage();
     }
 
@@ -359,11 +360,8 @@ public class RuneManager
 
 		for (int iter = 0; iter < RuneManager.shapes.size(); iter++) {
 			RuneShape s = RuneManager.shapes.get(iter);
-			// System.out.println("Dicks");
-			int[][] temptrim = trim;
 
-			if ((rot = s.compareData(trim)) != -1) {
-				// trim = temptrim;
+			if (s.dataMatches(trim)) {
 				found = s;
 				break;
 			}

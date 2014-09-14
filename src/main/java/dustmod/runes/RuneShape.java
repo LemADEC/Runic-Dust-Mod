@@ -5,6 +5,7 @@
 package dustmod.runes;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 import dustmod.DustMod;
@@ -16,7 +17,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -28,9 +28,9 @@ import net.minecraft.world.World;
 public class RuneShape {
 	public static final int n = -1;
 
-	public int width;
-	public int length;
-	public int height;
+	public final int width;
+	public final int length;
+	public final int height;
 	public boolean solid = true;
 	public boolean isPower = false;
 
@@ -39,14 +39,18 @@ public class RuneShape {
 	private String notes = "";
 	private String author = "";
 	protected String desc = "";
-	public int[][][] data;
+	public final int[][][] data;
 	public boolean isRemote = false;
 
-	public int[] rotationMatrix = new int[8];
-	private int[] setPos = new int[] { 0, 0, 0 };
-
-	public int cy, cx;
-	public int oy, ox;
+	// Center X Offset
+	public final int cx;
+	// Center Z Offset
+	public final int cz;
+	
+	// Edge X Offset
+	public final int ox;
+	// Edge Z Offset
+	public final int oz;
 
 	public ArrayList<ArrayList<int[][]>> blocks;
 
@@ -69,16 +73,14 @@ public class RuneShape {
 	 *            Rune size width (x)
 	 * @param l
 	 *            Rune size length (z)
+	 * @param design
+	 *            Design of the Rune
 	 * @param name
 	 *            Code name for the rune.
 	 * @param solid
 	 *            Is this rune a solid color. Mostly useful for runes who are
 	 *            entirely made out of variable and should only be one dust
 	 *            (like fire trap)
-	 * @param ox
-	 *            X offset for the edge of the rune
-	 * @param oy
-	 *            Y offset for the edge of the rune
 	 * @param cx
 	 *            X offset for the center of the rune
 	 * @param cy
@@ -86,8 +88,8 @@ public class RuneShape {
 	 * @param id
 	 *            unique rune id
 	 */
-	public RuneShape(int w, int l, String name, boolean solid, int ox, int oy, int cx, int cy, int id) {
-		this(w, l, name, solid, ox, oy, cx, cy, RuneManager.getNextPageNumber(), id);
+	public RuneShape(int[][][] design, String name, boolean solid, int cx, int cy, int id) {
+		this(design, name, solid, cx, cy, RuneManager.getNextPageNumber(), id);
 	}
 
 	/**
@@ -102,16 +104,14 @@ public class RuneShape {
 	 *            Rune size width (x)
 	 * @param l
 	 *            Rune size length (z)
+	 * @param design
+	 *            Design of the Rune
 	 * @param name
 	 *            Code name for the rune.
 	 * @param solid
 	 *            Is this rune a solid color. Mostly useful for runes who are
 	 *            entirely made out of variable and should only be one dust
 	 *            (like fire trap)
-	 * @param ox
-	 *            X offset for the edge of the rune
-	 * @param oy
-	 *            Y offset for the edge of the rune
 	 * @param cx
 	 *            X offset for the center of the rune
 	 * @param cy
@@ -121,46 +121,34 @@ public class RuneShape {
 	 * @param id
 	 *            unique rune id
 	 */
-	public RuneShape(int w, int l, String name, boolean solid, int ox, int oy, int cx, int cy, int page, int id) {
+	public RuneShape(int[][][] design, String name, boolean solid, int cx, int cy, int page, int id) {
 
-		if (w > 32 || l > 32) {
+		this.width = design[0].length;
+		this.length = design[0][0].length;
+		this.height = 1;
+		
+		if (width > 32 || length > 32) {
 			throw new IllegalArgumentException("Rune dimensions too big! " + name + " Max:32x32");
 		}
 
 		this.id = id;
 		this.name = name;
-		width = w;
-		length = l;
-		height = 1;
-		data = new int[height][width][length];
-		dustAmt = new int[1000];
+		this.data = design;
+		this.dustAmt = new int[1000];
 		this.solid = solid;
-		this.cy = cy;
+		this.cz = cy;
 		this.cx = cx;
-		this.oy = oy;
-		this.ox = ox;
+		this.oz = (cy % 4 == 0) ? 0 : 4 - (cy % 4);
+		this.ox = (cx % 4 == 0) ? 0 : 4 - (cx % 4);
 
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-				for (int z = 0; z < length; z++) {
-					data[y][x][z] = 0;
-				}
-			}
-		}
+		blocks = new ArrayList<ArrayList<int[][]>>();
+		allowedVariable = new ArrayList<Integer>();
+		int[] test = getBlockCoord(ox + width, oz + length);
+		int bwidth = test[0] + 2;
+		int bheight = test[1] + 2;
 
-		if (ox < 0 || oy < 0) {
-			throw new IllegalArgumentException("Dust offset cannot be negative.");
-		}
-
-		blocks = new ArrayList();
-		allowedVariable = new ArrayList();
-		int[] test = getBlockCoord(ox + w, oy + l);
-		int bwidth = test[0] + 2; // (int)Math.ceil((((double)w+Math.abs(oy))/4.0));
-		int bheight = test[1] + 2; // (int)Math.ceil(((double)(l+Math.abs(ox))/4.0));
-
-		// System.out.println("fuckitalllll " + bwidth + " " + bheight);
 		for (int i = 0; i < bwidth; i++) {
-			blocks.add(new ArrayList());
+			blocks.add(new ArrayList<int[][]>());
 
 			for (int j = 0; j < bheight; j++) {
 				blocks.get(i).add(new int[4][4]);
@@ -168,8 +156,6 @@ public class RuneShape {
 		}
 		this.pageNumber = page;
 
-		// System.out.println("Derpsize " + bwidth + " " + bheight + " " +
-		// blocks.size() + " " + blocks.get(0).size() + " " + name);
 		updateData();
 	}
 
@@ -200,23 +186,6 @@ public class RuneShape {
 				desc += DustItemManager.getName(i) + "\n";
 			}
 		}
-		return this;
-	}
-
-	/**
-	 * Sets the manual rotation offset for when being placed by scrolls. Array
-	 * format: {x0,y0,x1,y1,x2,y2,x3,y3} x0 and y0 represent the x and y offsets
-	 * for when the player is rotated in the '0' direction x1 and y1 represent
-	 * the x and y offsets for when the player is rotated in the '1' direction
-	 * The offset is in terms of whole blocks. You're just gonna have to guess
-	 * check and revise on this one unfortunately.
-	 * 
-	 * @param n
-	 *            Raw string to display
-	 * @return This DustShape
-	 */
-	public RuneShape setRotationMatrix(int[] derp) {
-		this.rotationMatrix = derp;
 		return this;
 	}
 
@@ -253,25 +222,20 @@ public class RuneShape {
 	}
 
 	private void updateData() {
-		blocks = updateData(data, oy, ox);
+		blocks = updateData(data, oz, ox);
 	}
 
 	private ArrayList<ArrayList<int[][]>> updateData(int[][][] tdata, int tox, int toy) {
 		int w = tdata[0].length;
 		int l = tdata[0][0].length;
 
-		if (tdata == this.data) {
-			width = w;
-			length = l;
-		}
-
-		ArrayList<ArrayList<int[][]>> tblocks = new ArrayList();
-		int[] test = getBlockCoord(tox + w, toy + l, tox, toy);
-		int bwidth = test[0] + 2; // (int)Math.ceil((((double)w+Math.abs(oy))/4.0));
-		int bheight = test[1] + 2; // (int)Math.ceil(((double)(l+Math.abs(ox))/4.0));
+		ArrayList<ArrayList<int[][]>> tblocks = new ArrayList<ArrayList<int[][]>>();
+		int[] coords = getBlockCoord(tox + w, toy + l, tox, toy);
+		int bwidth = coords[0] + 2;
+		int bheight = coords[1] + 2;
 
 		for (int i = 0; i < bwidth; i++) {
-			tblocks.add(new ArrayList());
+			tblocks.add(new ArrayList<int[][]>());
 
 			for (int j = 0; j < bheight; j++) {
 				tblocks.get(i).add(new int[4][4]);
@@ -290,7 +254,6 @@ public class RuneShape {
 						to = -2;
 					}
 
-
 					tblocks.get(c[0]).get(c[1])[c[2]][c[3]] = to;
 
 					if (to >= 0) {
@@ -303,27 +266,20 @@ public class RuneShape {
 	}
 
 	public int[] getBlockCoord(int x, int z) {
-		return getBlockCoord(x, z, oy, ox);
+		return getBlockCoord(x, z, oz, ox);
 	}
 
-	public int[] getBlockCoord(int x, int z, int tox, int toy) {
-		int i = (int) Math.floor((x + tox) / 4);
-		int j = (int) Math.floor((z + toy) / 4);
-		int nx = x + tox - i * 4;
-		int nz = z + toy - j * 4;
-		// if(i >= blocks.size() || j >= blocks.get(0).size())
-		// System.out.println("Derp bx:" + i + " by:" + j + " nx:" + nx + " nz:"
-		// + nz );
-		// if(nx < 0) nx = 0;
-		// if(nz < 0) nz = 0;
+	public int[] getBlockCoord(int x, int z, int toX, int toY) {
+		int i = (int) Math.floor((x + toX) / 4);
+		int j = (int) Math.floor((z + toY) / 4);
+		int nx = x + toX - i * 4;
+		int nz = z + toY - j * 4;
+
 		return new int[] { i, j, nx, nz };
 	}
 
 	public RuneShape setDataAt(int x, int y, int z, int b) {
 		data[y][x][z] = b;
-		setPos[0] = x;
-		setPos[1] = y;
-		setPos[2] = z;
 		updateData();
 		return this;
 	}
@@ -332,60 +288,56 @@ public class RuneShape {
 		return data[y][x][z];
 	}
 
-	public void setData(int[][][] data) {
-		this.data = data;
-		updateData();
-	}
-
 	public int[][][] getData() {
 		return data;
-	}
-
-	public void translate(int x, int y, int z, int value) {
-		data[setPos[1]][setPos[0]][setPos[2]] = value;
-		setPos[0] += x;
-		setPos[y] += y;
-		setPos[z] += z;
 	}
 
 	/**
 	 * 
 	 * @param d
-	 * @param m
 	 * @return -1: no match, 0: match but incomplete, 1:complete match
 	 */
-	public int compareData(int[][] d) {
-		// int h = d.length;
+	public boolean dataMatches(int[][] d) {
 		int w = d.length;
 		int l = d[0].length;
-		// if(h > height) return -1;
-		// System.out.println("WHYYY " + w + " " + l + " " + width + " " +
-		// length);
-		// if(w > width) return -1;
-		// if(l > length) return -1;
-		// int dh = height - h;
-		int dw = width - w;
-		int dl = length - l;
-
-		if (dw < 0 || dl < 0) {
-			dw = width - l;
-			dl = length - w;
+		
+		if ((w != width || l != length) && (w != length || l != width)) {
+			return false;
 		}
-
-		int rot = -1;
-
-		// System.out.println("potato " + dw + " " + dl);
-		for (int x = 0; x <= dw; x++) {
-			for (int z = 0; z <= dl; z++) {
-				if ((rot = compareChunk(d, x, 0, z)) == -1) {
-					// System.out.println("dicks");
-					return -1;
-				}
+		
+		boolean checkAllRotations = false;
+		
+		if (w != width) {
+			d = rotateMatrixLeft(d);
+			w = d.length;
+			l = d[0].length;
+		} else if (w == l) {
+			checkAllRotations = true;
+		}
+		
+		if (!dataMatches(d, 0, 0, 0)) {
+			return false;
+		}
+		
+		d = flipMatrixXY(d);
+		
+		if (!dataMatches(d, 0, 0, 0)) {
+			return false;
+		}
+		
+		if (checkAllRotations) {
+			d = rotateMatrixLeft(d);
+			
+			if (!dataMatches(d, 0, 0, 0)) {
+				return false;
+			}
+			
+			d = flipMatrixXY(d);
+			
+			if (!dataMatches(d, 0, 0, 0)) {
+				return false;
 			}
 		}
-
-		w = d.length;
-		l = d[0].length;
 
 		if (solid) {
 			int compare = 0;
@@ -396,193 +348,165 @@ public class RuneShape {
 
 					if (compare == 0 && iter != 0) {
 						compare = iter;
-					} else if (compare != 0) {
-						if (compare != iter && iter != 0) {
-							// System.out.println("Rune mulicolored");
-							return -1;
-						}
+					} else if (compare != 0 && iter != 0 && compare != iter) {
+						return false;
 					}
 				}
 			}
 		}
 
-		if ((w == width && l == length) || (w == length && l == width)) {
-			return rot;
-		}
-
-		return -1;
+		return true;
 	}
 
-	protected int compareChunk(int[][] d, int ox, int oy, int oz) {
-		// int h = d.length;
-		// I shouldn't have to put this here, but it works
-		width = data[0].length;
-		length = data[0][0].length;
-		boolean equal = true;
+	protected boolean dataMatches(int[][] d, int ox, int oy, int oz) {
 
-		// for(int y = 0; y < h; y++){
-		for (int rot = 0; rot < 4; rot++) {
-			int w = d.length;
-			int l = d[0].length;
-			if (w != width || l != length) {
-				// System.out.println("firsderp");
-				equal = false;
-			}
-
-			kill:
-
-			for (int x = 0; x < w && equal; x++) {
-				for (int z = 0; z < l && equal; z++) {
-					try {
-
-						if (x >= width || z >= length || (d[x][z] != data[oy][x + ox][z + oz] && (d[x][z] == 0 || data[oy][x + ox][z + oz] != -1))
-								|| (data[oy][x + ox][z + oz] == -1 && !this.isDustAllowedAsVariable(d[x][z]))) {
-							equal = false;
-							break kill;
-						}
-					} catch (Exception e) {
-						equal = false;
-						break kill;
-					}
-				}
-			}
-
-			if (equal) {
-				return rot;
-			}
-
-			d = rotateMatrix(d);
-			equal = true;
-		}
-
-		d = flipMatrix(d);
-		// System.out.println("FLIP");
-
-		for (int rot = 0; rot < 4; rot++) {
-			int w = d.length;
-			int l = d[0].length;
-
-			if (w != width || l != length) {
-				// System.out.println("firsderp");
-				equal = false;
-			}
-
-			kill:
-
-			for (int x = 0; x < w && equal; x++) {
-				for (int z = 0; z < l && equal; z++) {
-					try {
-						if (x >= width || z >= length || (d[x][z] != data[oy][x + ox][z + oz] && !(d[x][z] != 0 && data[oy][x + ox][z + oz] == -1))
-								|| (data[oy][x + ox][z + oz] == -1 && !this.isDustAllowedAsVariable(d[x][z]))) {
-							equal = false;
-							break kill;
-						}
-					} catch (Exception e) {
-						equal = false;
-						break kill;
-					}
-				}
-			}
-
-			if (equal) {
-				return rot;
-			}
-
-			d = rotateMatrix(d);
-			equal = true;
-		}
-		return -1;
-	}
-
-	public static int[][] rotateMatrix(int[][] mat) {
-		int[][] rtn = new int[mat[0].length][mat.length];
-		int M = mat.length;
-		int N = mat[0].length;
-
-		for (int r = 0; r < M; r++) {
-			for (int c = 0; c < N; c++) {
-				rtn[c][M - 1 - r] = mat[r][c];
-			}
-		}
-
-		return rtn;
-	}
-
-	public static int[][] flipMatrix(int[][] mat) {
-		int[][] rtn = new int[mat.length][mat[0].length];
-		int w = mat.length;
-		int l = mat[0].length;
-
+		int w = d.length;
+		int l = d[0].length;
+	
 		for (int x = 0; x < w; x++) {
-			for (int y = 0; y < l; y++) {
-				rtn[w - x - 1][y] = mat[x][y];
+			for (int z = 0; z < l; z++) {
+				if ((d[x][z] != data[oy][x + ox][z + oz] && (d[x][z] == 0 || data[oy][x + ox][z + oz] != -1))
+						|| (data[oy][x + ox][z + oz] == -1 && !this.isDustAllowedAsVariable(d[x][z]))) {
+					return false;
+				}
+			}
+		}
+	
+		return true;
+	}
+
+	// Rotates the matrix counterclockwise
+	public static int[][] rotateMatrixLeft(int[][] mat) {
+		int width = mat.length;
+		int height = mat[0].length;
+		int[][] rtn = new int[height][width];
+
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				rtn[y][width - 1 - x] = mat[x][y];
+			}
+		}
+
+		return rtn;
+	}
+	
+	// Rotates the matrix clockwise
+	public static int[][] rotateMatrixRight(int[][] mat) {
+		int width = mat.length;
+		int height = mat[0].length;
+		int[][] rtn = new int[height][width];
+
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				rtn[height - 1 - y][x] = mat[x][y];
+			}
+		}
+
+		return rtn;
+	}
+
+	public static int[][] flipMatrixX(int[][] mat) {
+		int width = mat.length;
+		int height = mat[0].length;
+		int[][] rtn = new int[width][height];
+
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				rtn[width - 1 - x][y] = mat[x][y];
 			}
 		}
 		return rtn;
 	}
+	
+	public static int[][] flipMatrixY(int[][] mat) {
+		int width = mat.length;
+		int height = mat[0].length;
+		int[][] rtn = new int[width][height];
 
-	public boolean drawOnWorldWhole(World w, int i, int j, int k, EntityPlayer p, int r) {
-
-		if (w.isRemote)
-			return false;
-
-		int si = i, sk = k;
-		int tcx = cy, tcy = cx, tox = oy, toy = ox;
-		int[][][] tdata = new int[height][width][length];
-
-		si += rotationMatrix[r * 2];
-		sk += rotationMatrix[r * 2 + 1];
-
-		j++;
-		r = (5 - r) % 4;
-		// yes, I know this rotation code is bull, but i'm getting fed up with it
-
-		ArrayList<ArrayList<int[][]>> tblocks;
-
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-				for (int z = 0; z < length; z++) {
-					tdata[y][x][z] = data[y][x][z];
-				}
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				rtn[x][height - 1 - y] = mat[x][y];
 			}
 		}
+		return rtn;
+	}
+	
+	public static int[][] flipMatrixXY(int[][] mat) {
+		int width = mat.length;
+		int height = mat[0].length;
+		int[][] rtn = new int[width][height];
 
-		for (int rot = 0; rot < r; rot++) {
-			tdata[0] = rotateMatrix(tdata[0]);
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				rtn[width - 1 - x][height - 1 - y] = mat[x][y];
+			}
 		}
-
-		int tw = (int) Math.floor(data[0].length / 4);
-		tw *= 4;
-		int th = (int) Math.floor(data[0][0].length / 4);
-		th *= 4;
-
-		switch (r) {
+		return rtn;
+	}
+	
+	public boolean drawOnWorldWhole(World world, int x, int y, int z, EntityPlayer player, int rotation) {
+		
+		if (world.isRemote)
+			return false;
+		
+		int placementX = x;
+		int placementZ = z;
+		int newEdgeOffsetX;
+		int newEdgeOffsetY;
+		int newCenterOffsetX;
+		int newCenterOffsetY;
+		
+		int[][][] rotatedData = new int[height][][];
+		
+		for (int i = 0; i < rotatedData.length; i++) {
+			if (rotation == 0) {
+				rotatedData[i] = data[i].clone();
+			} else if (rotation == 1) {
+				rotatedData[i] = rotateMatrixLeft(data[i]);
+			} else if (rotation == 2) {
+				rotatedData[i] = flipMatrixXY(data[i]);
+			} else if (rotation == 3) {
+				rotatedData[i] = rotateMatrixRight(data[i]);
+			}
+		}
+		
+		DustMod.logger.info("rotation {} data {}", rotation, Arrays.deepToString(rotatedData));
+		
+		// Recalculate Center offset
+		switch (rotation) {
 		case 0:
+		default:
+			newCenterOffsetX = cx;
+			newCenterOffsetY = cz;
 			break;
-
+			
 		case 1:
-			tox = ox;
-			toy = tw - ((data[0].length + oy) % 4);
+			newCenterOffsetX = cz;
+			newCenterOffsetY = width - cx - 4;
 			break;
-
+		
 		case 2:
-			tox = tw - ((data[0].length + oy) % 4);
-			toy = th - ((data[0][0].length + ox) % 4);
+			newCenterOffsetX = width - cx - 4;
+			newCenterOffsetY = length - cz - 4;
 			break;
-
+			
 		case 3:
-			tox = th - ((data[0][0].length + ox) % 4);
-			toy = oy;
+			newCenterOffsetX = length - cz - 4;
+			newCenterOffsetY = cx;
 			break;
 		}
-
-		tblocks = updateData(tdata, tox, toy);
-		int[] temp = this.getBlockCoord(tcx, tcy, tox, toy);
-		si -= temp[0];
-		sk -= temp[1];
+		
+		newEdgeOffsetX = (newCenterOffsetX % 4 == 0) ? 0 : 4 - (newCenterOffsetX % 4);
+		newEdgeOffsetY = (newCenterOffsetY % 4 == 0) ? 0 : 4 - (newCenterOffsetY % 4);
+		
+		int[] centerPos = getBlockCoord(newCenterOffsetX, newCenterOffsetY, newEdgeOffsetX, newEdgeOffsetY);
+		
+		placementX -= centerPos[0];
+		placementZ -= centerPos[1];
+		
 		int[] pDustAmount = new int[1000];
 
-		for (ItemStack is : p.inventory.mainInventory) {
+		for (ItemStack is : player.inventory.mainInventory) {
 			if (is != null) {
 				if (is.getItem() == DustMod.idust) {
 					pDustAmount[is.getItemDamage()] += is.stackSize;
@@ -594,13 +518,12 @@ public class RuneShape {
 			}
 		}
 
+		ArrayList<ArrayList<int[][]>> blockData = updateData(rotatedData, newEdgeOffsetX, newEdgeOffsetY);
 		int[] reduceDustAmount = new int[1000];
 
-		int hasDrawn = 1;
-
-		for (int x = 0; x < tblocks.size(); x++)
-			for (int z = 0; z < tblocks.get(0).size(); z++) {
-				int[][] block = tblocks.get(x).get(z);
+		for (int bx = 0; bx < blockData.size(); bx++) {
+			for (int bz = 0; bz < blockData.get(0).size(); bz++) {
+				int[][] block = blockData.get(bx).get(bz);
 
 				boolean empty = true;
 				for (int iter = 0; iter < block.length && empty; iter++) {
@@ -613,46 +536,46 @@ public class RuneShape {
 					continue;
 				}
 
-				Block otherBlock = w.getBlock(si + x, j, sk + z);
-				int meta = w.getBlockMetadata(si + x, j, sk + z);
+				Block otherBlock = world.getBlock(placementX + bx, y, placementZ + bz);
+				int meta = world.getBlockMetadata(placementX + bx, y, placementZ + bz);
 
 				if (!otherBlock.getMaterial().isReplaceable() && !DustMod.isDust(otherBlock)) {
 					continue;
 				}
 
-				if (w.getBlock(si + x, j - 1, sk + z).getMaterial() == Material.air) {
+				if (world.getBlock(placementX + bx, y - 1, placementZ + bz).getMaterial() == Material.air) {
 					continue;
 				}
 
-				if (!DustMod.dust.canPlaceBlockAt(w, si + x, j, sk + z)) {
+				if (!DustMod.dust.canPlaceBlockAt(world, placementX + bx, y, placementZ + bz)) {
 					continue;
 				}
 
 				if (otherBlock != DustMod.dust) {
-					w.setBlock(si + x, j, sk + z, DustMod.dust, BlockDust.UNUSED_DUST, 2);
+					world.setBlock(placementX + bx, y, placementZ + bz, DustMod.dust, BlockDust.UNUSED_DUST, 2);
 				} else if (meta != BlockDust.UNUSED_DUST) {
-					w.setBlockMetadataWithNotify(si + x, j, sk + z, BlockDust.UNUSED_DUST, 2);
+					world.setBlockMetadataWithNotify(placementX + bx, y, placementZ + bz, BlockDust.UNUSED_DUST, 2);
 				}
 				
 				TileEntityDust ted;
-				TileEntity te = w.getTileEntity(si + x, j, sk + z);
+				TileEntity te = world.getTileEntity(placementX + bx, y, placementZ + bz);
 
 				if (te != null && te instanceof TileEntityDust) {
 					ted = (TileEntityDust) te;
 				} else {
 					DustMod.logger.info("CREATING TE 2");
 					ted = new TileEntityDust();
-					w.setTileEntity(si + i, j, sk + k, ted);
+					world.setTileEntity(placementX + bx, y, placementZ + bz, ted);
 				}
 
 				// ted.empty();
 
-				for (int ix = 0; ix < 4; ix++)
+				for (int ix = 0; ix < 4; ix++) {
 					for (int iz = 0; iz < 4; iz++) {
 						int dust = block[ix][iz];
 						if (ted.getDust(ix, iz) == 0 && dust != 0) {
 							boolean canDraw = true;
-							if (dust > 0 && !p.capabilities.isCreativeMode) {
+							if (dust > 0 && !player.capabilities.isCreativeMode) {
 								if (pDustAmount[dust] > 0) {
 									reduceDustAmount[dust]++;
 									pDustAmount[dust]--;
@@ -661,30 +584,32 @@ public class RuneShape {
 								}
 							}
 							if (canDraw) {
-								ted.setDust(p, ix, iz, dust);
+								ted.setDust(player, ix, iz, dust);
 							}
 						}
-					}
-			}
-
-		for (int x = 0; x < tblocks.size(); x++) {
-			for (int z = 0; z < tblocks.get(0).size(); z++) {
-				if (DustMod.isDust(w.getBlock(si + x, j, sk + z))) {
-					TileEntityDust ted = (TileEntityDust) w.getTileEntity(si + x, j, sk + z);
-
-					if (ted.isEmpty()) {
-						w.setBlockToAir(si + x, j, sk + z);
-					} else {
-						w.markBlockForUpdate(si + x, j, sk + z);
 					}
 				}
 			}
 		}
 
-		if (!p.capabilities.isCreativeMode) {
+		for (int bx = 0; bx < blockData.size(); bx++) {
+			for (int bz = 0; bz < blockData.get(0).size(); bz++) {
+				if (DustMod.isDust(world.getBlock(placementX + bx, y, placementZ + bz))) {
+					TileEntityDust ted = (TileEntityDust) world.getTileEntity(placementX + bx, y, placementZ + bz);
+
+					if (ted.isEmpty()) {
+						world.setBlockToAir(placementX + bx, y, placementZ + bz);
+					} else {
+						world.markBlockForUpdate(placementX + bx, y, placementZ + bz);
+					}
+				}
+			}
+		}
+
+		if (!player.capabilities.isCreativeMode) {
 			for (int id = 1; id < 1000; id++) {
-				for (int sind = 0; sind < p.inventory.mainInventory.length; sind++) {
-					ItemStack is = p.inventory.mainInventory[sind];
+				for (int sind = 0; sind < player.inventory.mainInventory.length; sind++) {
+					ItemStack is = player.inventory.mainInventory[sind];
 
 					if (is != null && reduceDustAmount[id] > 0) {
 						if (is.getItem() == DustMod.idust && is.getItemDamage() == id) {
@@ -692,7 +617,7 @@ public class RuneShape {
 								is.stackSize--;
 
 								if (is.stackSize == 0) {
-									p.inventory.mainInventory[sind] = null;
+									player.inventory.mainInventory[sind] = null;
 								}
 
 								reduceDustAmount[id]--;
@@ -712,77 +637,78 @@ public class RuneShape {
 				}
 			}
 		}
-		InventoryPlayer inv = p.inventory;
+		InventoryPlayer inv = player.inventory;
 		for (int slot = 0; slot < inv.getSizeInventory(); slot++) {
 			inv.getStackInSlot(slot);
 		}
-		p.inventory.inventoryChanged = true;
+		player.inventory.inventoryChanged = true;
 
 		updateData();
 		return true;
 	}
 
-	public boolean drawOnWorldPart(World w, int i, int j, int k, EntityPlayer p, int r, int itemUse) {
-		if (w.isRemote)
+	public boolean drawOnWorldPart(World world, int x, int y, int z, EntityPlayer player, int rotation, int itemUse) {
+		if (world.isRemote)
 			return false;
-
-		int si = i, sk = k;
-		int tcx = cy, tcy = cx, tox = oy, toy = ox;
-		int[][][] tdata = new int[height][width][length];
-
-		si += rotationMatrix[r * 2];
-		sk += rotationMatrix[r * 2 + 1];
-
-		j++;
-		r = (5 - r) % 4;
-		// yes, I know this rotation code is bull, but i'm getting fed up with it
-
-		ArrayList<ArrayList<int[][]>> tblocks;
-
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-				for (int z = 0; z < length; z++) {
-					tdata[y][x][z] = data[y][x][z];
-				}
+		
+		int placementX = x;
+		int placementZ = z;
+		int newEdgeOffsetX;
+		int newEdgeOffsetY;
+		int newCenterOffsetX;
+		int newCenterOffsetY;
+		
+		int[][][] rotatedData = new int[height][][];
+		
+		for (int i = 0; i < rotatedData.length; i++) {
+			if (rotation == 0) {
+				rotatedData[i] = data[i].clone();
+			} else if (rotation == 1) {
+				rotatedData[i] = rotateMatrixLeft(data[i]);
+			} else if (rotation == 2) {
+				rotatedData[i] = flipMatrixXY(data[i]);
+			} else if (rotation == 3) {
+				rotatedData[i] = rotateMatrixRight(data[i]);
 			}
 		}
-
-		for (int rot = 0; rot < r; rot++) {
-			tdata[0] = rotateMatrix(tdata[0]);
-		}
-
-		int tw = (int) Math.floor(data[0].length / 4);
-		tw *= 4;
-		int th = (int) Math.floor(data[0][0].length / 4);
-		th *= 4;
-
-		switch (r) {
+		
+		DustMod.logger.info("rotation {} data {}", rotation, Arrays.deepToString(rotatedData));
+		
+		// Recalculate Center offset
+		switch (rotation) {
 		case 0:
+		default:
+			newCenterOffsetX = cx;
+			newCenterOffsetY = cz;
 			break;
-
+			
 		case 1:
-			tox = ox;
-			toy = tw - ((data[0].length + oy) % 4);
+			newCenterOffsetX = cz;
+			newCenterOffsetY = width - cx - 4;
 			break;
-
+		
 		case 2:
-			tox = tw - ((data[0].length + oy) % 4);
-			toy = th - ((data[0][0].length + ox) % 4);
+			newCenterOffsetX = width - cx - 4;
+			newCenterOffsetY = length - cz - 4;
 			break;
-
+			
 		case 3:
-			tox = th - ((data[0][0].length + ox) % 4);
-			toy = oy;
+			newCenterOffsetX = length - cz - 4;
+			newCenterOffsetY = cx;
 			break;
 		}
-
-		tblocks = updateData(tdata, tox, toy);
-		int[] temp = this.getBlockCoord(tcx, tcy, tox, toy);
-		si -= temp[0];
-		sk -= temp[1];
+		
+		newEdgeOffsetX = (newCenterOffsetX % 4 == 0) ? 0 : 4 - (newCenterOffsetX % 4);
+		newEdgeOffsetY = (newCenterOffsetY % 4 == 0) ? 0 : 4 - (newCenterOffsetY % 4);
+		
+		int[] centerPos = getBlockCoord(newCenterOffsetX, newCenterOffsetY, newEdgeOffsetX, newEdgeOffsetY);
+		
+		placementX -= centerPos[0];
+		placementZ -= centerPos[1];
+		
 		int[] pDustAmount = new int[1000];
 
-		for (ItemStack is : p.inventory.mainInventory) {
+		for (ItemStack is : player.inventory.mainInventory) {
 			if (is != null) {
 				if (is.getItem() == DustMod.idust) {
 					pDustAmount[is.getItemDamage()] += is.stackSize;
@@ -794,15 +720,16 @@ public class RuneShape {
 			}
 		}
 
+		ArrayList<ArrayList<int[][]>> blockData = updateData(rotatedData, newEdgeOffsetX, newEdgeOffsetY);
 		int[] reduceDustAmount = new int[1000];
 
 		int hasDrawn = 1;
 
 		Random rand = new Random();
 		for (int check = 0; check < this.width * this.height * 2 && hasDrawn > 0; check++) {
-			int x = rand.nextInt(tblocks.size());
-			int z = rand.nextInt(tblocks.get(0).size());
-			int[][] block = tblocks.get(x).get(z);
+			int rx = rand.nextInt(blockData.size());
+			int rz = rand.nextInt(blockData.get(0).size());
+			int[][] block = blockData.get(rx).get(rz);
 
 			boolean empty = true;
 			for (int iter = 0; iter < block.length && empty; iter++) {
@@ -815,37 +742,37 @@ public class RuneShape {
 				continue;
 			}
 
-			Block otherBlock = w.getBlock(si + x, j, sk + z);
-			int meta = w.getBlockMetadata(si + x, j, sk + z);
+			Block otherBlock = world.getBlock(placementX + rx, y, placementZ + rz);
+			int meta = world.getBlockMetadata(placementX + rx, y, placementZ + rz);
 			if (!otherBlock.getMaterial().isReplaceable() && !DustMod.isDust(otherBlock)) {
 				continue;
 			}
 
-			if (w.getBlock(si + x, j - 1, sk + z).getMaterial() == Material.air) {
+			if (world.getBlock(placementX + rx, y - 1, placementZ + rz).getMaterial() == Material.air) {
 				continue;
 			}
 
-			if (!DustMod.dust.canPlaceBlockAt(w, si + x, j, sk + z)) {
+			if (!DustMod.dust.canPlaceBlockAt(world, placementX + rx, y, placementZ + rz)) {
 				continue;
 			}
 
 			if (otherBlock != DustMod.dust) {
-				w.setBlock(si + x, j, sk + z, DustMod.dust, 0, 2);
+				world.setBlock(placementX + rx, y, placementZ + rz, DustMod.dust, 0, 2);
 			} else if (meta == BlockDust.DEAD_DUST) {
-				w.setBlockMetadataWithNotify(si + x, j, sk + z, BlockDust.UNUSED_DUST, 2);
+				world.setBlockMetadataWithNotify(placementX + rx, y, placementZ + rz, BlockDust.UNUSED_DUST, 2);
 			} else if (meta != BlockDust.UNUSED_DUST) {
 				continue;
 			}
 			
 			TileEntityDust ted;
-			TileEntity te = w.getTileEntity(si + x, j, sk + z);
+			TileEntity te = world.getTileEntity(placementX + rx, y, placementZ + rz);
 
 			if (te != null && te instanceof TileEntityDust) {
 				ted = (TileEntityDust) te;
 			} else {
 				DustMod.logger.info("CREATING TE");
 				ted = new TileEntityDust();
-				w.setTileEntity(si + i, j, sk + k, ted);
+				world.setTileEntity(placementX + rx, y, placementZ + rz, ted);
 			}
 
 			// ted.empty();
@@ -863,7 +790,7 @@ public class RuneShape {
 			int dust = block[ix][iz];
 			if (ted.getDust(ix, iz) == 0 && dust != 0) {
 				boolean canDraw = true;
-				if (dust > 0 && !p.capabilities.isCreativeMode) {
+				if (dust > 0 && !player.capabilities.isCreativeMode) {
 					if (pDustAmount[dust] > 0) {
 						reduceDustAmount[dust]++;
 						pDustAmount[dust]--;
@@ -872,29 +799,29 @@ public class RuneShape {
 					}
 				}
 				if (canDraw) {
-					ted.setDust(p, ix, iz, dust);
+					ted.setDust(player, ix, iz, dust);
 				}
 			}
 		}
 
-		for (int x = 0; x < tblocks.size(); x++) {
-			for (int z = 0; z < tblocks.get(0).size(); z++) {
-				if (DustMod.isDust(w.getBlock(si + x, j, sk + z))) {
-					TileEntityDust ted = (TileEntityDust) w.getTileEntity(si + x, j, sk + z);
+		for (int bx = 0; bx < blockData.size(); bx++) {
+			for (int bz = 0; bz < blockData.get(0).size(); bz++) {
+				if (DustMod.isDust(world.getBlock(placementX + bx, y, placementZ + bz))) {
+					TileEntityDust ted = (TileEntityDust) world.getTileEntity(placementX + bx, y, placementZ + bz);
 
 					if (ted.isEmpty()) {
-						w.setBlockToAir(si + x, j, sk + z);
+						world.setBlockToAir(placementX + bx, y, placementZ + bz);
 					} else {
-						w.markBlockForUpdate(si + x, j, sk + z);
+						world.markBlockForUpdate(placementX + bx, y, placementZ + bz);
 					}
 				}
 			}
 		}
 
-		if (!p.capabilities.isCreativeMode) {
+		if (!player.capabilities.isCreativeMode) {
 			for (int id = 1; id < 1000; id++) {
-				for (int sind = 0; sind < p.inventory.mainInventory.length; sind++) {
-					ItemStack is = p.inventory.mainInventory[sind];
+				for (int sind = 0; sind < player.inventory.mainInventory.length; sind++) {
+					ItemStack is = player.inventory.mainInventory[sind];
 
 					if (is != null && reduceDustAmount[id] > 0) {
 						if (is.getItem() == DustMod.idust && is.getItemDamage() == id) {
@@ -902,7 +829,7 @@ public class RuneShape {
 								is.stackSize--;
 
 								if (is.stackSize == 0) {
-									p.inventory.mainInventory[sind] = null;
+									player.inventory.mainInventory[sind] = null;
 								}
 
 								reduceDustAmount[id]--;
@@ -922,11 +849,11 @@ public class RuneShape {
 				}
 			}
 		}
-		InventoryPlayer inv = p.inventory;
+		InventoryPlayer inv = player.inventory;
 		for (int slot = 0; slot < inv.getSizeInventory(); slot++) {
 			inv.getStackInSlot(slot);
 		}
-		p.inventory.inventoryChanged = true;
+		player.inventory.inventoryChanged = true;
 
 		updateData();
 		return true;

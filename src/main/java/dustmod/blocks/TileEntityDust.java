@@ -64,7 +64,12 @@ public class TileEntityDust extends TileEntity implements IInventory
     
     public void writeNetworkNBT(NBTTagCompound tag)
     {
-    	tag.setIntArray("pattern", pattern);
+    	int[] intPattern = new int[pattern.length / 2];
+    	
+    	for (int i = 0; i < intPattern.length; i++) {
+    		intPattern[i] = (pattern[i * 2] & 0xFFFF) | (pattern[i * 2 + 1] << 16);
+    	}
+    	tag.setIntArray("pattern", intPattern);
     	
     	tag.setInteger("toDestroy", toDestroy);
         
@@ -88,7 +93,14 @@ public class TileEntityDust extends TileEntity implements IInventory
     
     public void readNetworkNBT(NBTTagCompound tag)
     {
-    	pattern = tag.getIntArray("pattern");
+    	int[] intPattern = tag.getIntArray("pattern");
+    	
+    	for (int i = 0; i < intPattern.length; i++) {
+    		short dustLow = (short) intPattern[i];
+    		short dustHigh = (short) (intPattern[i] >> 16);
+    		pattern[i * 2] = dustLow;
+    		pattern[i * 2 + 1] = dustHigh;
+    	}
     	
         if (tag.hasKey("toDestroy"))
         {

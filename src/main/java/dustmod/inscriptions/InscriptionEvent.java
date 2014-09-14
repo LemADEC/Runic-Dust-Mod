@@ -13,7 +13,9 @@ import net.minecraft.util.DamageSource;
 
 public class InscriptionEvent {
 
-	public int[][] referenceDesign;
+	public int[] referenceDesign;
+	public int width;
+	public int height;
 	public int id;
 	public String idName = "";
 	public String properName = "";
@@ -34,10 +36,21 @@ public class InscriptionEvent {
 	
 	
 	public InscriptionEvent(int[][] design, String idName, String properName, int id){
-		if(design.length > 16 || design[0].length > 16){
+		this.height = design.length;
+		this.width = design[0].length;
+		
+		if(this.width > 16 || this.height > 16){
 			throw new IllegalArgumentException("Inscription dimensions too big! " + idName + " Max:16x16");
 		}
-		this.referenceDesign = design; 
+		
+		this.referenceDesign = new int[this.height * this.width];
+		
+		for (int y = 0; y < this.height; y++) {
+			for (int x = 0; x < this.width; x++) {
+				this.referenceDesign[x + y * this.width] = design[y][x];
+			}
+		}
+		
 		this.id = id;
 		this.idName = idName;
 		this.properName = properName;
