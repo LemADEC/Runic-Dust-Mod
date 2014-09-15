@@ -244,21 +244,28 @@ public class BlockRut extends BlockContainer
     {
         TileEntityRut ter = (TileEntityRut)world.getTileEntity(x, y, z);
         
-        Block mask = ter.maskBlock;
-        Block fluid = ter.fluidBlock;
+        Block maskBlock = ter.maskBlock;
+        Block fluidBlock = ter.fluidBlock;
         int light = lightValue;
         
-        if (mask != null && mask != this)
+        if (maskBlock != null && maskBlock != this)
         {
         	int mLight = ter.maskBlock.getLightValue();
         	if(mLight > light) light = mLight;
         }
         
-        if (fluid != null && fluid != this)
+        if (fluidBlock != null && fluidBlock != this)
         {
         	int fLight = ter.fluidBlock.getLightValue();
         	if(fLight > light) light = fLight;
+        	
+        	Fluid fluid = FluidRegistry.lookupFluidForBlock(fluidBlock);
+        	if (fluid != null) {
+        		fLight = fluid.getLuminosity();
+        		if (fLight > light) light = fLight;
+        	}
         }
+        
         return light;
     }
     
