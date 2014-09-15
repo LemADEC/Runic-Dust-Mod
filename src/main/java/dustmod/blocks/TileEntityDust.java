@@ -40,7 +40,7 @@ public class TileEntityDust extends TileEntity implements IInventory
     public int dustEntID;
     
     private boolean hasFlame = false;
-    private int fr,fg,fb; //flame rgb
+    private final float[] flameColor = new float[3]; //flame rgb
 
     public TileEntityDust()
     {
@@ -74,9 +74,12 @@ public class TileEntityDust extends TileEntity implements IInventory
     	tag.setInteger("toDestroy", toDestroy);
         
         tag.setBoolean("flame", hasFlame);
-        tag.setInteger("flameR", fr);
-        tag.setInteger("flameG", fg);
-        tag.setInteger("flameB", fb);
+        
+        int r = (int) (flameColor[0] * 255);
+        int g = (int) (flameColor[1] * 255);
+        int b = (int) (flameColor[2] * 255);
+        
+        tag.setInteger("flameColor", r << 16 | g << 8 | b);
     }
 
     public void readFromNBT(NBTTagCompound tag)
@@ -109,9 +112,14 @@ public class TileEntityDust extends TileEntity implements IInventory
         
         if(tag.hasKey("flame")){
         	this.hasFlame = tag.getBoolean("flame");
-        	fr = tag.getInteger("flameR");
-        	fg = tag.getInteger("flameG");
-        	fb = tag.getInteger("flameB");
+        	int rgb = tag.getInteger("flameColor");
+        	int r = rgb >> 16;
+        	int g = (rgb >> 8) & 0xFF;
+        	int b = rgb & 0xFF;
+        	
+        	flameColor[0] = r / 255.0F;
+        	flameColor[1] = g / 255.0F;
+        	flameColor[2] = b / 255.0F;
         }
     }
 
@@ -516,17 +524,17 @@ public class TileEntityDust extends TileEntity implements IInventory
 
     public void setRenderFlame(boolean val, int r, int g, int b){
     	this.hasFlame = val;
-    	this.fr = r;
-    	this.fg = g;
-    	this.fb = b;
+    	this.flameColor[0] = r / 255.0F;
+    	this.flameColor[1] = g / 255.0F;
+    	this.flameColor[2] = b / 255.0F;
     	worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
 	public boolean hasFlame() {
 		return hasFlame;
 	}
-	public int[] getFlameColor(){
-		return new int[]{fr,fg,fb};
+	public float[] getFlameColor(){
+		return flameColor;
 	}
     
     @Override

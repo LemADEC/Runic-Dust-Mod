@@ -1,9 +1,11 @@
 package dustmod.client;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockFire;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import dustmod.blocks.BlockDust;
@@ -66,6 +68,87 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
 		return currentRenderer;
 	}
 	
+	
+    protected boolean renderBlockFire(IBlockAccess blockAccess, BlockFire blockFire, int x, int y, int z, float[] rgb)
+    {
+        Tessellator tessellator = Tessellator.instance;
+        IIcon iicon = blockFire.getFireIcon(0);
+        IIcon iicon1 = blockFire.getFireIcon(1);
+
+        tessellator.setColorOpaque_F(rgb[0], rgb[1], rgb[2]);
+        tessellator.setBrightness(blockFire.getMixedBrightnessForBlock(blockAccess, x, y, z));
+        double d0 = (double)iicon.getMinU();
+        double d1 = (double)iicon.getMinV();
+        double d2 = (double)iicon.getMaxU();
+        double d3 = (double)iicon.getMaxV();
+        float f = 0.5F;
+        double d5;
+        double d6;
+        double d7;
+        double d8;
+        double d9;
+        double d10;
+        double d11;
+
+        double d4 = (double)x + 0.5D + 0.2D;
+        d5 = (double)x + 0.5D - 0.2D;
+        d6 = (double)z + 0.5D + 0.2D;
+        d7 = (double)z + 0.5D - 0.2D;
+        d8 = (double)x + 0.5D - 0.3D;
+        d9 = (double)x + 0.5D + 0.3D;
+        d10 = (double)z + 0.5D - 0.3D;
+        d11 = (double)z + 0.5D + 0.3D;
+        tessellator.addVertexWithUV(d8, (double)((float)y + f), (double)(z + 1), d2, d1);
+        tessellator.addVertexWithUV(d4, (double)(y + 0), (double)(z + 1), d2, d3);
+        tessellator.addVertexWithUV(d4, (double)(y + 0), (double)(z + 0), d0, d3);
+        tessellator.addVertexWithUV(d8, (double)((float)y + f), (double)(z + 0), d0, d1);
+        tessellator.addVertexWithUV(d9, (double)((float)y + f), (double)(z + 0), d2, d1);
+        tessellator.addVertexWithUV(d5, (double)(y + 0), (double)(z + 0), d2, d3);
+        tessellator.addVertexWithUV(d5, (double)(y + 0), (double)(z + 1), d0, d3);
+        tessellator.addVertexWithUV(d9, (double)((float)y + f), (double)(z + 1), d0, d1);
+        d0 = (double)iicon1.getMinU();
+        d1 = (double)iicon1.getMinV();
+        d2 = (double)iicon1.getMaxU();
+        d3 = (double)iicon1.getMaxV();
+        tessellator.addVertexWithUV((double)(x + 1), (double)((float)y + f), d11, d2, d1);
+        tessellator.addVertexWithUV((double)(x + 1), (double)(y + 0), d7, d2, d3);
+        tessellator.addVertexWithUV((double)(x + 0), (double)(y + 0), d7, d0, d3);
+        tessellator.addVertexWithUV((double)(x + 0), (double)((float)y + f), d11, d0, d1);
+        tessellator.addVertexWithUV((double)(x + 0), (double)((float)y + f), d10, d2, d1);
+        tessellator.addVertexWithUV((double)(x + 0), (double)(y + 0), d6, d2, d3);
+        tessellator.addVertexWithUV((double)(x + 1), (double)(y + 0), d6, d0, d3);
+        tessellator.addVertexWithUV((double)(x + 1), (double)((float)y + f), d10, d0, d1);
+        d4 = (double)x + 0.5D - 0.5D;
+        d5 = (double)x + 0.5D + 0.5D;
+        d6 = (double)z + 0.5D - 0.5D;
+        d7 = (double)z + 0.5D + 0.5D;
+        d8 = (double)x + 0.5D - 0.4D;
+        d9 = (double)x + 0.5D + 0.4D;
+        d10 = (double)z + 0.5D - 0.4D;
+        d11 = (double)z + 0.5D + 0.4D;
+        tessellator.addVertexWithUV(d8, (double)((float)y + f), (double)(z + 0), d0, d1);
+        tessellator.addVertexWithUV(d4, (double)(y + 0), (double)(z + 0), d0, d3);
+        tessellator.addVertexWithUV(d4, (double)(y + 0), (double)(z + 1), d2, d3);
+        tessellator.addVertexWithUV(d8, (double)((float)y + f), (double)(z + 1), d2, d1);
+        tessellator.addVertexWithUV(d9, (double)((float)y + f), (double)(z + 1), d0, d1);
+        tessellator.addVertexWithUV(d5, (double)(y + 0), (double)(z + 1), d0, d3);
+        tessellator.addVertexWithUV(d5, (double)(y + 0), (double)(z + 0), d2, d3);
+        tessellator.addVertexWithUV(d9, (double)((float)y + f), (double)(z + 0), d2, d1);
+        d0 = (double)iicon.getMinU();
+        d1 = (double)iicon.getMinV();
+        d2 = (double)iicon.getMaxU();
+        d3 = (double)iicon.getMaxV();
+        tessellator.addVertexWithUV((double)(x + 0), (double)((float)y + f), d11, d0, d1);
+        tessellator.addVertexWithUV((double)(x + 0), (double)(y + 0), d7, d0, d3);
+        tessellator.addVertexWithUV((double)(x + 1), (double)(y + 0), d7, d2, d3);
+        tessellator.addVertexWithUV((double)(x + 1), (double)((float)y + f), d11, d2, d1);
+        tessellator.addVertexWithUV((double)(x + 1), (double)((float)y + f), d10, d0, d1);
+        tessellator.addVertexWithUV((double)(x + 1), (double)(y + 0), d6, d0, d3);
+        tessellator.addVertexWithUV((double)(x + 0), (double)(y + 0), d6, d2, d3);
+        tessellator.addVertexWithUV((double)(x + 0), (double)((float)y + f), d10, d2, d1);
+
+        return true;
+    }
 
     public boolean renderDust(RenderBlocks renderblocks, IBlockAccess iblock, int i, int j, int k, Block block)
     {
@@ -99,9 +182,7 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
         float r, g, b;
         
 		if (ted.hasFlame()) {
-			renderblocks.overrideBlockBounds(0, 0, 0, 1, 0.5f, 1);
-			renderblocks.renderBlockFire(Blocks.fire, i, j, k);
-			renderblocks.unlockBlockBounds();
+			renderBlockFire(iblock, Blocks.fire, i, j, k, ted.getFlameColor());
 		}
         
         float highlightHeight = 0.125f;
