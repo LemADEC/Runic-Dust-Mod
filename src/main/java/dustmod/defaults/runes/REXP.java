@@ -4,6 +4,8 @@
  */
 package dustmod.defaults.runes;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 
 import net.minecraft.entity.Entity;
@@ -57,12 +59,36 @@ public class REXP extends PoweredEvent
             return;
         }
     }
+    
+    private Method expMethod;
+    
+    protected int getExp(EntityLivingBase entity, EntityPlayer player) {
+    	if (expMethod == null) {
+    		try {
+				expMethod = EntityLivingBase.class.getDeclaredMethod("func_70693_a", EntityPlayer.class);
+			} catch (NoSuchMethodException e) {
+				return 0;
+			} catch (SecurityException e) {
+				return 0;
+			}
+    		expMethod.setAccessible(true);
+    	}
+    	
+    	try {
+			return (Integer) expMethod.invoke(entity, player);
+		} catch (IllegalAccessException e) {
+			return 0;
+		} catch (IllegalArgumentException e) {
+			return 0;
+		} catch (InvocationTargetException e) {
+			return 0;
+		}
+    }
 
     public void onTick(EntityRune e)
     {
         super.onTick(e);
 
-//        System.out.println("HUNGRY " + e.data);
         if (e.ticksExisted < 60)
         {
     		e.setRenderBeam(false);
@@ -75,7 +101,6 @@ public class REXP extends PoweredEvent
 
         EntityPlayer player = e.getSummoner();
 
-//        if(true/*!e.worldObj.multiplayerWorld*/) player = ModLoader.getMinecraftInstance().thePlayer;
         if (player == null)
         {
             return;
@@ -116,8 +141,7 @@ public class REXP extends PoweredEvent
                     continue;
                 }
 
-                //TODO fetch Exp from Entity
-                int exp = 0;//DustModEntityBouncer.getExperiencePoints(el, null);
+                int exp = getExp(el, player);
                 el.attackEntityFrom(DamageSource.magic, 10000000);
 
                 for (int mul = 0; mul < 2; mul++)
