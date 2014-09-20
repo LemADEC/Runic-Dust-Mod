@@ -12,7 +12,7 @@ import net.minecraft.util.IIcon;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import dustmod.DustMod;
-import dustmod.dusts.DustItemManager;
+import dustmod.dusts.DustManager;
 
 public class ItemInk extends DustModItem {
 	
@@ -39,7 +39,7 @@ public class ItemInk extends DustModItem {
 		
         for (int i = 5; i < 1000; ++i) //i > 4 for migration from old system
         {
-        	if(DustItemManager.hasDust(i)){
+        	if(DustManager.hasDust(i)){
                 list.add(getInk(i));
         	}
         }
@@ -49,7 +49,7 @@ public class ItemInk extends DustModItem {
     public String getUnlocalizedName(ItemStack itemstack)
     {
     	int dustID = getDustID(itemstack);
-    	return DustItemManager.hasDust(dustID) ? "tile.ink." + DustItemManager.getId(dustID) : "tile.ink";
+    	return DustManager.hasDust(dustID) ? "tile.ink." + DustManager.getId(dustID) : "tile.ink";
     }
 
     @Override
@@ -58,7 +58,7 @@ public class ItemInk extends DustModItem {
     	int meta = stack.getItemDamage();
     	int id = getDustID(meta);
     	if(pass == 0) return 16777215;
-    	return pass == 1 ? DustItemManager.getPrimaryColor(id) : DustItemManager.getSecondaryColor(id);
+    	return pass == 1 ? DustManager.getPrimaryColor(id) : DustManager.getSecondaryColor(id);
     }
 
 

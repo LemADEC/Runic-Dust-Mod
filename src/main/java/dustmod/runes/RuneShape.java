@@ -11,7 +11,7 @@ import java.util.Random;
 import dustmod.DustMod;
 import dustmod.blocks.BlockDust;
 import dustmod.blocks.TileEntityDust;
-import dustmod.dusts.DustItemManager;
+import dustmod.dusts.DustManager;
 import dustmod.items.ItemPouch;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -183,7 +183,7 @@ public class RuneShape {
 		if (!allowedVariable.isEmpty()) {
 			desc += "\n----\nAllowed Variable Dusts:\n";
 			for (int i : allowedVariable) {
-				desc += DustItemManager.getName(i) + "\n";
+				desc += DustManager.getName(i) + "\n";
 			}
 		}
 		return this;

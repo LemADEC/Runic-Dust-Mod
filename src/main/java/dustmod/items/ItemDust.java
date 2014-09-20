@@ -19,7 +19,7 @@ import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import dustmod.DustMod;
-import dustmod.dusts.DustItemManager;
+import dustmod.dusts.DustManager;
 
 /**
  *
@@ -39,8 +39,6 @@ public class ItemDust extends DustModItem
         setMaxDamage(0);
         setHasSubtypes(true);
     }
-   
-    
     
     public boolean onItemUse(ItemStack item, EntityPlayer p, World world, int i, int j, int k, int face, float x, float y, float z)
     {
@@ -127,7 +125,7 @@ public class ItemDust extends DustModItem
     @Override
     public String getUnlocalizedName(ItemStack itemstack)
     {
-    	String id = DustItemManager.getId(itemstack.getItemDamage());
+    	String id = DustManager.getId(itemstack.getItemDamage());
     	if(id != null) return "item.dust." + id;
 
         return "item.dust";
@@ -142,7 +140,7 @@ public class ItemDust extends DustModItem
     {
         for (int i = 5; i < 1000; ++i) //i > 4 for migration from old system
         {
-        	if(DustItemManager.hasDust(i)){
+        	if(DustManager.hasDust(i)){
                 par3List.add(new ItemStack(par1, 1, i));
         	}
         }
@@ -152,7 +150,7 @@ public class ItemDust extends DustModItem
     @SideOnly(Side.CLIENT)
     public int getColorFromItemStack(ItemStack stack, int pass) {
     	int meta = stack.getItemDamage();
-    	return pass == 0 ? DustItemManager.getPrimaryColor(meta) : DustItemManager.getSecondaryColor(meta);
+    	return pass == 0 ? DustManager.getPrimaryColor(meta) : DustManager.getSecondaryColor(meta);
     }
 
 

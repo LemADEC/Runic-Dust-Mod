@@ -13,7 +13,7 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 import dustmod.DustMod;
 import dustmod.items.ItemInk;
 
-public class DustItemManager {
+public class DustManager {
 	
 	public static Dust[] dusts = new Dust[1000];
 	public static Dust[] remoteDusts = new Dust[1000];

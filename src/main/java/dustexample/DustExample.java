@@ -19,7 +19,7 @@ import dustexample.examplerunes.REMakeBlockFromItem;
 import dustexample.examplerunes.REMakeItRain;
 import dustexample.examplerunes.REPain;
 import dustmod.DustMod;
-import dustmod.dusts.DustItemManager;
+import dustmod.dusts.DustManager;
 import dustmod.runes.RuneManager;
 import dustmod.runes.RuneShape;
 import dustmod.runes.XMLRuneShapeReader;
@@ -53,7 +53,7 @@ public class DustExample {
 	}
 
 	public void registerDusts() {
-		DustItemManager.registerDust(350, "Glowing Runic Dust", "glowdust",
+		DustManager.registerDust(350, "Glowing Runic Dust", "glowdust",
 				0xEEEE00, 0xFFFF00, 0xFFFF00, 15);
 
 		// Register recipe for our dust (2xGlowstoneDust + 1xCoal)

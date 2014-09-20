@@ -65,7 +65,7 @@ public class TileEntityRut extends TileEntity
 
         if (worldObj.getWorldTime() % 14 == 0 && prevFluid == fluidBlock && fluidIsFluid())
         {
-            int i = xCoord, j = yCoord, k = zCoord;
+            int x = xCoord, y = yCoord, z = zCoord;
 
             for (int ix = -1; ix <= 1; ix++)
             {
@@ -73,24 +73,17 @@ public class TileEntityRut extends TileEntity
                 {
                     for (int iz = -1; iz <= 1; iz++)
                     {
-                        if ((ix == -1 || ix == 1) && ix == iy && (iz == -1 || iz == 1))
-                        {
-                            continue;
-                        }
+                    	if (ix != 0 && iz != 0) {
+                    		continue;
+                    	}
+                    	
+                    	if (ix == 0 && iy == 0 && iz == 0) {
+                    		continue;
+                    	}
 
-                        if ((ix == -1 || ix == 1) && (iy == -1 || iy == 1) && ix != iy && (iz == -1 || iz == 1))
+                        if (worldObj.getBlock(x + ix, y + iy, z + iz) == DustMod.rutBlock)
                         {
-                            continue;
-                        }
-
-                        if (iy == 0 && (ix == -1 || ix == 1) && (iz == -1 || iz == 1))
-                        {
-                            continue;
-                        }
-
-                        if (worldObj.getBlock(i + ix, j + iy, k + iz) == DustMod.rutBlock)
-                        {
-                            TileEntityRut ter = (TileEntityRut)worldObj.getTileEntity(i + ix, j + iy, k + iz);
+                            TileEntityRut ter = (TileEntityRut)worldObj.getTileEntity(x + ix, y + iy, z + iz);
 
                             if (ter.fluidBlock == null)
                             {

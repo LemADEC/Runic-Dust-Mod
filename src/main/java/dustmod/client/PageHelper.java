@@ -22,7 +22,7 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.ResourceLocation;
 import dustmod.DustMod;
-import dustmod.dusts.DustItemManager;
+import dustmod.dusts.DustManager;
 import dustmod.inscriptions.InscriptionEvent;
 import dustmod.runes.RuneShape;
 
@@ -416,7 +416,7 @@ public class PageHelper
     }
     public static int getRandomDustColor(int dust, boolean primary)
     {
-    	int color = DustItemManager.getPrimaryColor(dust);
+    	int color = DustManager.getPrimaryColor(dust);
     	if(!primary){
     		color = new Color(color).brighter().getRGB();
     	}
@@ -425,7 +425,7 @@ public class PageHelper
         int g = (color&0xFF00) >> 8;
         int b = (color&0xFF);
 //        color = (color & 0xfefefe) >> 1;
-        Color temp = new Color(DustItemManager.getFloorColorRGB(dust)[0],DustItemManager.getFloorColorRGB(dust)[0],DustItemManager.getFloorColorRGB(dust)[2]);
+        Color temp = new Color(DustManager.getFloorColorRGB(dust)[0],DustManager.getFloorColorRGB(dust)[0],DustManager.getFloorColorRGB(dust)[2]);
         Color c = primary? temp: temp;
         
         if(primary) {

@@ -2,8 +2,8 @@ package dustmod.network;
 
 import java.util.Random;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.world.World;
+import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
@@ -18,7 +18,8 @@ public class ParticleHandler implements IMessageHandler<ParticleMessage, IMessag
 			double y = message.getLoc(l * 3 + 1);
 			double z = message.getLoc(l * 3 + 2);
 			
-			World world = Minecraft.getMinecraft().theWorld;
+			// Because client side message handlers get instantiated on server side
+			World world = FMLClientHandler.instance().getClientPlayerEntity().worldObj;
 			
 			Random rand = new Random((long) (x + y + z + world.getWorldTime()));
 			

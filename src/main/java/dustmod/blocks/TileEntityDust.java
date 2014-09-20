@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Random;
 
 import dustmod.DustMod;
-import dustmod.dusts.DustItemManager;
+import dustmod.dusts.DustManager;
 import dustmod.runes.EntityRune;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -132,7 +132,7 @@ public class TileEntityDust extends TileEntity implements IInventory
         dusts = null;
         
         if(dust != 0 && last != dust){
-        	int[] color = DustItemManager.getFloorColorRGB(dust);
+        	int[] color = DustManager.getFloorColorRGB(dust);
         	java.awt.Color c = new java.awt.Color(color[0],color[1],color[2]);
         	c = c.darker();
         	float r =  (float)c.getRed()/255F;
@@ -406,7 +406,7 @@ public class TileEntityDust extends TileEntity implements IInventory
         }
 
         Random rand = new Random();
-        int[] rgb = DustItemManager.getFloorColorRGB(dusts[rand.nextInt(s)]);
+        int[] rgb = DustManager.getFloorColorRGB(dusts[rand.nextInt(s)]);
         return new Color(rgb[0], rgb[1], rgb[2]).getRGB();
     }
 

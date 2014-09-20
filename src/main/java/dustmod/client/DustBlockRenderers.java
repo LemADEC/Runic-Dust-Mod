@@ -11,7 +11,7 @@ import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import dustmod.blocks.BlockDust;
 import dustmod.blocks.TileEntityDust;
 import dustmod.blocks.TileEntityRut;
-import dustmod.dusts.DustItemManager;
+import dustmod.dusts.DustManager;
 
 
 /**
@@ -205,7 +205,7 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
 						g = 178F / 255.0F;
 						b = 178F / 255.0F;
 					} else {
-						col = DustItemManager.getFloorRenderColor(midArray[x][z]);
+						col = DustManager.getFloorRenderColor(midArray[x][z]);
 						r = col[0];
 						g = col[1];
 						b = col[2];
@@ -245,7 +245,7 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
 						g = 178F / 255.0F;
 						b = 178F / 255.0F;
 					} else {
-						col = DustItemManager.getFloorRenderColor(horizArray[x][z]);
+						col = DustManager.getFloorRenderColor(horizArray[x][z]);
 						r = col[0];
 						g = col[1];
 						b = col[2];
@@ -294,7 +294,7 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
 						g = 178F / 255.0F;
 						b = 178F / 255.0F;
 					} else {
-						col = DustItemManager.getFloorRenderColor(vertArray[x][z]);
+						col = DustManager.getFloorRenderColor(vertArray[x][z]);
 						r = col[0];
 						g = col[1];
 						b = col[2];
@@ -365,6 +365,7 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
         float rw = 4F / 16F; //rutWidth
         
         rb.renderAllFaces = true;
+        rb.field_152631_f = true;
 
         /*
          * TOP
@@ -631,6 +632,7 @@ public class DustBlockRenderers implements ISimpleBlockRenderingHandler{
         }
         
         rb.unlockBlockBounds();
+        rb.field_152631_f = false;
         rb.renderAllFaces = false;
 
         return true;

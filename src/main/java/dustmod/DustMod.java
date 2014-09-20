@@ -53,7 +53,7 @@ import dustmod.common.CommonProxy;
 import dustmod.common.GuiHandler;
 import dustmod.defaults.runes.VoidStorageManager;
 import dustmod.defaults.runes.VoidTeleManager;
-import dustmod.dusts.DustItemManager;
+import dustmod.dusts.DustManager;
 import dustmod.entities.EntityBlock;
 import dustmod.inscriptions.InscriptionManager;
 import dustmod.items.DustModItem;
@@ -152,7 +152,7 @@ public class DustMod {
 
 	public static int numSec = 0; // number of secret runes
 
-	@SidedProxy(clientSide = "dustmod.client.ClientProxy", serverSide = "dustmod.CommonProxy")
+	@SidedProxy(clientSide = "dustmod.client.ClientProxy", serverSide = "dustmod.common.CommonProxy")
 	public static CommonProxy proxy;
 	public static CommonMouseHandler keyHandler = new CommonMouseHandler();
 	public static InscriptionManager inscriptionManager = new InscriptionManager();
@@ -373,7 +373,7 @@ public class DustMod {
 
 		proxy.registerRenderInformation();
 
-		DustItemManager.registerDefaultDusts();
+		DustManager.registerDefaultDusts();
 		RuneManager.registerDefaultShapes();
 		InscriptionManager.registerDefaultInscriptions();
 

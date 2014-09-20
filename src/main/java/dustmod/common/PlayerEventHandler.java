@@ -10,7 +10,7 @@ import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
 import dustmod.DustMod;
-import dustmod.dusts.DustItemManager;
+import dustmod.dusts.DustManager;
 import dustmod.inscriptions.InscriptionEvent;
 import dustmod.inscriptions.InscriptionManager;
 import dustmod.items.ItemPouch;
@@ -30,9 +30,9 @@ public class PlayerEventHandler {
 		
 		if (event.player instanceof EntityPlayerMP) {
 			EntityPlayerMP player = (EntityPlayerMP) event.player;
-			for (int i = 0; i < DustItemManager.dusts.length; i++) {
-				if (DustItemManager.dusts[i] != null) {
-					DustMod.networkWrapper.sendTo(new DustDeclarationMessage(i, DustItemManager.dusts[i]), player);
+			for (int i = 0; i < DustManager.dusts.length; i++) {
+				if (DustManager.dusts[i] != null) {
+					DustMod.networkWrapper.sendTo(new DustDeclarationMessage(i, DustManager.dusts[i]), player);
 				}
 			}
 			

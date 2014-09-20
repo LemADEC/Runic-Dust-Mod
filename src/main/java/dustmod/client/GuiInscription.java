@@ -11,7 +11,7 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import dustmod.DustMod;
-import dustmod.dusts.DustItemManager;
+import dustmod.dusts.DustManager;
 import dustmod.inscriptions.InscriptionGuiContainer;
 import dustmod.inscriptions.InscriptionInventory;
 import dustmod.items.ItemInk;
@@ -71,7 +71,7 @@ public class GuiInscription extends GuiContainer {
 		for(int x = 0; x < 16; x++){
 			for(int y = 0; y < 16; y++){
 				if(getDust(x,y) != 0){
-					drawCell(x,y,DustItemManager.getPrimaryColor(getDust(x,y)));
+					drawCell(x,y,DustManager.getPrimaryColor(getDust(x,y)));
 				}
 			}
 		}

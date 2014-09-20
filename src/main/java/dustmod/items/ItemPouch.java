@@ -16,7 +16,7 @@ import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import dustmod.DustMod;
-import dustmod.dusts.DustItemManager;
+import dustmod.dusts.DustManager;
 
 public class ItemPouch extends DustModItem {
 
@@ -116,7 +116,7 @@ public class ItemPouch extends DustModItem {
     public String getUnlocalizedName(ItemStack itemstack)
     {
 		int dust = getValue(itemstack);
-		return DustItemManager.hasDust(dust) ? "pouch." + DustItemManager.getId(dust) : "pouchblank";
+		return DustManager.hasDust(dust) ? "pouch." + DustManager.getId(dust) : "pouchblank";
     }
     
     @Override
@@ -137,7 +137,7 @@ public class ItemPouch extends DustModItem {
     {
         for (int i = 5; i < 1000; ++i) //i > 4 for migration from old system
         {
-        	if(DustItemManager.hasDust(i)){
+        	if(DustManager.hasDust(i)){
                 par3List.add(new ItemStack(par1, 1, i*2));
         	}
         }
@@ -149,7 +149,7 @@ public class ItemPouch extends DustModItem {
     	int meta = stack.getItemDamage();
     	meta = meta >> 1;
     	if(pass == 0) return super.getColorFromItemStack(stack, pass);
-    	return pass == 1 ? DustItemManager.getPrimaryColor(meta) : DustItemManager.getSecondaryColor(meta);
+    	return pass == 1 ? DustManager.getPrimaryColor(meta) : DustManager.getSecondaryColor(meta);
     }
 
 

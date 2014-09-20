@@ -18,7 +18,7 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 import dustmod.DustMod;
 import dustmod.blocks.BlockDust;
 import dustmod.blocks.TileEntityDust;
-import dustmod.dusts.DustItemManager;
+import dustmod.dusts.DustManager;
 
 /**
  *
@@ -233,7 +233,7 @@ public class RuneManager
         config.save();
         
         LanguageRegistry.instance().addStringLocalization("tile.scroll" + shape.name + ".name", "en_US", shape.getRuneName() + " Placing Scroll");
-        DustItemManager.reloadLanguage();
+        DustManager.reloadLanguage();
     }
     
 
@@ -253,7 +253,7 @@ public class RuneManager
 //        System.out.println("[DustMod] Registering remote rune " + shape.name);
         LanguageRegistry.instance().addStringLocalization("tile.scroll" + shape.name + ".name", "en_US", shape.getRuneName() + " Placing Scroll");
         DustMod.logger.info("Add Loc {} for {}", shape.getRuneName() + " Placing Scroll", "tile.scroll" + shape.name + ".name");
-        DustItemManager.reloadLanguage();
+        DustManager.reloadLanguage();
     }
 
 	/**
@@ -351,7 +351,6 @@ public class RuneManager
 					}
 
 					DustMod.logger.debug("Left variable dust in rune.");
-//					System.out.println("[DustMod] Left variable dust in rune.");
 					return;
 				}
 			}

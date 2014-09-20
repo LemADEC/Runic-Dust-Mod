@@ -18,6 +18,7 @@ import net.minecraft.util.IIcon;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -44,11 +45,24 @@ public class BlockRut extends BlockContainer
     {
         return DustMod.proxy.getBlockModel(this);
     }
-    public boolean renderAsNormalBlock()
-    {
-        return false;
+    
+    @Override
+    public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
+    	
+    	TileEntityRut ter = (TileEntityRut) world.getTileEntity(x, y, z);
+    	
+    	if (ter == null) return true;
+    	
+    	if (side.offsetX != 0) {
+    		return !ter.getRut(side.offsetX + 1, 0, 1) && !ter.getRut(side.offsetX + 1, 1, 1) && !ter.getRut(side.offsetX + 1, 2, 1) && !ter.getRut(side.offsetX + 1, 1, 0) && !ter.getRut(side.offsetX + 1, 1, 2);
+    	} else if (side.offsetY != 0) {
+    		return !ter.getRut(0, side.offsetY + 1, 1) && !ter.getRut(1, side.offsetY + 1, 1) && !ter.getRut(2, side.offsetY + 1, 1) && !ter.getRut(1, side.offsetY + 1, 0) && !ter.getRut(1, side.offsetY + 1, 2);
+    	} else {
+    		return !ter.getRut(0, 1, side.offsetZ + 1) && !ter.getRut(1, 1, side.offsetZ + 1) && !ter.getRut(2, 1, side.offsetZ + 1) && !ter.getRut(1, 0, side.offsetZ + 1) && !ter.getRut(1, 2, side.offsetZ + 1);
+    	}
     }
 
+    @Override
     public boolean isOpaqueCube()
     {
         return false;
@@ -215,15 +229,17 @@ public class BlockRut extends BlockContainer
 		return ter.maskBlock.getIcon(world, x, y, z, ter.maskMeta);
 	}
 
+	@Override
     @SideOnly(Side.CLIENT)
     public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z) {
     	TileEntityRut ter = (TileEntityRut)world.getTileEntity(x, y, z);
-    	return new ItemStack(ter.maskBlock);
+    	return new ItemStack(ter.maskBlock, 1, ter.maskMeta);
     };
 
     /**
      * Get the block's damage value (for use with pick block).
      */
+    @Override
     public int getDamageValue(World world, int i, int j, int k)
     {
     	TileEntityRut ter = (TileEntityRut)world.getTileEntity(i, j, k);
@@ -240,6 +256,7 @@ public class BlockRut extends BlockContainer
      * @param z Z position
      * @return The light value
      */
+    @Override
     public int getLightValue(IBlockAccess world, int x, int y, int z)
     {
         TileEntityRut ter = (TileEntityRut)world.getTileEntity(x, y, z);

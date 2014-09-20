@@ -4,7 +4,7 @@ import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import dustmod.dusts.Dust;
-import dustmod.dusts.DustItemManager;
+import dustmod.dusts.DustManager;
 
 public class DustDeclarationHandler implements IMessageHandler<DustDeclarationMessage, IMessage> {
 
@@ -14,7 +14,7 @@ public class DustDeclarationHandler implements IMessageHandler<DustDeclarationMe
 		Dust dust = message.getDust();
 		int value = message.getValue();
 		
-		DustItemManager.registerRemoteDust(value, dust);
+		DustManager.registerRemoteDust(value, dust);
 
 		return null;
 	}
