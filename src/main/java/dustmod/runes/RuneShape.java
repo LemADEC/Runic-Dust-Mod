@@ -315,30 +315,37 @@ public class RuneShape {
 			checkAllRotations = true;
 		}
 		
-		if (!dataMatches(d, 0, 0, 0)) {
-			return false;
+		if (dataMatches(d, 0, 0, 0)) {
+			return checkSolid(d);
 		}
 		
 		d = flipMatrixXY(d);
 		
-		if (!dataMatches(d, 0, 0, 0)) {
-			return false;
+		if (dataMatches(d, 0, 0, 0)) {
+			return checkSolid(d);
 		}
 		
 		if (checkAllRotations) {
 			d = rotateMatrixLeft(d);
 			
-			if (!dataMatches(d, 0, 0, 0)) {
-				return false;
+			if (dataMatches(d, 0, 0, 0)) {
+				return checkSolid(d);
 			}
 			
 			d = flipMatrixXY(d);
 			
-			if (!dataMatches(d, 0, 0, 0)) {
-				return false;
+			if (dataMatches(d, 0, 0, 0)) {
+				return checkSolid(d);
 			}
 		}
 
+		return false;
+	}
+	
+	public boolean checkSolid(int[][] d) {
+		int w = d.length;
+		int l = d[0].length;
+		
 		if (solid) {
 			int compare = 0;
 
@@ -354,7 +361,7 @@ public class RuneShape {
 				}
 			}
 		}
-
+		
 		return true;
 	}
 

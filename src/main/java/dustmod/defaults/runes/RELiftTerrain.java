@@ -40,6 +40,8 @@ public class RELiftTerrain extends RuneEvent
 		e.setRenderBeam(true);
         e.setColorStar(255, 255, 0);
         e.setColorFire(0,0,255);
+        
+        loadArea(e);
 		e.setRenderFireOnRuts(true);
 		
     }
@@ -116,10 +118,6 @@ public class RELiftTerrain extends RuneEvent
 //        }
         e.sacrificeWaiting = 600;
         this.addSacrificeList(new Sacrifice(99));
-        loadArea(e);
-
-		e.setRenderFireOnRuts(true);
-        e.setColorFire(0,0,255);
 //        e.fade();
     }
 
@@ -146,6 +144,9 @@ public class RELiftTerrain extends RuneEvent
 
         if (e.ticksExisted % ticksperblock == 0 && e.data[2] <= height)
         {
+        	if (e.rutAreaPoints == null) {
+        		loadArea(e);
+        	}
 //            int c = e.bb - e.gb;
             for (Integer[] i : e.rutAreaPoints)
             {

@@ -18,10 +18,12 @@ import net.minecraft.item.Item;
 import net.minecraft.item.Item.ToolMaterial;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.world.WorldEvent;
 
 import org.apache.logging.log4j.Level;
@@ -36,6 +38,7 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
@@ -88,6 +91,7 @@ import dustmod.network.UseInkMessage;
 import dustmod.runes.RuneManager;
 import dustmod.runes.EntityRune;
 import dustmod.runes.EntityRuneManager;
+import dustmod.util.EntityLivingBaseHelper;
 
 @Mod(modid = DustMod.MOD_ID, name = "Runic Dust Mod", version = "2.0.0")
 public class DustMod {
@@ -157,6 +161,8 @@ public class DustMod {
 	public static CommonMouseHandler keyHandler = new CommonMouseHandler();
 	public static InscriptionManager inscriptionManager = new InscriptionManager();
 	public static Random random = new Random();
+	public static DamageSource destroyDrops = new DamageSource("magic").setDamageBypassesArmor().setMagicDamage();
+	public static EntityLivingBaseHelper entityLivingHelper = new EntityLivingBaseHelper();
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
@@ -176,6 +182,8 @@ public class DustMod {
 		suggestedConfig = new File(evt.getSuggestedConfigurationFile()
 				.getParent() + File.separator + "DustModConfigv2.cfg");
 		// suggestedConfig.renameTo(new File("DustModConfigv2.cfg"));
+		
+		entityLivingHelper.init();
 
 		creativeTab = new DustModTab();
 
@@ -413,6 +421,14 @@ public class DustMod {
 		VoidStorageManager.load(savePath);
 		VoidTeleManager.load(savePath);
 		EntityRuneManager.load(savePath);
+	}
+	
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public void onLivingDrops(LivingDropsEvent event) {
+		if (event.source == DustMod.destroyDrops) {
+			event.drops.clear();
+			event.setCanceled(true);
+		}
 	}
 
 	public static void spawnParticles(World world, String type, double x,

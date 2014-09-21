@@ -228,7 +228,7 @@ public class EntityBlock extends EntityFallingBlock
                 setDead();
             }
         }
-        else if ((parentDust != null && parentDust.isDead) || func_145805_f().getMaterial() == Material.air)
+        else if ((parentDust != null && parentDust.isDead) || func_145805_f() == null)
         {
 //        	System.out.println("DEATH4");
             setDead();
@@ -573,6 +573,10 @@ public class EntityBlock extends EntityFallingBlock
     }
     
     public boolean canPlace(int x, int y, int z){
+    	if (func_145805_f() == null)
+    		return false;
+    	
+    	
     	Block block = worldObj.getBlock(x, y, z);
     	int metadata = worldObj.getBlockMetadata(x,y,z);
     	

@@ -16,6 +16,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
+import dustmod.DustMod;
 import dustmod.runes.EntityRune;
 import dustmod.runes.PoweredEvent;
 
@@ -58,31 +59,6 @@ public class REXP extends PoweredEvent
             e.fizzle();
             return;
         }
-    }
-    
-    private Method expMethod;
-    
-    protected int getExp(EntityLivingBase entity, EntityPlayer player) {
-    	if (expMethod == null) {
-    		try {
-				expMethod = EntityLivingBase.class.getDeclaredMethod("func_70693_a", EntityPlayer.class);
-			} catch (NoSuchMethodException e) {
-				return 0;
-			} catch (SecurityException e) {
-				return 0;
-			}
-    		expMethod.setAccessible(true);
-    	}
-    	
-    	try {
-			return (Integer) expMethod.invoke(entity, player);
-		} catch (IllegalAccessException e) {
-			return 0;
-		} catch (IllegalArgumentException e) {
-			return 0;
-		} catch (InvocationTargetException e) {
-			return 0;
-		}
     }
 
     public void onTick(EntityRune e)
@@ -141,8 +117,9 @@ public class REXP extends PoweredEvent
                     continue;
                 }
 
-                int exp = getExp(el, player);
-                el.attackEntityFrom(DamageSource.magic, 10000000);
+                int exp = DustMod.entityLivingHelper.getExperiencePoints(el, player);
+                DustMod.entityLivingHelper.setRecentlyHit(el, 0);
+                el.attackEntityFrom(DustMod.destroyDrops, 10000000);
 
                 for (int mul = 0; mul < 2; mul++)
                     for (int i = exp; i > 0;)

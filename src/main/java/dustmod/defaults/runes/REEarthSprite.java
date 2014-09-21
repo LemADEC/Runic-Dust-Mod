@@ -53,7 +53,7 @@ public class REEarthSprite  extends PoweredEvent
         };
         req = this.sacrifice(e, req);
 
-        if (req[0].stackSize != 0 || req[1].stackSize != 0 || req[2].stackSize != 0 || !takeXP(e, 20))
+        if (req[0].stackSize != 0 || req[1].stackSize != 0 || !takeXP(e, 20))
         {
             e.fizzle();
             return;

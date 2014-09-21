@@ -4,13 +4,6 @@
  */
 package dustmod.items;
 
-import java.util.Random;
-import java.util.logging.Level;
-
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import dustmod.DustMod;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -24,13 +17,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import dustmod.DustMod;
 
 /**
  * 
  * @author billythegoat101
  */
 public class ItemSpiritPickaxe extends ItemPickaxe {
-	private static Block blocksEffectiveAgainst[];
 
 	public ItemSpiritPickaxe(ToolMaterial enumtoolmaterial) {
 		super(enumtoolmaterial);
@@ -38,7 +33,8 @@ public class ItemSpiritPickaxe extends ItemPickaxe {
 		efficiencyOnProperMaterial = 16F;
 	}
 
-	public EnumRarity func_40398_f(ItemStack itemstack) {
+	@Override
+	public EnumRarity getRarity(ItemStack p_77613_1_) {
 		return EnumRarity.epic;
 	}
 
@@ -89,7 +85,6 @@ public class ItemSpiritPickaxe extends ItemPickaxe {
 		y = (int) click.blockY;
 		z = (int) click.blockZ;
 
-		Random rand = new Random();
 		int level = player.experienceLevel + 1;
 		level *= level;
 		double tol = (double) level / 900D;
@@ -107,33 +102,34 @@ public class ItemSpiritPickaxe extends ItemPickaxe {
 						int meta = world.getBlockMetadata(x + i, y + j, z + k);
 						try {
 
-							if (block != null) // block is not null (air)
+							if (block.getMaterial() == Material.rock && block != Blocks.bedrock) // if block is made of rock
 							{
-								if (block.getMaterial() == Material.rock && block != Blocks.bedrock) // if block is made of rock
-								{
-									if (!playedSound) {
-										world.playSoundEffect((double) ((float) i + 0.5F), (double) ((float) j + 0.5F), (double) ((float) k + 0.5F), block.stepSound.getStepResourcePath(),
-												(block.stepSound.getVolume() + 1.0F) / 6.0F, block.stepSound.getPitch() * 0.99F);
-										playedSound = true;
-									}
-									if (rand.nextDouble() < tol) {
+								if (!playedSound) {
+									world.playSoundEffect((double) ((float) i + 0.5F), (double) ((float) j + 0.5F), (double) ((float) k + 0.5F), block.stepSound.getStepResourcePath(),
+											(block.stepSound.getVolume() + 1.0F) / 6.0F, block.stepSound.getPitch() * 0.99F);
+									playedSound = true;
+								}
+								
+								if (!world.isRemote) {
+									if (world.rand.nextDouble() < tol) {
 										EntityItem ei = new EntityItem(player.worldObj, x + 0.5 + i, y + 0.5 + j, z + 0.5 + k, new ItemStack(DustMod.idust, 1, 300));
 										world.spawnEntityInWorld(ei);
 									}
-									boolean success = block.removedByPlayer(world, player, x + i, y + j, z + k, false);
-
-									if (success) {
-										block.onBlockDestroyedByPlayer(world, x + i, y + j, z + k, meta);
-									}
-									// update world
-									world.setBlockToAir(i + x, j + y, k + z); 
-									// destroy block
-									block.onBlockDestroyedByPlayer(world, i + x, j + y, k + z, world.getBlockMetadata(i + x, j + y, k + z)); 
-									// drop block
-									block.dropBlockAsItem(world, i + x, j + y, k + z, world.getBlockMetadata(i + x, j + y, k + z), 0);
-									if (!creative)
-										item.damageItem(1, player);
 								}
+								
+								boolean success = block.removedByPlayer(world, player, x + i, y + j, z + k, false);
+
+								if (success) {
+									block.onBlockDestroyedByPlayer(world, x + i, y + j, z + k, meta);
+								}
+								// update world
+								world.setBlockToAir(i + x, j + y, k + z); 
+								// destroy block
+								block.onBlockDestroyedByPlayer(world, i + x, j + y, k + z, world.getBlockMetadata(i + x, j + y, k + z)); 
+								// drop block
+								block.dropBlockAsItem(world, i + x, j + y, k + z, world.getBlockMetadata(i + x, j + y, k + z), 0);
+								if (!creative)
+									item.damageItem(1, player);
 							}
 						} catch (Exception e) {
 							DustMod.logger.warn("Error breaking block " + block.getUnlocalizedName(), e);

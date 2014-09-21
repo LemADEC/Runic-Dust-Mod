@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Random;
 
 import cpw.mods.fml.common.registry.GameData;
+import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -67,15 +68,15 @@ public class RESpawnRecord extends RuneEvent
             
 			try {
 				
-				//TODO test
-				Field recordMapField = ItemRecord.class.getField("field_150928_b");
+				Field recordMapField = ItemRecord.class.getDeclaredField("field_150928_b");
 	            recordMapField.setAccessible(true);
-	            ItemRecord[] recordList = (ItemRecord[]) ((Map<String, ItemRecord>) recordMapField.get(null)).values().toArray();
+	            Map<String, ItemRecord> recordMap = (Map<String, ItemRecord>) recordMapField.get(null);
+	            Object[] recordList = recordMap.values().toArray();
 	            int recordNr = r.nextInt(recordList.length);
 	            
-	            EntityItem en = new EntityItem(e.worldObj, e.posX, e.posY - EntityRune.yOffset - 1, e.posZ, new ItemStack(recordList[recordNr], 1, 0));
+	            EntityItem en = new EntityItem(e.worldObj, e.posX, e.posY - EntityRune.yOffset - 1, e.posZ, new ItemStack((Item) recordList[recordNr], 1, 0));
 	            e.worldObj.spawnEntityInWorld(en);
-	            e.fade();
+	            
 			} catch (NoSuchFieldException e1) {
 				DustMod.logger.catching(e1);
 			} catch (SecurityException e1) {
@@ -85,6 +86,8 @@ public class RESpawnRecord extends RuneEvent
 			} catch (IllegalAccessException e1) {
 				DustMod.logger.catching(e1);
 			}
+			
+			e.fade();
 
         }
     }

@@ -4,7 +4,6 @@
  */
 package dustmod.client;
 
-import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.entity.RenderFallingBlock;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
@@ -29,7 +28,7 @@ public class RenderEntityBlock extends RenderFallingBlock
     {
         if (!((EntityBlock)ent).lingering) //dont want it to be visible if lingering
         {
-            if (((EntityBlock)ent).func_145805_f().getMaterial() != Material.air)
+            if (((EntityBlock)ent).func_145805_f() != null)
             {
             	GL11.glPushMatrix();
             	GL11.glTranslated(0.5, -0.5, 0.5);

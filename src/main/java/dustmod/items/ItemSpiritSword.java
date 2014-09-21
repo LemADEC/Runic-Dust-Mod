@@ -6,12 +6,16 @@ package dustmod.items;
 
 import java.util.Random;
 
+import com.google.common.collect.Multimap;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import dustmod.DustMod;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumRarity;
@@ -30,10 +34,10 @@ public class ItemSpiritSword extends ItemSword
         super(ToolMaterial.EMERALD);
         setMaxDamage(131);
     }
-
-    public EnumRarity func_40398_f(ItemStack itemstack)
-    {
-        return EnumRarity.epic;
+    
+    @Override
+    public EnumRarity getRarity(ItemStack p_77613_1_) {
+    	return EnumRarity.epic;
     }
 
     @Override
@@ -46,10 +50,15 @@ public class ItemSpiritSword extends ItemSword
         }
         super.onUpdate(itemstack, world, entity, i, flag);
     }
-
-    public int getDamageVsEntity(Entity entity)
+    
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+    public Multimap getItemAttributeModifiers()
     {
-        return 12;
+        Multimap multimap = super.getItemAttributeModifiers();
+        multimap.removeAll(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName());
+        multimap.put(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(), new AttributeModifier(field_111210_e, "Tool modifier", (double)12, 0));
+        return multimap;
     }
     
     @Override

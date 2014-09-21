@@ -107,7 +107,7 @@ public class RESpawnerReprog extends RuneEvent
             fin[1] /= 8;
             fin[2] /= 8;
 
-            if (true || e.worldObj.getBlock(fin[0], fin[1], fin[2]) == Blocks.mob_spawner)
+            if (e.worldObj.getBlock(fin[0], fin[1], fin[2]) == Blocks.mob_spawner)
             {
                 TileEntityMobSpawner tems = ((TileEntityMobSpawner)e.worldObj.getTileEntity(fin[0], fin[1], fin[2]));
                 tems.func_145881_a().setEntityName(mob);

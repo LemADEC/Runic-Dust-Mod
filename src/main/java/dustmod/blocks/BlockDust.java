@@ -524,7 +524,6 @@ public class BlockDust extends BlockContainer {
 			}
 		}
 
-		// System.out.println("ASNASO " + Arrays.deepToString(map));
 		RuneManager.callShape(world, (double) sx + (double) dx / 2 + 0.5D, j + 1D, (double) sz + (double) dz / 2 + 0.5D, map, n, (p == null) ? null : p.getGameProfile().getId());
 	}
 

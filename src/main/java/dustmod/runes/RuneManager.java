@@ -5,6 +5,7 @@
 package dustmod.runes;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -356,6 +357,8 @@ public class RuneManager
 			}
 		}
 		int rot = 0;
+		
+		DustMod.logger.info("Trim: {}", Arrays.deepToString(trim));
 
 		for (int iter = 0; iter < RuneManager.shapes.size(); iter++) {
 			RuneShape s = RuneManager.shapes.get(iter);
@@ -367,7 +370,7 @@ public class RuneManager
 		}
 
 		if (found != null) {
-			DustMod.logger.debug("Found rune: " + found.name);
+			DustMod.logger.info("Found rune: {}", found.name);
 			RuneManager.initiate(found, found.name, i, j, k, world, points,
 					trim, playerId, rot);
 		} else {
@@ -380,7 +383,7 @@ public class RuneManager
 				}
 			}
 
-			DustMod.logger.debug("No rune found.");
+			DustMod.logger.info("No rune found.");
 		}
 	}
     
