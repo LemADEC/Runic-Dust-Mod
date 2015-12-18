@@ -278,12 +278,17 @@ public class DustMod {
 
 		proxy.registerTileEntityRenderers();
 
+		OreDictionary.registerOre("runicDust", new ItemStack(idust, 1, 100));
+		OreDictionary.registerOre("runicDust", new ItemStack(idust, 1, 200));
+		OreDictionary.registerOre("runicDust", new ItemStack(idust, 1, 300));
+		OreDictionary.registerOre("runicDust", new ItemStack(idust, 1, 350));
+		OreDictionary.registerOre("runicDust", new ItemStack(idust, 1, 400));
 		GameRegistry.addRecipe(new ItemStack(dustTable, 1), new Object[] {
-				"dwd", "wbw", "dwd", 'd', new ItemStack(idust, 1, -1), 'w',
+				"dwd", "wbw", "dwd", 'd', "runicDust", 'w',
 				new ItemStack(Blocks.planks, 1, -1), 'b',
 				new ItemStack(tome, -1) });
 		GameRegistry.addRecipe(new ItemStack(dustTable, 1), new Object[] {
-				"wdw", "dbd", "wdw", 'd', new ItemStack(idust, 1, -1), 'w',
+				"wdw", "dbd", "wdw", 'd', "runicDust", 'w',
 				new ItemStack(Blocks.planks, 1, -1), 'b',
 				new ItemStack(tome, -1) });
 		GameRegistry.addRecipe(new ItemStack(chisel, 1), new Object[] { "st",
@@ -358,7 +363,12 @@ public class DustMod {
 						new ItemStack(idust, 1, 300),
 						new ItemStack(idust, 1, 300) /* , mortar */});
 		GameRegistry.addShapelessRecipe(new ItemStack(tome, 1, 0),
-				new Object[] { new ItemStack(idust, 1, -1), Items.book });
+				new Object[] {
+					new ItemStack(idust, 1, 100),
+					new ItemStack(idust, 1, 200),
+					new ItemStack(idust, 1, 300),
+					new ItemStack(idust, 1, 400),
+					Items.book });
 		GameRegistry.addShapelessRecipe(new ItemStack(runicPaper, 1),
 				new Object[] { Items.paper, Items.gold_nugget, Items.gold_nugget });
 
