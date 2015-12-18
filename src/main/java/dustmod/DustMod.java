@@ -25,6 +25,9 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.oredict.ShapedOreRecipe;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -283,14 +286,14 @@ public class DustMod {
 		OreDictionary.registerOre("runicDust", new ItemStack(idust, 1, 300));
 		OreDictionary.registerOre("runicDust", new ItemStack(idust, 1, 350));
 		OreDictionary.registerOre("runicDust", new ItemStack(idust, 1, 400));
-		GameRegistry.addRecipe(new ItemStack(dustTable, 1), new Object[] {
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(dustTable, 1), false, 
 				"dwd", "wbw", "dwd", 'd', "runicDust", 'w',
 				new ItemStack(Blocks.planks, 1, -1), 'b',
-				new ItemStack(tome, -1) });
-		GameRegistry.addRecipe(new ItemStack(dustTable, 1), new Object[] {
+				new ItemStack(tome, -1) ));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(dustTable, 1), false,
 				"wdw", "dbd", "wdw", 'd', "runicDust", 'w',
 				new ItemStack(Blocks.planks, 1, -1), 'b',
-				new ItemStack(tome, -1) });
+				new ItemStack(tome, -1) ));
 		GameRegistry.addRecipe(new ItemStack(chisel, 1), new Object[] { "st",
 				"i ", 's', new ItemStack(Blocks.cobblestone, 1), 't',
 				new ItemStack(Items.stick, 1), 'i',
