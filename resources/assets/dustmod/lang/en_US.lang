@@ -1,4 +1,9 @@
 tile.dust.name=Dust
+tile.dust.plantdust.name=Plant Runic Dust
+tile.dust.gundust.name=Funpowder Runic Dust
+tile.dust.lapisdust.name=Lapis Runic Dust
+tile.dust.glowdust.name=Glowing Rrunic Dust
+tile.dust.blazedust.name=Blaze Runic Dust
 tile.dustTable.name=Runic Lexicon
 tile.dustrutblock.name=Rut Block
 
@@ -14,3 +19,4 @@ item.emptyinsc.name=Blank Runic Inscription
 item.driedinsc.name=Dried Runic Inscription
 item.dryinginsc.name=Drying Runic Inscription
 item.inscblank=INVALID Inscription
+
