@@ -4,12 +4,15 @@
  */
 package dustmod.items;
 
+import java.util.List;
+
 import dustmod.DustMod;
 import dustmod.runes.RuneManager;
 import dustmod.runes.RuneShape;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
 /**
@@ -66,4 +69,11 @@ public class ItemRunicTome  extends DustModItem
     	
         return true;
     }
+	
+	@Override
+	public void addInformation(ItemStack itemStack, EntityPlayer entityPlayer, List list, boolean advancedItemTooltips){
+		list.add(StatCollector.translateToLocal("dustmod.tooltip.runic_tome1"));
+		list.add(StatCollector.translateToLocal("dustmod.tooltip.runic_tome2"));
+		super.addInformation(itemStack, entityPlayer, list, advancedItemTooltips);
+	}
 }

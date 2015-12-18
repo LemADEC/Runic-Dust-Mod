@@ -20,3 +20,5 @@ item.driedinsc.name=Dried Runic Inscription
 item.dryinginsc.name=Drying Runic Inscription
 item.inscblank=INVALID Inscription
 
+dustmod.tooltip.runic_tome1=Shift-Right click to open the book
+dustmod.tooltip.runic_tome2=Right click a rune to trigger it
