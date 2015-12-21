@@ -231,8 +231,6 @@ public class RuneManager
             }
 
         config.save();
-        
-        LanguageRegistry.instance().addStringLocalization("tile.scroll" + shape.name + ".name", "en_US", shape.getRuneName() + " Placing Scroll");
     }
     
 
@@ -248,10 +246,7 @@ public class RuneManager
         shapesRemote.add(shape);
         namesRemote.add(shape.name);
         DustMod.proxy.checkRunePage(shape);
-		DustMod.logger.debug("Registering remote rune: " + shape.name);
-//        System.out.println("[DustMod] Registering remote rune " + shape.name);
-        LanguageRegistry.instance().addStringLocalization("tile.scroll" + shape.name + ".name", "en_US", shape.getRuneName() + " Placing Scroll");
-        DustMod.logger.info("Add Loc {} for {}", shape.getRuneName() + " Placing Scroll", "tile.scroll" + shape.name + ".name");
+		DustMod.logger.info("Registering remote rune {} as {}", shape.name, shape.getRuneName());
     }
 
 	/**

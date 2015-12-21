@@ -15,6 +15,8 @@ item.emptyinsc.name=Blank Runic Inscription
 item.driedinsc.name=Dried Runic Inscription
 item.dryinginsc.name=Drying Runic Inscription
 item.inscblank=INVALID Inscription
+item.scroll.name=Placing Scroll
+item.scroll.error=INVALID Placing Scroll
 
 
 item.dust.name=INVALID Runic Dust

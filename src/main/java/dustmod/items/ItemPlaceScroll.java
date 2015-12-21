@@ -5,6 +5,9 @@
 package dustmod.items;
 
 import java.util.List;
+
+import org.lwjgl.input.Keyboard;
+
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -89,10 +92,11 @@ public class ItemPlaceScroll extends DustModItem {
 	@Override
 	public String getUnlocalizedName(ItemStack itemstack) {
 		RuneShape shape = RuneManager.getShapeFromID(itemstack.getItemDamage());
-		if (shape != null)
-			return "tile.scroll" + shape.name;
-		else
-			return "tile.scroll.error";
+		if (shape != null) {
+			return "item.scroll";
+		} else {
+			return "item.scroll.error";
+		}
 	}
 	
 	@Override
@@ -103,32 +107,36 @@ public class ItemPlaceScroll extends DustModItem {
 		if (shape == null) {
 			return;
 		}
-		//        123456789012345678901234567890123456789
-		list.add("Use this placing scroll to place a rune");
-		list.add("");
-		String sacr = shape.getNotes().replace("Sacrifice\n", "");
-		String[] split = sacr.split("\n");
-		list.add("Required sacrifice:");
-		for (String line : split) {
-			if (!line.isEmpty()) {
-				if (line.charAt(0) != '-') {
-					break;
-				}
-				String lineRemaining = line;
-				while (lineRemaining.length() > 40) {
-					int index = lineRemaining.substring(0, 40).lastIndexOf(' ');
-					if (index == -1) {
-						index = lineRemaining.length();
-					}
-					
-					String add = lineRemaining.substring(0, index);
-					if (!add.isEmpty()) {
-						list.add(add);
-					}
-					lineRemaining = lineRemaining.substring(index);
-				}
-				list.add(lineRemaining);
+		
+		String tooltip;
+		
+		if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+			tooltip = "Required sacrifice:\n" + shape.getNotes().replace("Sacrifice\n", "");
+			
+			// remove notes
+			int indexNotes = tooltip.indexOf("\n\nNotes");
+			if (indexNotes != -1) {
+				tooltip = tooltip.substring(0, indexNotes);
 			}
+		} else {
+			tooltip = "§f§l" + shape.getRuneName() + "§7\n" + shape.getDescription().replace("Description\n", "") + "\n\n§b<Press shift to show sacrifices>";
+		}
+		
+		String[] split = tooltip.split("\n");
+		for (String line : split) {
+			String lineRemaining = line;
+			while (lineRemaining.length() > 38) {
+				int index = lineRemaining.substring(0, 38).lastIndexOf(' ');
+				if (index == -1) {
+					list.add(lineRemaining);
+					lineRemaining = "";
+				} else {
+					list.add(lineRemaining.substring(0, index));
+					lineRemaining = lineRemaining.substring(index + 1);
+				}
+			}
+			
+			list.add(lineRemaining);
 		}
 	}
 	
