@@ -32,12 +32,12 @@ public class DustManager {
 
 		dusts[value] = remoteDusts[value] = dust;
 
-		GameRegistry.addShapelessRecipe(ItemInk.getInk(value), new Object[] { new ItemStack(Items.potionitem, 1, 0), new ItemStack(DustMod.idust, 1, value), Items.ghast_tear });
+		GameRegistry.addShapelessRecipe(ItemInk.getInk(value), new Object[] { new ItemStack(Items.potionitem, 1, 0), new ItemStack(DustMod.itemDust, 1, value), Items.ghast_tear });
 		GameRegistry.addShapelessRecipe(ItemInk.getInk(value), new Object[] { new ItemStack(Items.potionitem, 1, 0), new ItemStack(DustMod.pouch, 1, value * 2 + 1), Items.ghast_tear });
 
 		ItemStack craft = new ItemStack(DustMod.pouch, 1, value * 2);
-		GameRegistry.addRecipe(craft, new Object[] { " s ", "ldl", " l ", 's', new ItemStack(Items.string, 1), 'd', new ItemStack(DustMod.idust, 1, value), 'l', new ItemStack(Items.leather, 1) });
-		GameRegistry.addShapelessRecipe(new ItemStack(DustMod.idust, 1, value), new ItemStack(DustMod.pouch, 1, value * 2 + 1));
+		GameRegistry.addRecipe(craft, new Object[] { " s ", "ldl", " l ", 's', new ItemStack(Items.string, 1), 'd', new ItemStack(DustMod.itemDust, 1, value), 'l', new ItemStack(Items.leather, 1) });
+		GameRegistry.addShapelessRecipe(new ItemStack(DustMod.itemDust, 1, value), new ItemStack(DustMod.pouch, 1, value * 2 + 1));
 	}
 
 	public static void registerRemoteDust(int value, Dust dust) {
@@ -47,12 +47,12 @@ public class DustManager {
 		
 		remoteDusts[value] = dust;
 
-		GameRegistry.addShapelessRecipe(ItemInk.getInk(value), new Object[] { new ItemStack(Items.potionitem, 1, 0), new ItemStack(DustMod.idust, 1, value), Items.ghast_tear });
+		GameRegistry.addShapelessRecipe(ItemInk.getInk(value), new Object[] { new ItemStack(Items.potionitem, 1, 0), new ItemStack(DustMod.itemDust, 1, value), Items.ghast_tear });
 		GameRegistry.addShapelessRecipe(ItemInk.getInk(value), new Object[] { new ItemStack(Items.potionitem, 1, 0), new ItemStack(DustMod.pouch, 1, value * 2 + 1), Items.ghast_tear });
 
 		ItemStack craft = new ItemStack(DustMod.pouch, 1, value * 2);
-		GameRegistry.addRecipe(craft, new Object[] { " s ", "ldl", " l ", 's', new ItemStack(Items.string, 1), 'd', new ItemStack(DustMod.idust, 1, value), 'l', new ItemStack(Items.leather, 1) });
-		GameRegistry.addShapelessRecipe(new ItemStack(DustMod.idust, 1, value), new ItemStack(DustMod.pouch, 1, value * 2 + 1));
+		GameRegistry.addRecipe(craft, new Object[] { " s ", "ldl", " l ", 's', new ItemStack(Items.string, 1), 'd', new ItemStack(DustMod.itemDust, 1, value), 'l', new ItemStack(Items.leather, 1) });
+		GameRegistry.addShapelessRecipe(new ItemStack(DustMod.itemDust, 1, value), new ItemStack(DustMod.pouch, 1, value * 2 + 1));
 	}
 	
 	public static boolean hasDust(int value) {
