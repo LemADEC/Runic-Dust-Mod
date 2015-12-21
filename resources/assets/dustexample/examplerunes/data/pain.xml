@@ -1,14 +1,12 @@
 <rune>
 	<id value="103"/>
 	<name display="Rune of Pain" id="constanthurt"/>
-	<author>billythegoat101: Demonstrations pack</author>
+	<author>billythegoat101 (Demonstrations pack)</author>
 	<solid value="false"/>
-	<sacrifices>
-		Sacrifice:
+	<sacrifices>Sacrifice:
 		-None
 		Notes:
-		-Will last for a day unless fueled.
-	</sacrifices>
+		-Will last for a day unless fueled.</sacrifices>
 	<description>
 		Description:
 		Constantly damages all entities (that aren't the summoning player) within range.Amount of damage depends on the variable dust.

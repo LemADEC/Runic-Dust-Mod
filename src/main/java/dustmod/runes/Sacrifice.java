@@ -126,7 +126,8 @@ public class Sacrifice
         return false;
     }
 
-    public Sacrifice clone()
+    @Override
+	public Sacrifice clone()
     {
         Sacrifice rtn = null;
 

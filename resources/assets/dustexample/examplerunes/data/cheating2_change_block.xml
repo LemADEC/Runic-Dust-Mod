@@ -19,7 +19,7 @@
 	<name display="Second Rune of Cheating" id="changeblock"/>
 	
 <!-- Author: This should be you!-->
-	<author>billythegoat101: Demonstrations pack</author>
+	<author>billythegoat101 (Demonstrations pack)</author>
 	
 <!-- Should this rune be one solid color (useful for runes which are entirely variable.) -->
 	<solid value="true"/>
