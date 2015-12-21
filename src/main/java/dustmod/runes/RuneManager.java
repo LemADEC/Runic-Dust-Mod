@@ -57,7 +57,7 @@ public class RuneManager
         return events;
     }
     
-    public static EntityRune initiate(RuneShape shape, String name, double x, double y, double z, World world, List<Integer[]> points, int[][] map, UUID playerId,int rot)
+    public static EntityRune initiate(RuneShape shape, String name, double x, double y, double z, World world, List<Integer[]> points, int[][] map, UUID playerId, int rot)
     {
         RuneEvent evt = events.get(name);
 
@@ -126,7 +126,7 @@ public class RuneManager
 
             if (player != null)
             {
-                player.addChatMessage(new ChatComponentText("This rune is disabled on this server."));
+                player.addChatMessage(new ChatComponentText("This rune is disabled on the server."));
             }
         }
 
@@ -274,64 +274,57 @@ public class RuneManager
 	 *            The Id of the GameProfile of the player who called the rune. Null if called
 	 *            by redstone.
 	 */
-	public static void callShape(World world, double i, double j, double k,
-			int[][] map, List<Integer[]> points, UUID playerId) {
+	public static void callShape(World world, double i, double j, double k, int[][] map, List<Integer[]> points, EntityPlayer entityPlayer) {
 		RuneShape found = null;
 		// trim shape
-		ArrayList<ArrayList<Integer>> temp = new ArrayList<ArrayList<Integer>>();
-		int sx = map.length;
-		int sz = map[0].length;
-		int mx = 0;
-		int mz = 0;
-		boolean fnd = false;
+		int shapeMinX = map.length;
+		int shapeMinZ = map[0].length;
+		int shapeMaxX = 0;
+		int shapeMaxZ = 0;
 
 		for (int x = 0; x < map.length; x++) {
 			for (int z = 0; z < map[0].length; z++) {
-				if ((x < sx || z < sz) && map[x][z] != 0) {
-					if (x < sx) {
-						sx = x;
-					}
-
-					if (z < sz) {
-						sz = z;
-					}
-
-					fnd = true;
-				}
-
 				if (map[x][z] != 0) {
-					if (x > mx) {
-						mx = x;
+					if (x < shapeMinX) {
+						shapeMinX = x;
 					}
-
-					if (z > mz) {
-						mz = z;
+					
+					if (z < shapeMinZ) {
+						shapeMinZ = z;
+					}
+					
+					if (x > shapeMaxX) {
+						shapeMaxX = x;
+					}
+					
+					if (z > shapeMaxZ) {
+						shapeMaxZ = z;
 					}
 				}
 			}
 		}
 
-		int dx = Math.abs(mx - sx) + 1;
-		int dz = Math.abs(mz - sz) + 1;
+		int shapeSizeX = Math.abs(shapeMaxX - shapeMinX) + 1;
+		int shapeSizeZ = Math.abs(shapeMaxZ - shapeMinZ) + 1;
 
-		if (dx < 4) {
-			sx = 0;
-			mx = 3;
-			dx = 4;
+		if (shapeSizeX < 4) {
+			shapeMinX = 0;
+			shapeMaxX = 3;
+			shapeSizeX = 4;
 		}
 
-		if (dz < 4) {
-			sz = 0;
-			mz = 3;
-			dz = 4;
+		if (shapeSizeZ < 4) {
+			shapeMinZ = 0;
+			shapeMaxZ = 3;
+			shapeSizeZ = 4;
 		}
 
-		int[][] trim = new int[dx][dz];
+		int[][] trim = new int[shapeSizeX][shapeSizeZ];
 
-		for (int x = sx; x <= mx; x++) {
-			for (int z = sz; z <= mz; z++) {
-				trim[x - sx][z - sz] = 0;
-				trim[x - sx][z - sz] = map[x][z];
+		for (int x = shapeMinX; x <= shapeMaxX; x++) {
+			for (int z = shapeMinZ; z <= shapeMaxZ; z++) {
+				trim[x - shapeMinX][z - shapeMinZ] = 0;
+				trim[x - shapeMinX][z - shapeMinZ] = map[x][z];
 			}
 		}
 
@@ -339,23 +332,23 @@ public class RuneManager
 			for (int b : a) {
 				if (b == -2) {
 
-					for (Integer[] p : points) {
-						Block block = world.getBlock(p[0], p[1], p[2]);
+					for (Integer[] point : points) {
+						Block block = world.getBlock(point[0], point[1], point[2]);
 
 						if (block == DustMod.dust) {
-							world.setBlockMetadataWithNotify(p[0], p[1], p[2],
-									BlockDust.DEAD_DUST,3);
+							world.setBlockMetadataWithNotify(point[0], point[1], point[2], BlockDust.DEAD_DUST, 3);
 						}
 					}
 
-					DustMod.logger.debug("Left variable dust in rune.");
+					entityPlayer.addChatMessage(new ChatComponentText("Variable dust needs to be set before triggering a rune."));
 					return;
 				}
 			}
 		}
+
 		int rot = 0;
 		
-		DustMod.logger.info("Trim: {}", Arrays.deepToString(trim));
+		// DustMod.logger.info("Trim: {}", Arrays.deepToString(trim));
 
 		for (int iter = 0; iter < RuneManager.shapes.size(); iter++) {
 			RuneShape s = RuneManager.shapes.get(iter);
@@ -367,9 +360,8 @@ public class RuneManager
 		}
 
 		if (found != null) {
-			DustMod.logger.info("Found rune: {}", found.name);
-			RuneManager.initiate(found, found.name, i, j, k, world, points,
-					trim, playerId, rot);
+			DustMod.logger.info("Rune triggered at {}, {}, {}: {}", (int)i, (int)j, (int)k, found.name);
+			RuneManager.initiate(found, found.name, i, j, k, world, points, trim, (entityPlayer == null) ? null : entityPlayer.getGameProfile().getId(), rot);
 		} else {
 
 			for (Integer[] p : points) {
@@ -380,19 +372,15 @@ public class RuneManager
 				}
 			}
 
-			DustMod.logger.info("No rune found.");
+			DustMod.logger.info("Unrecognized rune at {}, {}, {}.", (int)i, (int)j, (int)k);
 		}
 	}
-    
 
 	public static void registerDefaultShapes() {
 		//Moved! to DustModDefaults
 	}
 
-
-
 	public static boolean isEmpty() {
 		return shapesRemote.isEmpty();
 	}
-	
 }
