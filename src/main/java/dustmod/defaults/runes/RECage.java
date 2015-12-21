@@ -12,7 +12,6 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import dustmod.blocks.TileEntityDust;
@@ -37,7 +36,8 @@ public class RECage extends RETrap
     	
     }
 
-    public void onInit(EntityRune e)
+    @Override
+	public void onInit(EntityRune e)
     {
         e.setRenderStar(true);
         ItemStack[] req = new ItemStack[] {new ItemStack(Items.iron_ingot, 6), new ItemStack(Items.redstone, 2)};
@@ -50,7 +50,8 @@ public class RECage extends RETrap
         }
     }
 
-    public void onTick(EntityRune e)
+    @Override
+	public void onTick(EntityRune e)
     {
         e.setRenderStar(true);
 
