@@ -42,18 +42,13 @@ public class ItemRunicTome  extends DustModItem
     @Override
     public boolean onItemUse(ItemStack itemstack, EntityPlayer p, World world, int i, int j, int k, int l, float x, float y, float z)
     {
-    	
-
     	int page = itemstack.getItemDamage();
 
         if (world.isRemote || page == 0 || p.isSneaking() || !p.capabilities.isCreativeMode)
         {
             return false;
         }
-
-        RuneShape ds = RuneManager.getShape(page - 1);
-        int r = (MathHelper.floor_double((double)(p.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3);
-
+        
         if (DustMod.isDust(world.getBlock(i, j, k)))
         {
             if (world.getBlockMetadata(i, j, k) == DustMod.DustMetaUsed)
@@ -72,8 +67,9 @@ public class ItemRunicTome  extends DustModItem
 	
 	@Override
 	public void addInformation(ItemStack itemStack, EntityPlayer entityPlayer, List list, boolean advancedItemTooltips){
-		list.add(StatCollector.translateToLocal("dustmod.tooltip.runic_tome1"));
-		list.add(StatCollector.translateToLocal("dustmod.tooltip.runic_tome2"));
+		for(String tooltip : StatCollector.translateToLocal("item.dustlibrary.tooltip").split("\\n")) {
+			list.add(tooltip);
+		}
 		super.addInformation(itemStack, entityPlayer, list, advancedItemTooltips);
 	}
 }

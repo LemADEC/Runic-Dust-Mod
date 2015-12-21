@@ -1,13 +1,8 @@
-tile.dust.name=Dust
-tile.dust.plantdust.name=Plant Runic Dust
-tile.dust.gundust.name=Funpowder Runic Dust
-tile.dust.lapisdust.name=Lapis Runic Dust
-tile.dust.glowdust.name=Glowing Rrunic Dust
-tile.dust.blazedust.name=Blaze Runic Dust
 tile.dustTable.name=Runic Lexicon
 tile.dustrutblock.name=Rut Block
 
 item.dustlibrary.name=Runic Tome
+item.dustlibrary.tooltip=Open with Sneak+Right click\nTrigger a rune with Right click
 item.negateSacrifice.name=Negate Rune Sacrifice
 item.runicPaper.name=Scroll Paper
 item.spiritPickaxe.name=Spirit Pickaxe
@@ -20,5 +15,22 @@ item.driedinsc.name=Dried Runic Inscription
 item.dryinginsc.name=Drying Runic Inscription
 item.inscblank=INVALID Inscription
 
-dustmod.tooltip.runic_tome1=Shift-Right click to open the book
-dustmod.tooltip.runic_tome2=Right click a rune to trigger it
+
+item.dust.name=INVALID Runic Dust
+item.dust.plantdust.name=Plant Runic Dust
+item.dust.gundust.name=Gunpowder Runic Dust
+item.dust.lapisdust.name=Lapis Runic Dust
+item.dust.glowdust.name=Glowing Runic Dust
+item.dust.blazedust.name=Blaze Runic Dust
+item.ink.name=INVALID Runic Ink
+item.ink.plantdust.name=Plant Runic Ink
+item.ink.gundust.name=Gunpowder Runic Ink
+item.ink.lapisdust.name=Lapis Runic Ink
+item.ink.glowdust.name=Glowing Runic Ink
+item.ink.blazedust.name=Blaze Runic Ink
+item.pouch.name=INVALID Dust Pouch
+item.pouch.plantdust.name=Plant Dust Pouch
+item.pouch.gundust.name=Gunpowder Dust Pouch
+item.pouch.lapisdust.name=Lapis Dust Pouch
+item.pouch.glowdust.name=Glowing Dust Pouch
+item.pouch.blazedust.name=Blaze Dust Pouch

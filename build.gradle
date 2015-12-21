@@ -64,13 +64,13 @@ dependencies {
 // Finds and sets version data
 task buildInfo {
     def cmd = "git rev-parse --short HEAD"
-    // def proc = cmd.execute()
-    // proc.waitFor()
-    // if (proc.exitValue() == 0) {
-    //    ext.revision = proc.text.trim()
-    // } else {
+    def proc = cmd.execute()
+    proc.waitFor()
+    if (proc.exitValue() == 0) {
+       ext.revision = proc.text.trim()
+    } else {
         ext.revision = "GITBORK"
-    // }
+    }
 
     if (System.getenv().BUILD_NUMBER != null) {
         ext.buildNum = "jenkins${System.getenv().BUILD_NUMBER}"

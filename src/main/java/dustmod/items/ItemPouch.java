@@ -116,7 +116,7 @@ public class ItemPouch extends DustModItem {
     public String getUnlocalizedName(ItemStack itemstack)
     {
 		int dust = getValue(itemstack);
-		return DustManager.hasDust(dust) ? "pouch." + DustManager.getId(dust) : "pouchblank";
+		return DustManager.hasDust(dust) ? "item.pouch." + DustManager.getId(dust) : "item.pouch";
     }
     
     @Override
