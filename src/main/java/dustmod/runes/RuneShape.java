@@ -477,7 +477,7 @@ public class RuneShape {
 			}
 		}
 		
-		DustMod.logger.info("rotation {} data {}", rotation, Arrays.deepToString(rotatedData));
+		// DustMod.logger.info("rotation {} data {}", rotation, Arrays.deepToString(rotatedData));
 		
 		// Recalculate Center offset
 		switch (rotation) {
@@ -550,7 +550,7 @@ public class RuneShape {
 					continue;
 				}
 
-				if (world.getBlock(placementX + bx, y - 1, placementZ + bz).getMaterial() == Material.air) {
+				if (world.isAirBlock(placementX + bx, y - 1, placementZ + bz)) {
 					continue;
 				}
 
@@ -560,8 +560,10 @@ public class RuneShape {
 
 				if (otherBlock != DustMod.dust) {
 					world.setBlock(placementX + bx, y, placementZ + bz, DustMod.dust, BlockDust.UNUSED_DUST, 2);
+				} else if (meta == BlockDust.DEAD_DUST) {
+					world.setBlock(placementX + bx, y, placementZ + bz, DustMod.dust, BlockDust.UNUSED_DUST, 2);
 				} else if (meta != BlockDust.UNUSED_DUST) {
-					world.setBlockMetadataWithNotify(placementX + bx, y, placementZ + bz, BlockDust.UNUSED_DUST, 2);
+					continue;	// skip that block
 				}
 				
 				TileEntityDust ted;
@@ -679,7 +681,7 @@ public class RuneShape {
 			}
 		}
 		
-		DustMod.logger.info("rotation {} data {}", rotation, Arrays.deepToString(rotatedData));
+		// DustMod.logger.info("rotation {} data {}", rotation, Arrays.deepToString(rotatedData));
 		
 		// Recalculate Center offset
 		switch (rotation) {
