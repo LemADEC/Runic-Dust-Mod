@@ -27,7 +27,6 @@ import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
-import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -471,28 +470,28 @@ public class DustMod {
 	 * 
 	 * Compares the two dust's values to find which is better.
 	 * 
-	 * @param base
+	 * @param dustA
 	 *            The reference dust
-	 * @param dust
+	 * @param dustB
 	 *            The check dust
 	 * @return 0 if dusts are equal, -1 if the reference is worth less than the
 	 *         check, and 1 if the reference is worth more than the check
 	 */
-	public static int compareDust(int base, int dust) {
+	public static int compareDust(int dustA, int dustB) {
 
-		if (base == -1 || dust == -1) {
+		if (dustA == -1 || dustB == -1) {
 			throw new IllegalArgumentException("Invalid dust ID.");
 		}
 
-		if (base == dust) {
+		if (dustA == dustB) {
 			return 0;
 		}
 
-		if (base > dust) {
+		if (dustA > dustB) {
 			return -1;
 		}
 
-		if (dust > base) {
+		if (dustB > dustA) {
 			return 1;
 		}
 

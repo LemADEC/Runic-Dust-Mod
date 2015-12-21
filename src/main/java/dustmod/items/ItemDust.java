@@ -40,7 +40,8 @@ public class ItemDust extends DustModItem
         setHasSubtypes(true);
     }
     
-    public boolean onItemUse(ItemStack item, EntityPlayer p, World world, int i, int j, int k, int face, float x, float y, float z)
+    @Override
+	public boolean onItemUse(ItemStack item, EntityPlayer p, World world, int i, int j, int k, int face, float x, float y, float z)
     {
 		if(!world.canMineBlock(p, i, j, k)) return false;
 		
@@ -112,7 +113,7 @@ public class ItemDust extends DustModItem
                     }
                     DustMod.dust.onBlockActivated(world, i, j, k, p, face, x, y, z);
 
-                    world.playSoundEffect((double)((float)i + 0.5F), (double)((float)j + 0.5F), (double)((float)k + 0.5F), block.stepSound.getStepResourcePath(), (block.stepSound.getVolume() + 1.0F) / 6.0F, block.stepSound.getPitch() * 0.99F);
+                    world.playSoundEffect(i + 0.5F, j + 0.5F, k + 0.5F, block.stepSound.getStepResourcePath(), (block.stepSound.getVolume() + 1.0F) / 6.0F, block.stepSound.getPitch() * 0.99F);
                     --item.stackSize;
                 }
             }
@@ -132,7 +133,8 @@ public class ItemDust extends DustModItem
     }
     
 
-    @SideOnly(Side.CLIENT)
+    @Override
+	@SideOnly(Side.CLIENT)
     /**
      * returns a list of items with the same ID, but different meta (eg: dye returns 16 items)
      */
@@ -154,7 +156,8 @@ public class ItemDust extends DustModItem
     }
 
 
-    @SideOnly(Side.CLIENT)
+    @Override
+	@SideOnly(Side.CLIENT)
     public boolean requiresMultipleRenderPasses()
     {
         return true;
