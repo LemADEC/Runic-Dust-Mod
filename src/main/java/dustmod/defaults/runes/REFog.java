@@ -23,46 +23,40 @@ import dustmod.runes.PoweredEvent;
  *
  * @author billythegoat101
  */
-public class REFog extends PoweredEvent
-{
-    public REFog()
-    {
-        super();
-    }
-
-    @Override
-    public void onInit(EntityRune e)
-    {
-        super.onInit(e);
-        ItemStack[] req = new ItemStack[] {new ItemStack(Items.water_bucket, 1), new ItemStack(Blocks.red_mushroom, 1)};
-        req = this.sacrifice(e, req);
-
-        if (!checkSacrifice(req) || !takeXP(e, 6))
-        {
-            e.fizzle();
-            return;
-        }
-    }
-
-    @Override
-    public void onTick(EntityRune e)
-    {
-        super.onTick(e);
-
-        if (e.ticksExisted % 5 == 0)
-        {
-            int amt = 40;
-            int radius = 10;
-            int cycle = 60;
-            float maxAlpha = 1.5F;
-            float minAlpha = 0.4F;
-            float alpha = 0;
-            float diff = maxAlpha - minAlpha;
-            int flip = (e.ticksExisted % (cycle * 2) > cycle) ? 1 : -1;
-            int stage = e.ticksExisted % cycle - cycle / 2;
-            stage *= flip;
-            float percent = ((float)stage / (float)(cycle));
-            alpha = percent * diff + minAlpha + diff / 2F;
+public class REFog extends PoweredEvent {
+	public REFog() {
+		super();
+	}
+	
+	@Override
+	public void onInit(EntityRune e) {
+		super.onInit(e);
+		ItemStack[] req = new ItemStack[] { new ItemStack(Items.water_bucket, 1), new ItemStack(Blocks.red_mushroom, 1) };
+		req = this.sacrifice(e, req);
+		
+		if (!checkSacrifice(req) || !takeXP(e, 6)) {
+			e.fizzle();
+			return;
+		}
+	}
+	
+	@Override
+	public void onTick(EntityRune entityRune) {
+		super.onTick(entityRune);
+		
+		if (entityRune.ticksExisted % 5 == 0) {
+			int amt = 40;
+			int radius = 10;
+			int cycle = 60;
+			float maxAlpha = 1.5F;
+			float minAlpha = 0.4F;
+			float alpha = 0;
+			float diff = maxAlpha - minAlpha;
+			int flip = (entityRune.ticksExisted % (cycle * 2) > cycle) ? 1 : -1;
+			int stage = entityRune.ticksExisted % cycle - cycle / 2;
+			stage *= flip;
+			float percent = ((float) stage / (float) (cycle));
+			alpha = percent * diff + minAlpha + diff / 2F;
 //            for(int i = 0; i < amt; i++){
 //                int rx = (int)(Math.random()*radius*2)-radius;
 //                int ry = (int)(Math.random()*radius+3)-3;
@@ -80,45 +74,33 @@ public class REFog extends PoweredEvent
 //            }
 //            System.out.println("Alpha" + alpha + " \tPercent" + percent + " \tStage" + stage);
 
-            if (e.ticksExisted % cycle == 0 && !e.worldObj.isRemote)
-            {
-//                System.out.println("Turn " + alpha);
-                List ents = this.getEntities(e, radius);
-                List ents2 = ents.subList(0, ents.size());
-                EntityPlayer player = e.worldObj.getClosestPlayerToEntity(e, radius);
-
-                for (Object o: ents)
-                {
-                    Entity i = (Entity)o;
-                    int x = MathHelper.floor_double(i.posX);
-                    int y = MathHelper.floor_double(i.posY);
-                    int z = MathHelper.floor_double(i.posZ);
-                    int light = e.worldObj.getSavedLightValue(EnumSkyBlock.Block, x, y, z);
-                    if (light >= 7)
-                    {
-                        System.out.println("Err light");
-                        continue;
-                    }
-
-                    if (i instanceof EntityCreature)
-                    {
-                        EntityCreature ec = (EntityCreature)i;
-//                        if(ec.getAttackTarget() != null){
-//                            Entity target = (Entity)ents2.get((int)(Math.random()*(double)ents2.size()));
-//                            if(target instanceof EntityLiving && target != ec && !(target instanceof EntityPlayer)){
-//                                ec.field_704_R = 1.5F;
-//                                ec.attackedAtYaw = 0;
-                        ec.setRevengeTarget(ec);
-                        ec.setAttackTarget(ec);
-                        ec.setAttackTarget(ec);
-                        ec.setPathToEntity(null);
-//                        DustModBouncer.setHasAttacked(ec, true);
-                        ec.attackTime = 30;
-
-                        if (player != null)
-                        {
-//                        	DustModBouncer.setCantSee(ec, player);
-                        }
+			if (entityRune.ticksExisted % cycle == 0 && !entityRune.worldObj.isRemote) {
+				List ents = this.getEntities(entityRune, radius);
+				EntityPlayer player = entityRune.worldObj.getClosestPlayerToEntity(entityRune, radius);
+				
+				for (Object o : ents) {
+					Entity i = (Entity) o;
+					int x = MathHelper.floor_double(i.posX);
+					int y = MathHelper.floor_double(i.posY);
+					int z = MathHelper.floor_double(i.posZ);
+					int light = entityRune.worldObj.getSavedLightValue(EnumSkyBlock.Block, x, y, z);
+					if (light >= 7) {
+						// System.out.println("Err light");
+						continue;
+					}
+					
+					if (i instanceof EntityCreature) {
+						EntityCreature ec = (EntityCreature) i;
+						ec.setRevengeTarget(ec);
+						ec.setAttackTarget(ec);
+						ec.setAttackTarget(ec);
+						ec.setPathToEntity(null);
+						// DustModBouncer.setHasAttacked(ec, true);
+						ec.attackTime = 30;
+						
+						if (player != null) {
+							// DustModBouncer.setCantSee(ec, player);
+						}
 
 //                                ec.worldObj.setEntityState(ec, (byte)2);
 ////                                ec.setBeenAttacked();
@@ -130,53 +112,44 @@ public class REFog extends PoweredEvent
 //                            System.out.println("Retarget " + ec.getAITarget());
 //                        }
 //                        }
-                    }
-
-                    if (i instanceof EntityLiving && Math.random() < 0.8D)
-                    {
-                        EntityLiving el = (EntityLiving)o;
-//                        if(!(el instanceof EntityPlayer))
-                        el.setPositionAndRotation(el.posX, el.posY, el.posZ, (float)Math.random() * 360F, el.rotationPitch);
-//                        System.out.println("Spinning");
-                    }
-                }
-            }
-        }
-    }
-
-    @Override
-    public void onRightClick(EntityRune e, TileEntityDust ted, EntityPlayer p)
-    {
-        super.onRightClick(e, ted, p);
-    }
-
-    @Override
-    public void onUnload(EntityRune e)
-    {
-        super.onUnload(e);
-    }
-
-    @Override
-    public int getStartFuel()
-    {
-        return dayLength;
-    }
-
-    @Override
-    public int getMaxFuel()
-    {
-        return dayLength * 7;
-    }
-
-    @Override
-    public int getStableFuelAmount(EntityRune e)
-    {
-        return dayLength;
-    }
-
-    @Override
-    public boolean isPaused(EntityRune e)
-    {
-        return false;
-    }
+					}
+					
+					if (i instanceof EntityLiving && Math.random() < 0.8D) {
+						EntityLiving el = (EntityLiving) o;
+						el.setPositionAndRotation(el.posX, el.posY, el.posZ, (float) Math.random() * 360F, el.rotationPitch);
+					}
+				}
+			}
+		}
+	}
+	
+	@Override
+	public void onRightClick(EntityRune e, TileEntityDust ted, EntityPlayer p) {
+		super.onRightClick(e, ted, p);
+	}
+	
+	@Override
+	public void onUnload(EntityRune e) {
+		super.onUnload(e);
+	}
+	
+	@Override
+	public int getStartFuel() {
+		return dayLength;
+	}
+	
+	@Override
+	public int getMaxFuel() {
+		return dayLength * 7;
+	}
+	
+	@Override
+	public int getStableFuelAmount(EntityRune e) {
+		return dayLength;
+	}
+	
+	@Override
+	public boolean isPaused(EntityRune e) {
+		return false;
+	}
 }

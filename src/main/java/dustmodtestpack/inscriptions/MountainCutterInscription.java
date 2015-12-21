@@ -53,8 +53,6 @@ public class MountainCutterInscription extends InscriptionEvent {
 
 	public static synchronized void chopChop(EntityPlayer ep) {
 
-//		System.out.println("DERP");
-//		if(ep.worldObj.getWorldTime() %3 == 0)
 		if (ep.getCurrentEquippedItem() == null && ep.isSneaking()) {
 			try {
 				MovingObjectPosition click = DustMod.getWornInscription().getMovingObjectPositionFromPlayer(ep.worldObj, ep, true);

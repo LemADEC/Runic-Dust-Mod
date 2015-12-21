@@ -132,7 +132,7 @@ public class RECage extends RETrap
 
         if (found)
         {
-            System.out.println("Found");
+            // System.out.println("Found");
             e.fade();
         }
     }

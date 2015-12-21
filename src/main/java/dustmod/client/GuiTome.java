@@ -238,8 +238,6 @@ public class GuiTome extends GuiScreen {
 				}
 			}
 		}
-		
-		// System.out.println("Click " + par1 + " " + par2 + " " + par3 + " " + width + " " + height);
 	}
 	
 	private void advancePage() {
@@ -284,10 +282,8 @@ public class GuiTome extends GuiScreen {
 		ResourceLocation resNoInscriptions = new ResourceLocation("dustmod", "pages/no_inscriptions.png");
 		ResourceLocation resInfo = new ResourceLocation("dustmod", "pages/info.png");
 		
-		// System.out.println("RAWR " + DustManager.isEmpty() + " " + InscriptionManager.isEmpty());
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(resTomeGUI);
-		// mc.renderEngine.bindTexture(mc.renderEngine.getTexture(RenderDustTable.getPagePath(page)));
 		int j = (width - xSize) / 2 - xOffset;
 		int k = (height - ySize) / 2;
 		xStart = j;

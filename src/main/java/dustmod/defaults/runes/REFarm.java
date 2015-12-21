@@ -37,9 +37,7 @@ public class REFarm extends RuneEvent {
 		}
 		entityRune.setRenderStar(true);
 
-		// e.ignoreRune = true;
 		int dustID = entityRune.dusts[entityRune.dusts.length / 2][entityRune.dusts[0].length / 2];
-		// System.out.println("DATA: \n" + Arrays.deepToString(e.dusts));
 		int r = 1;
 		int cBase = 0;
 		int cRand = 1;
@@ -87,7 +85,7 @@ public class REFarm extends RuneEvent {
 			int i = entityRune.getX();
 			int j = entityRune.getY();
 			int k = entityRune.getZ();
-			// System.out.println("R = " + r + " " + dustID);
+
 			World world = entityRune.worldObj;
 			world.setBlock(i, j - 1, k, Blocks.water,0,3);
 			Random rand = new Random();
@@ -120,12 +118,8 @@ public class REFarm extends RuneEvent {
 							locs.add(i+di +0.5);
 							locs.add((double)j+dj);
 							locs.add(k+dk +0.5);
-							// System.out.println("setting");
 							break layer;
-						}// else
-
-						// System.out.println("wat " + bidb + " " + bidt + " " + dj);
-						// System.out.println("DURR " + bidu + "," + bid + " " + sBlock.grass.blockID + " " + Block.dirt.blockID );
+						}
 					}
 				}
 			}

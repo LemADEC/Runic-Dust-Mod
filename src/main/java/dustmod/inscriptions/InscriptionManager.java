@@ -55,7 +55,6 @@ public class InscriptionManager {
             		evt.permission = "NONE";
         		if(!evt.permission.equals("ALL")){
         			DustMod.logger.debug("Inscription permission for " + evt.idName + " set to " + evt.permission);
-//        			System.out.println("[DustMod] Inscription permission for " + evt.idName + " set to " + evt.permission);
         		}
             }
 
@@ -64,16 +63,8 @@ public class InscriptionManager {
 
 	public static void registerRemoteInscriptionEvent(InscriptionEvent evt) {
 		eventsRemote.add(evt);
-		DustMod.logger.debug("Registering remote inscription " + evt.idName);
-//		System.out.println("[DustMod] Registering remote inscription " + evt.idName);
+		DustMod.logger.info("Registering remote inscription {} as {} ", evt.idName, evt.properName);
 		
-		/*HashMap<String, String> langEntries = new HashMap<String, String>();
-		langEntries.put("item.insc." + evt.idName + ".name", evt.properName);
-		
-		LanguageRegistry.instance().injectLanguage("en_US", langEntries);*/
-		LanguageRegistry.instance().addStringLocalization("item.insc." + evt.idName + ".name", "en_US", evt.properName);
-		DustMod.logger.info("Add Loc {} for {}", evt.properName, "item.insc." + evt.idName + ".name");
-
 		DustMod.proxy.checkInscriptionPage(evt);
 		evt.isRemote = true;
 	}
