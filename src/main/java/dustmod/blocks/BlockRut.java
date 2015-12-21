@@ -32,262 +32,247 @@ import dustmod.DustMod;
  *
  * @author billythegoat101
  */
-public class BlockRut extends BlockContainer
-{
-    public BlockRut()
-    {
-        super(Material.wood);
-        this.setLightOpacity(0);
-    }
-
-    @Override
-    public int getRenderType()
-    {
-        return DustMod.proxy.getBlockModel(this);
-    }
-    
-    @Override
-    public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
-    	
-    	TileEntityRut ter = (TileEntityRut) world.getTileEntity(x, y, z);
-    	
-    	if (ter == null) return true;
-    	
-    	if (side.offsetX != 0) {
-    		return !ter.getRut(side.offsetX + 1, 0, 1) && !ter.getRut(side.offsetX + 1, 1, 1) && !ter.getRut(side.offsetX + 1, 2, 1) && !ter.getRut(side.offsetX + 1, 1, 0) && !ter.getRut(side.offsetX + 1, 1, 2);
-    	} else if (side.offsetY != 0) {
-    		return !ter.getRut(0, side.offsetY + 1, 1) && !ter.getRut(1, side.offsetY + 1, 1) && !ter.getRut(2, side.offsetY + 1, 1) && !ter.getRut(1, side.offsetY + 1, 0) && !ter.getRut(1, side.offsetY + 1, 2);
-    	} else {
-    		return !ter.getRut(0, 1, side.offsetZ + 1) && !ter.getRut(1, 1, side.offsetZ + 1) && !ter.getRut(2, 1, side.offsetZ + 1) && !ter.getRut(1, 0, side.offsetZ + 1) && !ter.getRut(1, 2, side.offsetZ + 1);
-    	}
-    }
-
-    @Override
-    public boolean isOpaqueCube()
-    {
-        return false;
-    }
-
-    @Override
-    public void onNeighborBlockChange(World world, int x, int y, int z, Block block)
-    {
-    	if (world.isRemote) {
-    		return;
-    	}
-    	
-        for (int ix = -1; ix <= 1; ix++)
-        {
-            for (int iy = -1; iy <= 1; iy++)
-            {
-                for (int iz = -1; iz <= 1; iz++)
-                {
-                    if (ix != 0 || iy != 0 || iz != 0)
-                    {
-                        TileEntityRut ter = (TileEntityRut)world.getTileEntity(x, y, z);
-                        Block check = world.getBlock(x + ix, y + iy, z + iz);
-
-                        if (ter.fluidBlock == null)
-                        {
-                        	Fluid fluid = FluidRegistry.lookupFluidForBlock(check);
-                        	if (fluid != null) {
-                        		ter.setFluid(check);
-                        	} 
-                        	else if (check instanceof BlockStaticLiquid) {
-                                ter.setFluid(check);
-                            }
-                            else if (check instanceof BlockFluidBase) {
-                            	ter.setFluid(check);
-                            }
-                        }
-                        else if (ter.fluidBlock == Blocks.water)
-                        {
-                            if (check == Blocks.lava || check == Blocks.flowing_lava)
-                            {
-                                ter.setFluid(Blocks.cobblestone);
-                            }
-                        }
-                        else if (ter.fluidBlock == Blocks.lava)
-                        {
-                            if (check == Blocks.water || check == Blocks.flowing_water)
-                            {
-                                ter.setFluid(Blocks.obsidian);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        world.markBlockForUpdate(x, y, z);
-    }
-    @Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int face, float cx, float cy, float cz)
-    {	
+public class BlockRut extends BlockContainer {
+	public BlockRut() {
+		super(Material.wood);
+		this.setLightOpacity(0);
+	}
+	
+	@Override
+	public int getRenderType() {
+		return DustMod.proxy.getBlockModel(this);
+	}
+	
+	@Override
+	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
+		
+		TileEntityRut ter = (TileEntityRut) world.getTileEntity(x, y, z);
+		if (ter == null) {
+			return true;
+		}
+		
+		if (side.offsetX != 0) {
+			return !ter.getRut(side.offsetX + 1, 0, 1)
+				&& !ter.getRut(side.offsetX + 1, 1, 1)
+				&& !ter.getRut(side.offsetX + 1, 2, 1)
+				&& !ter.getRut(side.offsetX + 1, 1, 0)
+				&& !ter.getRut(side.offsetX + 1, 1, 2);
+		} else if (side.offsetY != 0) {
+			return !ter.getRut(0, side.offsetY + 1, 1)
+				&& !ter.getRut(1, side.offsetY + 1, 1)
+				&& !ter.getRut(2, side.offsetY + 1, 1)
+				&& !ter.getRut(1, side.offsetY + 1, 0)
+				&& !ter.getRut(1, side.offsetY + 1, 2);
+		} else {
+			return !ter.getRut(0, 1, side.offsetZ + 1)
+				&& !ter.getRut(1, 1, side.offsetZ + 1)
+				&& !ter.getRut(2, 1, side.offsetZ + 1)
+				&& !ter.getRut(1, 0, side.offsetZ + 1)
+				&& !ter.getRut(1, 2, side.offsetZ + 1);
+		}
+	}
+	
+	@Override
+	public boolean isOpaqueCube() {
+		return false;
+	}
+	
+	@Override
+	public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
+		if (world.isRemote) {
+			return;
+		}
+		
+		for (int ix = -1; ix <= 1; ix++) {
+			for (int iy = -1; iy <= 1; iy++) {
+				for (int iz = -1; iz <= 1; iz++) {
+					if (ix != 0 || iy != 0 || iz != 0) {
+						TileEntityRut ter = (TileEntityRut) world.getTileEntity(x, y, z);
+						Block check = world.getBlock(x + ix, y + iy, z + iz);
+						
+						if (ter.fluidBlock == null) {
+							Fluid fluid = FluidRegistry.lookupFluidForBlock(check);
+							if (fluid != null) {
+								ter.setFluid(check);
+							} else if (check instanceof BlockStaticLiquid) {
+								ter.setFluid(check);
+							} else if (check instanceof BlockFluidBase) {
+								ter.setFluid(check);
+							}
+						} else if (ter.fluidBlock == Blocks.water) {
+							if (check == Blocks.lava || check == Blocks.flowing_lava) {
+								ter.setFluid(Blocks.cobblestone);
+							}
+						} else if (ter.fluidBlock == Blocks.lava) {
+							if (check == Blocks.water || check == Blocks.flowing_water) {
+								ter.setFluid(Blocks.obsidian);
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		world.markBlockForUpdate(x, y, z);
+	}
+	
+	@Override
+	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int face, float cx, float cy, float cz) {
 		if (!world.canMineBlock(player, x, y, z)) {
 			return false;
 		}
-
-        ItemStack current = player.inventory.getCurrentItem();
-
-        TileEntityRut ter = (TileEntityRut)world.getTileEntity(x, y, z);
-
-        if (ter.isBeingUsed)
-        {
-            return false;
-        }
-        
-        if (current != null) {
-        	
-        	if (FluidContainerRegistry.isBucket(current)) {
-        		
-        		FluidStack fluid = FluidContainerRegistry.getFluidForFilledItem(current);
-        		if (fluid.getFluid().canBePlacedInWorld()) {
-        			ter.setFluid(fluid.getFluid().getBlock());
-        			
-        			if (!player.capabilities.isCreativeMode) {
-        				player.inventory.setInventorySlotContents(player.inventory.currentItem, new ItemStack(Items.bucket));
-        			}
-        			
-        			return true;
-        		}
-        		
-        	} else if (ter.fluidBlock == null || ter.fluidIsFluid()) {
-        		
-        		if (current.getItem() instanceof ItemBlock) {
-        			Block block = Block.getBlockFromItem(current.getItem());
-        			
-        			if (block.renderAsNormalBlock() && block.isOpaqueCube() && (DustMod.Enable_Decorative_Ruts || block.getBlockHardness(world, x,y,z) <= TileEntityRut.hardnessStandard)) {
-        				ter.setFluid(block);
-        				
-        				if (!player.capabilities.isCreativeMode)
-                        {
-                            current.stackSize--;
-                        }
-        				
-        				return true;
-        			}
-        		}
-        	} else if (ter.fluidBlock != null && !ter.fluidIsFluid() && (ter.fluidBlock.getBlockHardness(world, x,y,z) <= TileEntityRut.hardnessStandard || DustMod.Enable_Decorative_Ruts)) {
-                if (current.getItem() instanceof ItemSpade)
-                {
-                    this.dropBlockAsItem(world, x, y + 1, z, new ItemStack(ter.fluidBlock, 1, 0));
-                    ter.setFluid(Blocks.air);
-                    return true;
-                }
-        	}
-        }
-
-        if (current == null || current.getItem() != DustMod.chisel)
-        {
-            return false;
-        }
-
-        Block maskBlock = ter.maskBlock;
-        world.playSoundEffect((float)x + 0.5F, (float)y + 0.5F, (float)z + 0.5F, maskBlock.stepSound.getStepResourcePath(), (maskBlock.stepSound.getVolume() + 1.0F) / 6.0F, maskBlock.stepSound.getPitch() * 0.99F);
-        
-        int bx,by,bz;
-        bx = (int)Math.floor(cx*3);
-        by = (int)Math.floor(cy*3);
-        bz = (int)Math.floor(cz*3);
-        
-        bx = (int)Math.min(2, bx);
-        by = (int)Math.min(2, by);
-        bz = (int)Math.min(2, bz);
-        
-        ter.toggleRut(player, bx, by, bz);
-        
-        if (ter.isEmpty()) {
-        	ter.resetBlock();
-        }
-        
-        return true;
-    }
-    
-    @Override
-    public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune) {
-    	
-        TileEntityRut ter = (TileEntityRut)world.getTileEntity(x, y, z);
-
-        if (ter == null || ter.isInvalid())
-        {
-        	return new ArrayList<ItemStack>();
-        }
-        
-        return ter.maskBlock.getDrops(world, x, y, z, metadata, fortune);
-    }
-
-    @Override
-    public TileEntity createNewTileEntity(World world, int par2)
-    {
-        return new TileEntityRut();
-    }
-
+		
+		ItemStack current = player.inventory.getCurrentItem();
+		
+		TileEntityRut ter = (TileEntityRut) world.getTileEntity(x, y, z);
+		
+		if (ter.isBeingUsed || ter.maskBlock == null) {
+			return false;
+		}
+		
+		if (current != null) {
+			
+			if (FluidContainerRegistry.isBucket(current)) {
+				
+				FluidStack fluid = FluidContainerRegistry.getFluidForFilledItem(current);
+				if (fluid.getFluid().canBePlacedInWorld()) {
+					ter.setFluid(fluid.getFluid().getBlock());
+					
+					if (!player.capabilities.isCreativeMode) {
+						player.inventory.setInventorySlotContents(player.inventory.currentItem, new ItemStack(Items.bucket));
+					}
+					
+					return true;
+				}
+				
+			} else if (ter.fluidBlock == null || ter.fluidIsFluid()) {
+				
+				if (current.getItem() instanceof ItemBlock) {
+					Block block = Block.getBlockFromItem(current.getItem());
+					
+					if (block.renderAsNormalBlock() && block.isOpaqueCube() && (DustMod.Enable_Decorative_Ruts || block.getBlockHardness(world, x, y, z) <= TileEntityRut.hardnessStandard)) {
+						ter.setFluid(block);
+						
+						if (!player.capabilities.isCreativeMode) {
+							current.stackSize--;
+						}
+						
+						return true;
+					}
+				}
+			} else if (ter.fluidBlock != null && !ter.fluidIsFluid() && (ter.fluidBlock.getBlockHardness(world, x, y, z) <= TileEntityRut.hardnessStandard || DustMod.Enable_Decorative_Ruts)) {
+				if (current.getItem() instanceof ItemSpade) {
+					this.dropBlockAsItem(world, x, y + 1, z, new ItemStack(ter.fluidBlock, 1, 0));
+					ter.setFluid(Blocks.air);
+					return true;
+				}
+			}
+		}
+		
+		if (current == null || current.getItem() != DustMod.chisel) {
+			return false;
+		}
+		
+		Block maskBlock = ter.maskBlock;
+		world.playSoundEffect(x + 0.5F, y + 0.5F, z + 0.5F, maskBlock.stepSound.getStepResourcePath(), (maskBlock.stepSound.getVolume() + 1.0F) / 6.0F, maskBlock.stepSound.getPitch() * 0.99F);
+		
+		int bx, by, bz;
+		bx = (int) Math.floor(cx * 3);
+		by = (int) Math.floor(cy * 3);
+		bz = (int) Math.floor(cz * 3);
+		
+		bx = Math.min(2, bx);
+		by = Math.min(2, by);
+		bz = Math.min(2, bz);
+		
+		ter.toggleRut(player, bx, by, bz);
+		
+		if (ter.isEmpty()) {
+			ter.resetBlock();
+		}
+		
+		return true;
+	}
+	
+	@Override
+	public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune) {
+		
+		TileEntityRut ter = (TileEntityRut) world.getTileEntity(x, y, z);
+		
+		if (ter == null || ter.isInvalid()) {
+			return new ArrayList<ItemStack>();
+		}
+		
+		return ter.maskBlock.getDrops(world, x, y, z, metadata, fortune);
+	}
+	
+	@Override
+	public TileEntity createNewTileEntity(World world, int par2) {
+		return new TileEntityRut();
+	}
+	
 	@Override
 	@SideOnly(Side.CLIENT)
 	public IIcon getIcon(IBlockAccess world, int x, int y, int z, int meta) {
 		TileEntityRut ter = (TileEntityRut) world.getTileEntity(x, y, z);
 		return ter.maskBlock.getIcon(world, x, y, z, ter.maskMeta);
 	}
-
+	
 	@Override
-    @SideOnly(Side.CLIENT)
-    public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z) {
-    	TileEntityRut ter = (TileEntityRut)world.getTileEntity(x, y, z);
-    	return new ItemStack(ter.maskBlock, 1, ter.maskMeta);
-    };
-
-    /**
-     * Get the block's damage value (for use with pick block).
-     */
-    @Override
-    public int getDamageValue(World world, int i, int j, int k)
-    {
-    	TileEntityRut ter = (TileEntityRut)world.getTileEntity(i, j, k);
-    	return ter.maskMeta;
-    }
-
-
-    /**
-     * Get a light value for the block at the specified coordinates, normal ranges are between 0 and 15
-     *
-     * @param world The current world
-     * @param x X Position
-     * @param y Y position
-     * @param z Z position
-     * @return The light value
-     */
-    @Override
-    public int getLightValue(IBlockAccess world, int x, int y, int z)
-    {
-        TileEntityRut ter = (TileEntityRut)world.getTileEntity(x, y, z);
-        
-        Block maskBlock = ter.maskBlock;
-        Block fluidBlock = ter.fluidBlock;
-        int light = lightValue;
-        
-        if (maskBlock != null && maskBlock != this)
-        {
-        	int mLight = ter.maskBlock.getLightValue();
-        	if(mLight > light) light = mLight;
-        }
-        
-        if (fluidBlock != null && fluidBlock != this)
-        {
-        	int fLight = ter.fluidBlock.getLightValue();
-        	if(fLight > light) light = fLight;
-        	
-        	Fluid fluid = FluidRegistry.lookupFluidForBlock(fluidBlock);
-        	if (fluid != null) {
-        		fLight = fluid.getLuminosity();
-        		if (fLight > light) light = fLight;
-        	}
-        }
-        
-        return light;
-    }
-    
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerBlockIcons(IIconRegister iconRegister) {
-    }
+	@SideOnly(Side.CLIENT)
+	public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z) {
+		TileEntityRut ter = (TileEntityRut) world.getTileEntity(x, y, z);
+		return new ItemStack(ter.maskBlock, 1, ter.maskMeta);
+	};
+	
+	/**
+	 * Get the block's damage value (for use with pick block).
+	 */
+	@Override
+	public int getDamageValue(World world, int i, int j, int k) {
+		TileEntityRut ter = (TileEntityRut) world.getTileEntity(i, j, k);
+		return ter.maskMeta;
+	}
+	
+	/**
+	 * Get a light value for the block at the specified coordinates, normal ranges are between 0 and 15
+	 *
+	 * @param world
+	 *            The current world
+	 * @param x
+	 *            X Position
+	 * @param y
+	 *            Y position
+	 * @param z
+	 *            Z position
+	 * @return The light value
+	 */
+	@Override
+	public int getLightValue(IBlockAccess world, int x, int y, int z) {
+		TileEntityRut ter = (TileEntityRut) world.getTileEntity(x, y, z);
+		
+		Block maskBlock = ter.maskBlock;
+		Block fluidBlock = ter.fluidBlock;
+		int light = lightValue;
+		
+		if (maskBlock != null && maskBlock != this) {
+			light = Math.max(light, maskBlock.getLightValue());
+		}
+		
+		if (fluidBlock != null && fluidBlock != this) {
+			light = Math.max(light, fluidBlock.getLightValue());
+			
+			Fluid fluid = FluidRegistry.lookupFluidForBlock(fluidBlock);
+			if (fluid != null) {
+				light = Math.max(light, fluid.getLuminosity());
+			}
+		}
+		
+		return light;
+	}
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void registerBlockIcons(IIconRegister iconRegister) {
+	}
 }
