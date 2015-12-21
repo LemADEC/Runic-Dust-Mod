@@ -63,7 +63,7 @@ public class PlayerEventHandler {
 			}
 		}
 		
-		if (hasPouch && (event.crafting.getItem() == DustMod.idust || event.crafting.getItem() == DustMod.ink)){
+		if (hasPouch && (event.crafting.getItem() == DustMod.itemDust || event.crafting.getItem() == DustMod.ink)){
 			ItemPouch.subtractDust(pouch, 1);
 			DustMod.pouch.setContainerItemstack(pouch);
 		}
@@ -90,7 +90,7 @@ public class PlayerEventHandler {
 		ItemStack item = evt.item.getEntityItem();
 		
 		int dust = item.getItemDamage();
-		if(item.getItem() == DustMod.idust && 
+		if(item.getItem() == DustMod.itemDust && 
 				(player.inventory.hasItemStack(new ItemStack(DustMod.pouch, 1, dust * 2)) 
 				|| player.inventory.hasItemStack(new ItemStack(DustMod.pouch, 1, dust * 2 +1)))){
 			InventoryPlayer inv = player.inventory;

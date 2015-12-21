@@ -11,7 +11,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import dustmod.DustMod;
@@ -27,18 +26,19 @@ public class REFarm extends RuneEvent {
 		super();
 	}
 
-	public void onInit(EntityRune e) {
+	@Override
+	public void onInit(EntityRune entityRune) {
 		ItemStack[] req = new ItemStack[] { new ItemStack(Items.iron_ingot, 8, -1) };
-		sacrifice(e, req);
+		sacrifice(entityRune, req);
 
-		if (req[0].stackSize > 0 || !this.takeXP(e, 4)) {
-			e.fizzle();
+		if (req[0].stackSize > 0 || !this.takeXP(entityRune, 4)) {
+			entityRune.fizzle();
 			return;
 		}
-		e.setRenderStar(true);
+		entityRune.setRenderStar(true);
 
 		// e.ignoreRune = true;
-		int dustID = e.dusts[e.dusts.length / 2][e.dusts[0].length / 2];
+		int dustID = entityRune.dusts[entityRune.dusts.length / 2][entityRune.dusts[0].length / 2];
 		// System.out.println("DATA: \n" + Arrays.deepToString(e.dusts));
 		int r = 1;
 		int cBase = 0;
@@ -69,25 +69,26 @@ public class REFarm extends RuneEvent {
 			cRand = 5;
 			break;
 		}
-		e.data[0] = r;
-		e.data[1] = cBase;
-		e.data[2] = cRand;
+		entityRune.data[0] = r;
+		entityRune.data[1] = cBase;
+		entityRune.data[2] = cRand;
 	}
 
-	public void onTick(EntityRune e) {
+	@Override
+	public void onTick(EntityRune entityRune) {
 
-		if (e.ticksExisted == 0) {
+		if (entityRune.ticksExisted == 0) {
 
 			int r, cBase, cRand;
-			r = e.data[0];
-			cBase = e.data[1];
-			cRand = e.data[2];
+			r = entityRune.data[0];
+			cBase = entityRune.data[1];
+			cRand = entityRune.data[2];
 
-			int i = e.getX();
-			int j = e.getY();
-			int k = e.getZ();
+			int i = entityRune.getX();
+			int j = entityRune.getY();
+			int k = entityRune.getZ();
 			// System.out.println("R = " + r + " " + dustID);
-			World world = e.worldObj;
+			World world = entityRune.worldObj;
 			world.setBlock(i, j - 1, k, Blocks.water,0,3);
 			Random rand = new Random();
 
@@ -123,10 +124,8 @@ public class REFarm extends RuneEvent {
 							break layer;
 						}// else
 
-						// System.out.println("wat " + bidb + " " + bidt + " " +
-						// dj);
-						// System.out.println("DURR " + bidu + "," + bid + " " +
-						// Block.grass.blockID + " " + Block.dirt.blockID );
+						// System.out.println("wat " + bidb + " " + bidt + " " + dj);
+						// System.out.println("DURR " + bidu + "," + bid + " " + sBlock.grass.blockID + " " + Block.dirt.blockID );
 					}
 				}
 			}
@@ -140,8 +139,8 @@ public class REFarm extends RuneEvent {
 			for(int d = 0; d < locs.size(); d++){
 				locations[d] = locs.get(d);
 			}
-			DustMod.spawnParticles(e.worldObj, "smoke", locations, 0,0,0, 8, 0.5,0.2,0.5);
+			DustMod.spawnParticles(entityRune.worldObj, "smoke", locations, 0,0,0, 8, 0.5,0.2,0.5);
 		}
-		e.fade();
+		entityRune.fade();
 	}
 }

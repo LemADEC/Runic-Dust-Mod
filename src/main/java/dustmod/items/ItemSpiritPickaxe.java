@@ -112,7 +112,7 @@ public class ItemSpiritPickaxe extends ItemPickaxe {
 								
 								if (!world.isRemote) {
 									if (world.rand.nextDouble() < tol) {
-										EntityItem ei = new EntityItem(player.worldObj, x + 0.5 + i, y + 0.5 + j, z + 0.5 + k, new ItemStack(DustMod.idust, 1, 300));
+										EntityItem ei = new EntityItem(player.worldObj, x + 0.5 + i, y + 0.5 + j, z + 0.5 + k, new ItemStack(DustMod.itemDust, 1, 300));
 										world.spawnEntityInWorld(ei);
 									}
 								}

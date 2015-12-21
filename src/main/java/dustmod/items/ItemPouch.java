@@ -216,7 +216,7 @@ public class ItemPouch extends DustModItem {
     
     
     public static int getDustAmount(ItemStack pouch){
-    	if(pouch.getItem() == DustMod.idust){
+    	if(pouch.getItem() == DustMod.itemDust){
     		return pouch.stackSize;
     	}
     	if(pouch.getItem() != DustMod.pouch) return -1;
@@ -231,7 +231,7 @@ public class ItemPouch extends DustModItem {
     }
     
     public static boolean subtractDust(ItemStack pouch, int sub){
-    	if(pouch.getItem() == DustMod.idust){
+    	if(pouch.getItem() == DustMod.itemDust){
     		if(pouch.stackSize >= sub){
     			pouch.stackSize -= sub;
     			return true;
@@ -263,7 +263,7 @@ public class ItemPouch extends DustModItem {
      * @return amount remaining if attempting to add more than pouch can contain
      */
     public static int addDust(ItemStack pouch, int add){
-    	if(pouch.getItem() == DustMod.idust){
+    	if(pouch.getItem() == DustMod.itemDust){
 			pouch.stackSize += add;
 			return 0;
     	}
@@ -292,7 +292,7 @@ public class ItemPouch extends DustModItem {
     }
     
     public static void setAmount(ItemStack pouch, int amt){
-    	if(pouch.getItem() == DustMod.idust){
+    	if(pouch.getItem() == DustMod.itemDust){
 			pouch.stackSize -= amt;
     	}
     	if(pouch.getItem() != DustMod.pouch) return;

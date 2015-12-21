@@ -39,11 +39,11 @@ public class DustModTestPack {
 
 	public void registerRunes() {
 
-		int N = -1;
-		int P = 100;
+		// int N = -1;
+		// int P = 100;
 		int G = 200;
-		int L = 300;
-		int B = 400;
+		// int L = 300;
+		// int B = 400;
 		RuneShape s;
 		int[][][] values;
 
@@ -58,19 +58,19 @@ public class DustModTestPack {
 		
 		s.setRuneName("Launch test Rune");
 		s.setNotes("Sacrifice:\n\n"
-				+ "-None: Normal torch spawn.\n"
-				+ "-1xFlint: Beacon rune.\n"
+				+ "- None: Normal torch spawn.\n"
+				+ "- 1xFlint: Beacon rune.\n"
 				+ "\nNotes:\n\n"
-				+ "=Sacrificing a dye to an existing beacon will change its color.");
-		s.setDesc("Description:\n\n"
-				+ "Spawns a torch or, if a piece of flint is sacrficed, a beacon.");
+				+ "- Sacrify a dye to an existing beacon to change its color.");
+		s.setDesc("Description:\n"
+				+ "Spawns a torch or, if a piece of flint is sacrificed, a beacon.");
 		s.setAuthor("billythegoat101 -TestPack");
 		// DustManager.registerLocalDustShape(s, new LaunchTestRune());
 	}
 
 	public void registerInscriptions() {
 
-		int N = -1;
+		// int N = -1;
 		int P = 100;
 		int G = 200;
 		int L = 300;

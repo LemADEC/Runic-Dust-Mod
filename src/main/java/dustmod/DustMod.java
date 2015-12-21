@@ -136,7 +136,7 @@ public class DustMod {
 	public static Block dust;
 	protected static Block dustTable;
 	public static Block rutBlock;
-	public static DustModItem idust;
+	public static DustModItem itemDust;
 	public static DustModItem tome;
 	public static DustModItem dustScroll;
 	public static Item spiritPickaxe;
@@ -214,7 +214,7 @@ public class DustMod {
 
 		dust = new BlockDust().setBlockName("dust");
 		
-		idust = (DustModItem) (new ItemDust(dust)).setUnlocalizedName("idust").setCreativeTab(creativeTab);
+		itemDust = (DustModItem) (new ItemDust(dust)).setUnlocalizedName("idust").setCreativeTab(creativeTab);
 		
 		dustTable = ((Block) new BlockDustTable()).setBlockName("dustTable").setCreativeTab(creativeTab);
 		
@@ -259,7 +259,7 @@ public class DustMod {
 		GameRegistry.registerBlock(dustTable, ItemBlock.class, dustTable.getUnlocalizedName());
 		GameRegistry.registerBlock(rutBlock, ItemBlock.class, rutBlock.getUnlocalizedName());
 		
-		GameRegistry.registerItem(idust, idust.getUnlocalizedName());
+		GameRegistry.registerItem(itemDust, itemDust.getUnlocalizedName());
 		GameRegistry.registerItem(tome, tome.getUnlocalizedName());
 		GameRegistry.registerItem(negateSacrifice, negateSacrifice.getUnlocalizedName());
 		GameRegistry.registerItem(runicPaper, runicPaper.getUnlocalizedName());
@@ -280,11 +280,11 @@ public class DustMod {
 
 		proxy.registerTileEntityRenderers();
 
-		OreDictionary.registerOre("runicDust", new ItemStack(idust, 1, 100));
-		OreDictionary.registerOre("runicDust", new ItemStack(idust, 1, 200));
-		OreDictionary.registerOre("runicDust", new ItemStack(idust, 1, 300));
-		OreDictionary.registerOre("runicDust", new ItemStack(idust, 1, 350));
-		OreDictionary.registerOre("runicDust", new ItemStack(idust, 1, 400));
+		OreDictionary.registerOre("runicDust", new ItemStack(itemDust, 1, 100));
+		OreDictionary.registerOre("runicDust", new ItemStack(itemDust, 1, 200));
+		OreDictionary.registerOre("runicDust", new ItemStack(itemDust, 1, 300));
+		OreDictionary.registerOre("runicDust", new ItemStack(itemDust, 1, 350));
+		OreDictionary.registerOre("runicDust", new ItemStack(itemDust, 1, 400));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(dustTable, 1), false, 
 				"dwd", "wbw", "dwd", 'd', "runicDust", 'w',
 				new ItemStack(Blocks.planks, 1, -1), 'b',
@@ -301,83 +301,83 @@ public class DustMod {
 				"s", "p", "p", 's', new ItemStack(Items.string, 1), 'p',
 				new ItemStack(runicPaper, 1) });
 
-		GameRegistry.addShapelessRecipe(new ItemStack(idust, 8, 100),
+		GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 8, 100),
 				new Object[] { new ItemStack(Items.coal, 1, -1),
 						new ItemStack(Blocks.tallgrass, 1, -1),
 						new ItemStack(Blocks.tallgrass, 1, -1) /* , mortar */});
-		GameRegistry.addShapelessRecipe(new ItemStack(idust, 8, 100),
+		GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 8, 100),
 				new Object[] { new ItemStack(Items.coal, 1, -1),
 						new ItemStack(Blocks.leaves, 1, -1),
 						new ItemStack(Blocks.leaves, 1, -1) /* , mortar */});
-		GameRegistry.addShapelessRecipe(new ItemStack(idust, 8, 100),
+		GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 8, 100),
 				new Object[] { new ItemStack(Items.coal, 1, -1),
 						new ItemStack(Blocks.sapling, 1, -1),
 						new ItemStack(Blocks.sapling, 1, -1) /* , mortar */});
-		GameRegistry.addShapelessRecipe(new ItemStack(idust, 8, 100),
+		GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 8, 100),
 				new Object[] { new ItemStack(Items.coal, 1, -1),
 						Items.wheat_seeds, Items.wheat_seeds /* , mortar */});
-		GameRegistry.addShapelessRecipe(new ItemStack(idust, 8, 100),
+		GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 8, 100),
 				new Object[] { new ItemStack(Items.coal, 1, -1),
 						Blocks.cactus, Blocks.cactus /* , mortar */});
-		GameRegistry.addShapelessRecipe(new ItemStack(idust, 8, 100),
+		GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 8, 100),
 				new Object[] { new ItemStack(Items.coal, 1, -1),
 						Blocks.cactus, Items.wheat_seeds });
-		GameRegistry.addShapelessRecipe(new ItemStack(idust, 8, 100),
+		GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 8, 100),
 				new Object[] { new ItemStack(Items.coal, 1, -1),
 						Blocks.cactus, new ItemStack(Blocks.sapling, 1, -1) });
-		GameRegistry.addShapelessRecipe(new ItemStack(idust, 8, 100),
+		GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 8, 100),
 				new Object[] { new ItemStack(Items.coal, 1, -1),
 						Blocks.cactus, new ItemStack(Blocks.leaves, 1, -1) });
-		GameRegistry.addShapelessRecipe(new ItemStack(idust, 8, 100),
+		GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 8, 100),
 				new Object[] { new ItemStack(Items.coal, 1, -1),
 						Blocks.cactus, new ItemStack(Blocks.tallgrass, 1, -1) });
-		GameRegistry.addShapelessRecipe(new ItemStack(idust, 8, 100),
+		GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 8, 100),
 				new Object[] { new ItemStack(Items.coal, 1, -1),
 						Items.wheat_seeds, new ItemStack(Blocks.sapling, 1, -1) });
-		GameRegistry.addShapelessRecipe(new ItemStack(idust, 8, 100),
+		GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 8, 100),
 				new Object[] { new ItemStack(Items.coal, 1, -1),
 						Items.wheat_seeds, new ItemStack(Blocks.leaves, 1, -1) });
-		GameRegistry.addShapelessRecipe(new ItemStack(idust, 8, 100),
+		GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 8, 100),
 				new Object[] { new ItemStack(Items.coal, 1, -1),
 						Items.wheat_seeds, new ItemStack(Blocks.tallgrass, 1, -1) });
-		GameRegistry.addShapelessRecipe(new ItemStack(idust, 8, 100),
+		GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 8, 100),
 				new Object[] { new ItemStack(Items.coal, 1, -1),
 						new ItemStack(Blocks.sapling, 1, -1),
 						new ItemStack(Blocks.leaves, 1, -1) /* , mortar */});
-		GameRegistry.addShapelessRecipe(new ItemStack(idust, 8, 100),
+		GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 8, 100),
 				new Object[] { new ItemStack(Items.coal, 1, -1),
 						new ItemStack(Blocks.sapling, 1, -1),
 						new ItemStack(Blocks.tallgrass, 1, -1) /* , mortar */});
-		GameRegistry.addShapelessRecipe(new ItemStack(idust, 8, 100),
+		GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 8, 100),
 				new Object[] { new ItemStack(Items.coal, 1, -1),
 						new ItemStack(Blocks.leaves, 1, -1),
 						new ItemStack(Blocks.tallgrass, 1, -1) /* , mortar */});
-		GameRegistry.addShapelessRecipe(new ItemStack(idust, 12, 200),
-				new Object[] { Items.gunpowder, new ItemStack(idust, 1, 100),
-						new ItemStack(idust, 1, 100) /* , mortar */});
-		GameRegistry.addShapelessRecipe(new ItemStack(idust, 8, 300),
+		GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 12, 200),
+				new Object[] { Items.gunpowder, new ItemStack(itemDust, 1, 100),
+						new ItemStack(itemDust, 1, 100) /* , mortar */});
+		GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 8, 300),
 				new Object[] { new ItemStack(Items.coal, 1, -1),
 						new ItemStack(Items.dye, 2, 4),
 						new ItemStack(Items.dye, 2, 4),
 						new ItemStack(Items.dye, 2, 4) });
-		GameRegistry.addShapelessRecipe(new ItemStack(idust, 12, 400),
-				new Object[] { Items.blaze_powder, new ItemStack(idust, 1, 300),
-						new ItemStack(idust, 1, 300),
-						new ItemStack(idust, 1, 300) /* , mortar */});
+		GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 12, 400),
+				new Object[] { Items.blaze_powder, new ItemStack(itemDust, 1, 300),
+						new ItemStack(itemDust, 1, 300),
+						new ItemStack(itemDust, 1, 300) /* , mortar */});
 		GameRegistry.addShapelessRecipe(new ItemStack(tome, 1, 0),
 				new Object[] {
-					new ItemStack(idust, 1, 100),
-					new ItemStack(idust, 1, 200),
-					new ItemStack(idust, 1, 300),
-					new ItemStack(idust, 1, 400),
+					new ItemStack(itemDust, 1, 100),
+					new ItemStack(itemDust, 1, 200),
+					new ItemStack(itemDust, 1, 300),
+					new ItemStack(itemDust, 1, 400),
 					Items.book });
 		GameRegistry.addShapelessRecipe(new ItemStack(runicPaper, 1),
 				new Object[] { Items.paper, Items.gold_nugget, Items.gold_nugget });
 
 		for (int i = 1; i < 5; i++) {
 			// Migration from old system
-			GameRegistry.addShapelessRecipe(new ItemStack(idust, 1, i * 100),
-					new ItemStack(idust, 1, i));
+			GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 1, i * 100),
+					new ItemStack(itemDust, 1, i));
 		}
 
 		EntityRegistry.registerModEntity(EntityRune.class, "dustentity",
@@ -593,7 +593,7 @@ public class DustMod {
 		// if(!hasLoaded){
 		// instance.preInit(null);
 		// }
-		return idust;
+		return itemDust;
 	}
 
 	public static Item getNegator() {

@@ -82,7 +82,7 @@ public class BlockDust extends BlockContainer {
 	@Override
 	public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity) {
 		int meta = world.getBlockMetadata(x, y, z);
-		// if(world.isRemote) return;
+		
 		if (entity instanceof EntityItem && meta != DEAD_DUST) {
 			EntityItem ei = (EntityItem) entity;
 			ei.age = 0;
@@ -203,31 +203,26 @@ public class BlockDust extends BlockContainer {
 	public boolean removedByPlayer(World world, EntityPlayer player, int x, int y, int z, boolean willHarvest) {
 		
 		// TODO Test this
-		if (world.getBlockMetadata(x, y, z) > 0) {
+		if (world.getBlockMetadata(x, y, z) != UNUSED_DUST) {
 			
 			return world.setBlockToAir(x, y, z);
 			
 		} else {
-			TileEntityDust ted = (TileEntityDust) world.getTileEntity(x, y, z);
+			TileEntityDust tileEntityDust = (TileEntityDust) world.getTileEntity(x, y, z);
 			
-			// if (world.isRemote) {
-			// super.breakBlock(world, i, j, k, b, m);
-			// return;
-			// }
-			
-			if (ted == null || ted.isEmpty()) {
+			if (tileEntityDust == null || tileEntityDust.isEmpty()) {
 				DustMod.logger.warn("TED was empty!!");
 				return true;
 			}
 			
 			for (int dx = 0; dx < TileEntityDust.SIZE; dx++) {
 				for (int dy = 0; dy < TileEntityDust.SIZE; dy++) {
-					int dust = ted.getDust(dx, dy);
+					int dust = tileEntityDust.getDust(dx, dy);
 					
 					if (dust > 0) {
 						
 						if (!player.capabilities.isCreativeMode)
-							this.dropBlockAsItem(world, x, y, z, new ItemStack(DustMod.idust, 1, dust));
+							dropBlockAsItem(world, x, y, z, new ItemStack(DustMod.itemDust, 1, dust));
 						
 					}
 				}
@@ -278,7 +273,7 @@ public class BlockDust extends BlockContainer {
 			return true;
 		}
 		
-		if (itemStack == null || (itemStack.getItem() != DustMod.idust && itemStack.getItem() != DustMod.pouch)) {
+		if (itemStack == null || (itemStack.getItem() != DustMod.itemDust && itemStack.getItem() != DustMod.pouch)) {
 			return false;
 		}
 		
@@ -336,7 +331,7 @@ public class BlockDust extends BlockContainer {
 				ItemStack is = p.inventory.mainInventory[sind];
 				
 				if (is != null
-						&& ((is.getItem() == DustMod.idust && is.getItemDamage() == dust) || (is.getItem() == DustMod.pouch && ItemPouch.getValue(is) == dust && ItemPouch.getDustAmount(is) > 0))) {
+						&& ((is.getItem() == DustMod.itemDust && is.getItemDamage() == dust) || (is.getItem() == DustMod.pouch && ItemPouch.getValue(is) == dust && ItemPouch.getDustAmount(is) > 0))) {
 					
 					ItemPouch.subtractDust(is, 1);
 					
@@ -437,7 +432,7 @@ public class BlockDust extends BlockContainer {
 				
 				if (ted.getDust(rx, rz) != 0 && world.getBlockMetadata(x, y, z) == 0) {
 					if (ted.getDust(rx, rz) > 0 && !p.capabilities.isCreativeMode) {
-						this.dropBlockAsItem(world, x, y, z, new ItemStack(DustMod.idust, 1, ted.getDust(rx, rz)));
+						this.dropBlockAsItem(world, x, y, z, new ItemStack(DustMod.itemDust, 1, ted.getDust(rx, rz)));
 					}
 					
 					world.playSoundEffect(x + 0.5F, y + 0.5F, z + 0.5F, stepSound.getStepResourcePath(), (stepSound.getVolume() + 1.0F) / 6.0F, stepSound.getPitch() * 0.99F);
@@ -466,63 +461,70 @@ public class BlockDust extends BlockContainer {
 		return 0;// i == 0 ? mod_DustMod.ITEM_DustID+256:0;
 	}*/
 	
-	public void updatePattern(World world, int i, int j, int k, EntityPlayer p) {
-		List<Integer[]> n = new ArrayList<Integer[]>();
-		addNeighbors(world, i, j, k, n);
+	public void updatePattern(World world, int i, int j, int k, EntityPlayer entityPlayer) {
+		// get all connected dusts
+		List<Integer[]> dustBlocks = new ArrayList<Integer[]>();
+		addNeighbors(world, i, j, k, dustBlocks);
 		
-		if (n.size() == 0) {
+		if (dustBlocks.size() == 0) {
 			return; // dudewat
 		}
 		
-		for (Integer[] iter : n) {
-			if (world.getBlock(iter[0], j, iter[2]) == this) {
-				world.setBlockMetadataWithNotify(iter[0], j, iter[2], ACTIVATING_DUST, 2);
+		for (Integer[] dustBlock : dustBlocks) {
+			if (world.getBlock(dustBlock[0], j, dustBlock[2]) == this) {
+				world.setBlockMetadataWithNotify(dustBlock[0], j, dustBlock[2], ACTIVATING_DUST, 2);
 			}
 		}
 		
-		int sx = n.get(0)[0];
-		int sz = n.get(0)[2];
-		int mx = n.get(0)[0];
-		int mz = n.get(0)[2];
+		// compute shape size
+		int shapeMinX = dustBlocks.get(0)[0];
+		int shapeMinZ = dustBlocks.get(0)[2];
+		int shapeMaxX = dustBlocks.get(0)[0];
+		int shapeMaxZ = dustBlocks.get(0)[2];
 		
-		for (Integer[] iter : n) {
-			if (iter[0] < sx) {
-				sx = iter[0];
+		for (Integer[] dustBlock : dustBlocks) {
+			if (dustBlock[0] < shapeMinX) {
+				shapeMinX = dustBlock[0];
 			}
 			
-			if (iter[2] < sz) {
-				sz = iter[2];
+			if (dustBlock[2] < shapeMinZ) {
+				shapeMinZ = dustBlock[2];
 			}
 			
-			if (iter[0] > mx) {
-				mx = iter[0];
+			if (dustBlock[0] > shapeMaxX) {
+				shapeMaxX = dustBlock[0];
 			}
 			
-			if (iter[2] > mz) {
-				mz = iter[2];
+			if (dustBlock[2] > shapeMaxZ) {
+				shapeMaxZ = dustBlock[2];
 			}
 		}
 		
 		int size = TileEntityDust.SIZE;
-		int dx = mx - sx;
-		int dz = mz - sz;
-		int[][] map = new int[(mx - sx + 1) * size][(mz - sz + 1) * size];
+		int shapeSizeX = shapeMaxX - shapeMinX;
+		int shapeSizeZ = shapeMaxZ - shapeMinZ;
+		int[][] dustMap = new int[(shapeSizeX + 1) * size][(shapeSizeZ + 1) * size];
 		
-		for (int x = 0; x <= dx; x++) {
-			for (int z = 0; z <= dz; z++) {
-				if (world.getBlock(x + sx, j, z + sz) == this) {
-					TileEntityDust ted = (TileEntityDust) world.getTileEntity(x + sx, j, z + sz);
+		// build shape from dust in each blocks
+		for (int x = 0; x <= shapeSizeX; x++) {
+			for (int z = 0; z <= shapeSizeZ; z++) {
+				if (world.getBlock(x + shapeMinX, j, z + shapeMinZ) == this) {
+					TileEntityDust tileEntityDust = (TileEntityDust) world.getTileEntity(x + shapeMinX, j, z + shapeMinZ);
 					
 					for (int ix = 0; ix < size; ix++) {
 						for (int iz = 0; iz < size; iz++) {
-							map[ix + x * size][iz + z * size] = ted.getDust(ix, iz);
+							dustMap[ix + x * size][iz + z * size] = tileEntityDust.getDust(ix, iz);
 						}
 					}
 				}
 			}
 		}
 		
-		RuneManager.callShape(world, sx + (double) dx / 2 + 0.5D, j + 1D, sz + (double) dz / 2 + 0.5D, map, n, (p == null) ? null : p.getGameProfile().getId());
+		RuneManager.callShape(world,
+				shapeMinX + (double) shapeSizeX / 2 + 0.5D,
+				j + 1D,
+				shapeMinZ + (double) shapeSizeZ / 2 + 0.5D,
+				dustMap, dustBlocks, entityPlayer);
 	}
 	
 	public void addNeighbors(World world, int i, int j, int k, List<Integer[]> list) {

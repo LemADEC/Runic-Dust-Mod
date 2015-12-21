@@ -74,7 +74,7 @@ public class ItemSpiritSword extends ItemSword
     	if(r < tol){
     		int amt = 1;
     		if(rand.nextDouble() < 0.5D) amt = 2;
-    		EntityItem ei = new EntityItem(entity.worldObj, entity.posX, entity.posY, entity.posZ, new ItemStack(DustMod.idust,amt,200));
+    		EntityItem ei = new EntityItem(entity.worldObj, entity.posX, entity.posY, entity.posZ, new ItemStack(DustMod.itemDust,amt,200));
     		ei.delayBeforeCanPickup = 0;
     	}
     	
