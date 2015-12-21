@@ -10,7 +10,7 @@
 		- Will last for a day unless fueled.</sacrifices>
 	<description>
 		Description
-		Constantly damages all entities (that aren't the summoning player) within range.Amount of damage depends on the variable dust.
+		Constantly damages all entities (that aren't the summoning player) within range. Amount of damage depends on the variable dust.
 		
 		Demonstrates
 		Identifying the rune creator, Powered runes, Pausing powered runes, Basic AOE effects.

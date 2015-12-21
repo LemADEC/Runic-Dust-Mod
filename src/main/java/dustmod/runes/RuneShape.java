@@ -171,7 +171,7 @@ public class RuneShape {
 		return this;
 	}
 
-	private static String ALLOWED_VARIABLE_DUSTS_HEADER = "\n\n&fAllowed variable dusts:&7\n";
+	private static String ALLOWED_VARIABLE_DUSTS_HEADER = "\n\n§fAllowed variable dusts§7\n";
 	/**
 	 * Set the text for the description page in the Tome
 	 * 
