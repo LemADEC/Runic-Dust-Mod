@@ -17,11 +17,11 @@ public class BounceInscription extends InscriptionEvent {
 			int id) {
 		super(design, idName, properName, id);
 		this.setAuthor("billythegoat101");
-		this.setDescription("Description:\n"
+		this.setDescription("Description\n"
 				+ "Greatly reduce your fall damage by automatically bouncing back up upon landing.\n" +
 				"Cancel the effect by crouching.");
-		this.setNotes("Sacrifice:\n" +
-				"-8xFeathers + 1xLeatherBoots");
+		this.setNotes("Sacrifice\n" +
+				"- 8x Feathers + 1x Leather Boots");
 	}
 
 	@Override

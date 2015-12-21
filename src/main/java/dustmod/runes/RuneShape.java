@@ -171,7 +171,7 @@ public class RuneShape {
 		return this;
 	}
 
-	private static String ALLOWED_VARIABLE_DUSTS_HEADER = "\n\nAllowed variable dusts:\n";
+	private static String ALLOWED_VARIABLE_DUSTS_HEADER = "\n\n&fAllowed variable dusts:&7\n";
 	/**
 	 * Set the text for the description page in the Tome
 	 * 
@@ -183,8 +183,10 @@ public class RuneShape {
 		this.desc = rawString;
 		if (!allowedVariable.isEmpty()) {
 			desc += ALLOWED_VARIABLE_DUSTS_HEADER;
+			boolean isFirst = true;
 			for (int i : allowedVariable) {
-				desc += ((i != 0) ? ", " : "") + DustManager.getName(i);
+				desc += (isFirst ? "" : ", ") + DustManager.getName(i);
+				isFirst = false;
 			}
 		}
 		return this;

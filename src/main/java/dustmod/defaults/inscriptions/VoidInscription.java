@@ -19,10 +19,10 @@ public class VoidInscription extends InscriptionEvent {
 			int id) {
 		super(design, idName, properName, id);
 		this.setAuthor("billythegoat101");
-		this.setDescription("Description:\n"
+		this.setDescription("Description\n"
 				+ "Automatically store all picked-up items into the void. Use the Void Storage rune to summon them back.");
-		this.setNotes("Sacrifice:\n" +
-				"-4xObsidianBlock + 2xEnderPearl + 5XP");
+		this.setNotes("Sacrifice\n" +
+				"- 4x Obsidian Block + 2x Ender Pearl + 5 XP levels");
 	}
 	
 	@Override

@@ -20,10 +20,10 @@ public class FireballInscription extends InscriptionEvent {
 			int id) {
 			super(design, idName, properName, id);
 			this.setAuthor("billythegoat101");
-			this.setDescription("Description:\n" +
+			this.setDescription("Description\n" +
 					"Set your foes ablaze with fireballs!. LeftClick with a bare hand while lit on fire to activate.");
-			this.setNotes("Sacrifice:\n" +
-					"TBD");
+			this.setNotes("Sacrifice\n" +
+					"To be defined");
 		}
 		
 		@Override

@@ -21,10 +21,10 @@ public class ForesightInscription extends InscriptionEvent {
 			String properName, int id) {
 		super(design, idName, properName, id);
 		this.setAuthor("billythegoat101");
-		this.setDescription("Description:\n" +
+		this.setDescription("Description\n" +
 				"Enables you to anticipate the coming of mobs in the dark. Ground on which they are able to spawn will shine.");
-		this.setNotes("Sacrifice:\n" +
-				"-1xLapisBlock + 20XP");
+		this.setNotes("Sacrifice\n" +
+				"- 1x Lapis Lazuli Block + 20 XP levels");
 	}
 	
 	@Override

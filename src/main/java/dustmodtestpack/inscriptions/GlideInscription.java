@@ -19,8 +19,8 @@ public class GlideInscription extends InscriptionEvent {
 			int id) {
 		super(design, idName, properName, id);
 		this.setAuthor("billythegoat101");
-		this.setDescription("Description:\n" +
-				"Hold shift while falling to glide and prevent fall damage.");
+		this.setDescription("Description\n" +
+				"Hold sneak while falling to glide and prevent fall damage.");
 		
 		this.power = power;
 		switch(power){
@@ -29,14 +29,14 @@ public class GlideInscription extends InscriptionEvent {
 		case 1:
 			motionYMul = 0.25;
 			jumpFactor = 0.61F;
-			this.setNotes("Sacrifice:\n" +
-					"2xFeather + 5XP");
+			this.setNotes("Sacrifice\n" +
+					"- 2x Feather + 5 XP levels");
 			break;
 		case 2:
 			motionYMul = 0.1;
 			jumpFactor = 0.89F;
-			this.setNotes("Sacrifice:\n" +
-					"2xFeather + 1xGoldIngot + 7XP");
+			this.setNotes("Sacrifice\n" +
+					"- 2x Feather + 1x Gold Ingot + 7 XP levels");
 			break;
 		}
 	}

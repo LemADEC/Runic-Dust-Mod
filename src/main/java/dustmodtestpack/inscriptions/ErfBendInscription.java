@@ -33,11 +33,11 @@ public class ErfBendInscription extends InscriptionEvent {
 			String properName, int id) {
 		super(design, idName, properName, id);
 		this.setAuthor("billythegoat101");
-		this.setDescription("Description:\n" +
+		this.setDescription("Description\n" +
 				"Launch your enemies sky-high with a pillar of earth! Or drop them deep into an abyss! \n-\n Shift+left and right click with an empty hand at an enemy to activate. \n" +
 				"Design is still a WIP\n.\n.\n.\n(Earthbending is from the awesome show Avatar, please don't sue me.)");
-		this.setNotes("Sacrifice:\n" +
-				"TBD");
+		this.setNotes("Sacrifice\n" +
+				"To be defined");
 	}
 	
 	@Override

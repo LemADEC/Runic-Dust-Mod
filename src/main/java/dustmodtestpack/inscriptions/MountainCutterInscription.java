@@ -19,11 +19,11 @@ public class MountainCutterInscription extends InscriptionEvent {
 			String properName, int id) {
 		super(design, idName, properName, id);
 		this.setAuthor("billythegoat101");
-		this.setDescription("Description:\n" +
+		this.setDescription("Description\n" +
 				"Chop a hole through a freaking mountain! Hiyah!\n" +
 				"Design is still a WIP");
-		this.setNotes("Sacrifice:\n" +
-				"TBD");
+		this.setNotes("Sacrifice\n" +
+				"To be defined");
 	}
 	
 	@Override

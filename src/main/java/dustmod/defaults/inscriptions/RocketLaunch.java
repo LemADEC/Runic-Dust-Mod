@@ -26,20 +26,20 @@ public int level;
 		switch(level){
 		case 1:
 			this.power = 1.15;
-			this.setDescription("Description:\n" +
-					"Shift+Left Click with a bare hand to launch yourself in that direction!\n" +
+			this.setDescription("Description\n" +
+					"Sneak + Left Click with a bare hand to launch yourself in that direction!\n" +
 					"It will protect from fall damage but only that which is caused by the launch");
-			this.setNotes("Sacrifice:\n" +
-					"-4xFeathers + 1xFirework + 5XP");
+			this.setNotes("Sacrifice\n" +
+					"- 4x Feathers + 1x Firework + 5 XP levels");
 			break;
 		case 2:
 			this.power = 1.85;
-			this.setDescription("Description:\n" +
-					"Shift+Left Click with a bare hand to launch yourself in that direction!\n" +
+			this.setDescription("Description\n" +
+					"Sneak + Left Click with a bare hand to launch yourself in that direction!\n" +
 					"It will protect from fall damage but only that which is caused by the launch\n" +
 					"Level II provides extra height and duration as well as adding an extra half block to your normal jumping height.");
-			this.setNotes("Sacrifice:\n" +
-					"-1xLeapI (Fully charged) + 1xSlimeEgg + 7XP");
+			this.setNotes("Sacrifice\n" +
+					"- 1x Leap I (Fully charged) + 1x Slime Spawn Egg + 7 XP levels");
 			break;
 		}
 	}

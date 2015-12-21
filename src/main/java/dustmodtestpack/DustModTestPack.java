@@ -57,14 +57,14 @@ public class DustModTestPack {
 		s = new RuneShape(values, "launchtest", false, 0, 0, 200);
 		
 		s.setRuneName("Launch test Rune");
-		s.setNotes("Sacrifice:\n\n"
+		s.setNotes("Sacrifice\n\n"
 				+ "- None: Normal torch spawn.\n"
-				+ "- 1xFlint: Beacon rune.\n"
-				+ "\nNotes:\n\n"
+				+ "- 1x Flint: Beacon rune.\n"
+				+ "\nNotes\n\n"
 				+ "- Sacrify a dye to an existing beacon to change its color.");
-		s.setDesc("Description:\n"
+		s.setDesc("Description\n"
 				+ "Spawns a torch or, if a piece of flint is sacrificed, a beacon.");
-		s.setAuthor("billythegoat101 -TestPack");
+		s.setAuthor("billythegoat101 (TestPack)");
 		// DustManager.registerLocalDustShape(s, new LaunchTestRune());
 	}
 

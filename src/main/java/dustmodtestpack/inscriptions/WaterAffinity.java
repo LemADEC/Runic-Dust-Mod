@@ -17,10 +17,10 @@ public class WaterAffinity extends InscriptionEvent {
 	public WaterAffinity(int[][] design, String idName, String properName,
 			int id) {
 		super(design, idName, properName, id);
-		this.setAuthor("billythegoat101 -TestPack");
-		this.setDescription("Description:\n"
+		this.setAuthor("billythegoat101 (TestPack)");
+		this.setDescription("Description\n"
 				+ "Currently: Hold shift while on waters surface to hop across it.");
-		this.setNotes("Sacrifice:\n" + "TBD");
+		this.setNotes("Sacrifice:\n" + "To be defined");
 	}
 
 	@Override

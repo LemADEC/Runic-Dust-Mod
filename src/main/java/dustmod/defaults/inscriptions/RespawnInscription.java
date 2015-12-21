@@ -20,12 +20,12 @@ public class RespawnInscription extends InscriptionEvent {
 			int id) {
 		super(design, idName, properName, id);
 		this.setAuthor("billythegoat101");
-		this.setDescription("Description:\n" +
+		this.setDescription("Description\n" +
 				"Set a temporary home-point where you can teleport back to. " +
 				"Right-Click with the item in hand to set the coordinates. " +
-				"Shift+RightClick with a bare hand while looking at the ground to activate");
-		this.setNotes("Sacrifice:\n" +
-				"-1xQuartzBlock + 2xEnderPearl");
+				"Sneak + RightClick with a bare hand while looking at the ground to activate");
+		this.setNotes("Sacrifice\n" +
+				"- 1x Quartz Block + 2x Ender Pearl");
 	}
 	
 	@Override

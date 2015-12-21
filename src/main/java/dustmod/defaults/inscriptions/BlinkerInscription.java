@@ -24,11 +24,11 @@ public class BlinkerInscription extends InscriptionEvent {
 			int id) {
 		super(design, idName, properName, id);
 		this.setAuthor("billythegoat101");
-		this.setDescription("Description:\n" +
+		this.setDescription("Description\n" +
 				"Blink like an enderman! Shift+RightClick with a bare hand to teleport. It will cost 1 heart per blink but you will not take fall damage." +
 				"Level II enables precision teleporting and extra duration.");
-		this.setNotes("Sacrifice:\n" +
-				"-1xBlinkI (Fully charged) + 8xEnderPearl, 4xObsidian, 8xEndStone + 10XP");
+		this.setNotes("Sacrifice\n" +
+				"- 1x Blink I (Fully charged) + 8x Ender Pearl, 4x Obsidian, 8x End Stone + 10 XP levels");
 	}
 	
 	@Override

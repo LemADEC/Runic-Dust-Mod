@@ -23,10 +23,10 @@ public class EnderInscription extends InscriptionEvent {
 			int id) {
 		super(design, idName, properName, id);
 		this.setAuthor("billythegoat101");
-		this.setDescription("Description:\n" +
-				"Blink like an enderman! Shift+RightClick with a bare hand to teleport randomly in that direction. Safety not guaranteed. It will cost 1 heart per blink but you will not take fall damage.");
-		this.setNotes("Sacrifice:\n" +
-				"-8xEnderPearl + 1xQuartzBlock + 2xBlazeRod + 10XP");
+		this.setDescription("Description\n" +
+				"Blink like an enderman! Shift + RightClick with a bare hand to teleport randomly in that direction. Safety not guaranteed. It will cost 1 heart per blink but you will not take fall damage.");
+		this.setNotes("Sacrifice\n" +
+				"- 8x Ender Pearl + 1x Quartz Block + 2x Blaze Rod + 10 XP levels");
 	}
 	
 	@Override
