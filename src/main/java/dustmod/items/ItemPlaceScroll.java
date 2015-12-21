@@ -45,8 +45,8 @@ public class ItemPlaceScroll extends DustModItem {
 			return false;
 		}
 		
-		RuneShape ds = RuneManager.getShapeFromID(item.getItemDamage());
-		int r = MathHelper.floor_double((entityPlayer.rotationYaw * 4F) / 360F + 0.5D) & 3;
+		RuneShape runeShape = RuneManager.getShapeFromID(item.getItemDamage());
+		int rotation = MathHelper.floor_double((entityPlayer.rotationYaw * 4F) / 360F + 0.5D) & 3;
 		
 		if (DustMod.isDust(world.getBlock(i, j, k))) {
 			j--;
@@ -54,13 +54,13 @@ public class ItemPlaceScroll extends DustModItem {
 		
 		try {
 			if (entityPlayer.capabilities.isCreativeMode) {
-				ds.drawOnWorldWhole(world, i, j + 1, k, entityPlayer, r);
+				runeShape.drawOnWorldWhole(world, i, j + 1, k, entityPlayer, rotation);
 			} else {
-				ds.drawOnWorldPart(world, i, j + 1, k, entityPlayer, r, entityPlayer.getItemInUseCount());
+				runeShape.drawOnWorldPart(world, i, j + 1, k, entityPlayer, rotation, entityPlayer.getItemInUseCount());
 			}
-		} catch (Exception e) {
-			DustMod.logger.error("THE FUUUUCK " + e.getMessage(), e);
-			e.printStackTrace();
+		} catch (Exception exception) {
+			DustMod.logger.error("Unable to use scroll: " + exception.getMessage(), exception);
+			exception.printStackTrace();
 		}
 		entityPlayer.inventory.markDirty();
 		return true;
