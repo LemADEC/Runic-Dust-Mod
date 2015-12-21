@@ -11,7 +11,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
@@ -42,7 +41,8 @@ public class RETeleportation extends PoweredEvent
 		
     }
 
-    public void onInit(EntityRune e)
+    @Override
+	public void onInit(EntityRune e)
     {
         super.onInit(e);
         World world = e.worldObj;
@@ -56,7 +56,7 @@ public class RETeleportation extends PoweredEvent
 
         Integer[] fnd = null;
 
-        System.out.println("Check");
+        // System.out.println("Check");
         for (Integer[] i : e.dustPoints)
         {
             TileEntity te = world.getTileEntity(i[0], i[1], i[2]);
@@ -67,12 +67,12 @@ public class RETeleportation extends PoweredEvent
                 int gamt = 10;
                 int bamt = 4;
 
-                System.out.println("CHECKING");
+                // System.out.println("CHECKING");
                 for (int x = 0; x < 4; x++)
                 {
                     for (int y = 0; y < 4; y++)
                     {
-                        System.out.print(ted.getDust(x, y) + ",");
+                        // System.out.print(ted.getDust(x, y) + ",");
                         if (ted.getDust(x, y) == 2)
                         {
                             gamt--;
@@ -84,7 +84,7 @@ public class RETeleportation extends PoweredEvent
                         }
                     }
 
-                    System.out.println();
+                    // System.out.println();
                 }
 
                 if (gamt == 0 && bamt == 0)
@@ -189,7 +189,8 @@ public class RETeleportation extends PoweredEvent
         e.setStarScaleY(2.0F);
     }
 
-    public void onTick(EntityRune e)
+    @Override
+	public void onTick(EntityRune e)
     {
         super.onTick(e);
 //        System.out.println("ENTITY ID " + e.entityId);
@@ -354,7 +355,8 @@ public class RETeleportation extends PoweredEvent
     public void subtractFuel(EntityRune e)
     {
     }
-    public void onUnload(EntityRune e)
+    @Override
+	public void onUnload(EntityRune e)
     {
 //        System.out.println("KILL");
     	VoidTeleManager.removeWarp(VoidTeleManager.toWarp(e));
