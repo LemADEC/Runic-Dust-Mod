@@ -100,31 +100,34 @@ public class ItemPlaceScroll extends DustModItem {
 	public void addInformation(ItemStack item, EntityPlayer player, List list, boolean flag) {
 		super.addInformation(item, player, list, flag);
 		RuneShape shape = RuneManager.getShapeFromID(item.getItemDamage());
-		if (shape == null)
+		if (shape == null) {
 			return;
-		String sacr = shape.getNotes().replace("Sacrifice:\n", "");
+		}
+		//        123456789012345678901234567890123456789
+		list.add("Use this placing scroll to place a rune");
+		list.add("");
+		String sacr = shape.getNotes().replace("Sacrifice\n", "");
 		String[] split = sacr.split("\n");
-		list.add("Requires:");
-		for (String i : split) {
-			if (!i.isEmpty()) {
-				if (i.charAt(0) != '-')
+		list.add("Required sacrifice:");
+		for (String line : split) {
+			if (!line.isEmpty()) {
+				if (line.charAt(0) != '-') {
 					break;
-				if (i.length() > 25) {
-					String temp = i;
-					while (temp.length() > 25) {
-						int index = temp.indexOf(' ', 25);
-						if (index == -1)
-							index = temp.length();
-						
-						String add = temp.substring(0, index);
-						if (!add.isEmpty())
-							list.add(add);
-						temp = temp.substring(index);
-					}
-					list.add(temp);
-				} else {
-					list.add(i);
 				}
+				String lineRemaining = line;
+				while (lineRemaining.length() > 40) {
+					int index = lineRemaining.substring(0, 40).lastIndexOf(' ');
+					if (index == -1) {
+						index = lineRemaining.length();
+					}
+					
+					String add = lineRemaining.substring(0, index);
+					if (!add.isEmpty()) {
+						list.add(add);
+					}
+					lineRemaining = lineRemaining.substring(index);
+				}
+				list.add(lineRemaining);
 			}
 		}
 	}
