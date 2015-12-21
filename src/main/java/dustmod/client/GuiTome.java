@@ -4,8 +4,6 @@
  */
 package dustmod.client;
 
-import java.util.Random;
-
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
@@ -109,19 +107,27 @@ public class GuiTome extends GuiScreen {
 		String notes = "";
 		boolean recolor = false;
 		
-		if ((isRunes() && getRunePage() == 0) || (!isRunes() && getInsPage() == 0)) {
+		if ((isRunes() && getRunePage() == 0) || (!isRunes() && getInscriptionPage() == 0)) {
 			header = "- " + (isRunes() ? (RuneManager.namesRemote.size() + " runes are installed") : (InscriptionManager.eventsRemote.size()) + " inscriptions are installed") + " -";
-			notes = "Legends\n\n"
-					+ "Meat: Pork, Beef, or Chicken raw or cooked.\n---\n"
-					+ "Drops: Any item corresponding to a particular mob.\n---\n"
-					+ "Variable: The dust is interchangable and allows you to set traits of the rune.\n---\n"
-					+ "Powered: If the name is red, then it requires fueling via smeltables.";
-			
+			if (showSacrifices) {
+				notes = "§fWelcome to §6§lRunic Dust§f!§7\n"
+						+ "Draw shapes with dust/pouch, drop sacrifices on it, then right-click with this tome or redstone.\n"
+						+ "\n"
+						+ "Use Left click to view next page.\n"
+						+ "Use Right click to view previous page.\n";
+			} else {
+				notes = "§fTips§7\n"
+					+ "- Meat means any Pork, Beef or Chicken (raw or cooked).\n"
+					+ "- Drops means any item corresponding to a particular mob.\n"
+					+ "- §5Purple dust§7 is variable: use it to set traits of the rune.\n"
+					+ "- §4Red text§7 indicates powered runes: you need to provide fuel through smeltables.\n"
+					+ "- Area is set by ruts using §fHammer & Chisel§7.\n";
+			}
 			author = pun;
 		} else {
 			if (isRunes()) {
 				RuneShape shape = RuneManager.getShape(getRunePage() - 1);
-				header = shape.getRuneName() + " (" + getRunePage() + "/" + RuneManager.namesRemote.size() + ")";
+				header = "§l" + shape.getRuneName() + " §7(" + getRunePage() + "/" + RuneManager.namesRemote.size() + ")";
 				notes = showSacrifices ? shape.getNotes() : shape.getDescription();
 				author = "by " + shape.getAuthor();
 				if (shape.isPower) {
@@ -129,13 +135,18 @@ public class GuiTome extends GuiScreen {
 				}
 				updateRandomPun();
 			} else {
-				InscriptionEvent event = InscriptionManager.getEventInOrder(getInsPage() - 1);
-				header = event.getInscriptionName() + " (" + getInsPage() + "/" + InscriptionManager.eventsRemote.size() + ")";;
+				InscriptionEvent event = InscriptionManager.getEventInOrder(getInscriptionPage() - 1);
+				header = "§l" + event.getInscriptionName() + " §7(" + getInscriptionPage() + "/" + InscriptionManager.eventsRemote.size() + ")";;
 				notes = showSacrifices ? event.getNotes() : event.getDescription();
 				author = "by " + event.getAuthor();
 				updateRandomPun();
 			}
 		}
+		// transform color codes
+		notes = notes
+				.replace("Sacrifice\n", "§fSacrifice§7\n")
+				.replace("Notes\n", "§fNotes§7\n")
+				.replace("Description\n", "§fDescription§7\n");
 		
 		GL11.glColor3f(255, 0, 0);
 		fontRendererObj.drawString(header, (width - xSize) / 2 - xOffset, (height - ySize) / 2 - fontRendererObj.FONT_HEIGHT - 2, recolor ? 0xFF0000 : 0xEEEEEE);
@@ -164,11 +175,11 @@ public class GuiTome extends GuiScreen {
 		return runePage;
 	}
 	
-	public void setInsPage(int p) {
+	public void setInscriptionPage(int p) {
 		insPage = p;
 	}
 	
-	public int getInsPage() {
+	public int getInscriptionPage() {
 		return insPage;
 	}
 	
@@ -228,23 +239,21 @@ public class GuiTome extends GuiScreen {
 			}
 		}
 		
-		//        System.out.println("Click " + par1 + " " + par2 + " " + par3 + " " + width + " " + height);
+		// System.out.println("Click " + par1 + " " + par2 + " " + par3 + " " + width + " " + height);
 	}
 	
 	private void advancePage() {
 		if (isRunes()) {
-			//        itemstack.setItemDamage(itemstack.getItemDamage() + 1);
 			setRunePage(getRunePage() + 1);
 			
 			if (getRunePage() >= RuneManager.getShapes().size() - DustMod.numSec + 1) {
 				setRunePage(0);
 			}
 		} else {
+			setInscriptionPage(getInscriptionPage() + 1);
 			
-			setInsPage(getInsPage() + 1);
-			
-			if (getInsPage() >= InscriptionManager.getEvents().size() + 1) {
-				setInsPage(0);
+			if (getInscriptionPage() >= InscriptionManager.getEvents().size() + 1) {
+				setInscriptionPage(0);
 			}
 		}
 	}
@@ -255,16 +264,12 @@ public class GuiTome extends GuiScreen {
 			
 			if (getRunePage() < 0) {
 				setRunePage(RuneManager.getShapes().size() - DustMod.numSec);
-				//        	itemstack.setItemDamage(DustManager.getShapes().size() - DustMod.numSec);
-				//            page = DustManager.getShapes().size() - DustMod.numSec;
 			}
 		} else {
-			setInsPage(getInsPage() - 1);
+			setInscriptionPage(getInscriptionPage() - 1);
 			
-			if (getInsPage() < 0) {
-				setInsPage(InscriptionManager.getEvents().size());
-				//        	itemstack.setItemDamage(DustManager.getShapes().size() - DustMod.numSec);
-				//            page = DustManager.getShapes().size() - DustMod.numSec;
+			if (getInscriptionPage() < 0) {
+				setInscriptionPage(InscriptionManager.getEvents().size());
 			}
 		}
 	}
@@ -273,11 +278,16 @@ public class GuiTome extends GuiScreen {
 	 * Draw the background layer for the GuiContainer (everything behind the items)
 	 */
 	protected void drawGuiContainerBackgroundLayer(float par1, int par2, int par3) {
-		//    	System.out.println("RAWR " + DustManager.isEmpty() + " " + InscriptionManager.isEmpty());
-		//int i = mc.renderEngine.getTexture(DustMod.path + "/tomeGui.png");
+		// load textures
+		ResourceLocation resTomeGUI = new ResourceLocation("dustmod", "textures/tomeGui.png");
+		ResourceLocation resNoRunes = new ResourceLocation("dustmod", "pages/no_runes.png");
+		ResourceLocation resNoInscriptions = new ResourceLocation("dustmod", "pages/no_inscriptions.png");
+		ResourceLocation resInfo = new ResourceLocation("dustmod", "pages/info.png");
+		
+		// System.out.println("RAWR " + DustManager.isEmpty() + " " + InscriptionManager.isEmpty());
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(new ResourceLocation("dustmod", "tomeGui.png"));
-		//        mc.renderEngine.bindTexture(mc.renderEngine.getTexture(RenderDustTable.getPagePath(page)));
+		mc.renderEngine.bindTexture(resTomeGUI);
+		// mc.renderEngine.bindTexture(mc.renderEngine.getTexture(RenderDustTable.getPagePath(page)));
 		int j = (width - xSize) / 2 - xOffset;
 		int k = (height - ySize) / 2;
 		xStart = j;
@@ -292,36 +302,36 @@ public class GuiTome extends GuiScreen {
 		GL11.glScalef(1 / res, res, 1);
 		GL11.glTranslatef(j + ox, k + oy, 0);
 		GL11.glScalef(scalex, scaley, 1f);
-		//        System.out.println("Scale " + scalex + " " + scaley);
 		if (isRunes()) {
 			if (getRunePage() == 0) {
 				if (RuneManager.isEmpty()) {
-					mc.renderEngine.bindTexture(new ResourceLocation("dustmod", "pages/no_runes.png"));
+					mc.renderEngine.bindTexture(resNoRunes);
 				} else {
-					mc.renderEngine.bindTexture(new ResourceLocation("dustmod", "pages/info.png"));
+					mc.renderEngine.bindTexture(resInfo);
 				}
-			} else
+			} else {
 				PageHelper.bindPage(RenderDustTable.getRunePageName(getRunePage()));
+			}
 		} else {
-			if (getInsPage() == 0) {
+			if (getInscriptionPage() == 0) {
 				if (InscriptionManager.isEmpty()) {
-					mc.renderEngine.bindTexture(new ResourceLocation("dustmod", "pages/no_inscriptions.png"));
+					mc.renderEngine.bindTexture(resNoInscriptions);
 				} else {
-					mc.renderEngine.bindTexture(new ResourceLocation("dustmod", "pages/info.png"));
+					mc.renderEngine.bindTexture(resInfo);
 				}
-			} else
-				PageHelper.bindPage(InscriptionManager.getEventInOrder(getInsPage() - 1).getIDName());
+			} else {
+				PageHelper.bindPage(InscriptionManager.getEventInOrder(getInscriptionPage() - 1).getIDName());
+			}
 		}
 		drawTexturedModalRect(0, 0, 0, 0, 256, 256);
 		
 		GL11.glPopMatrix();
 		
+		mc.renderEngine.bindTexture(resTomeGUI);
 		if (isRunes()) {
-			mc.renderEngine.bindTexture(new ResourceLocation("dustmod", "tomeGui.png"));
-			drawTexturedModalRect(j - 6, k, 12, 0, 12, ySize);
-		} else {
-			mc.renderEngine.bindTexture(new ResourceLocation("dustmod", "tomeGui.png"));
 			drawTexturedModalRect(j - 6, k, 0, 0, 12, ySize);
+		} else {
+			drawTexturedModalRect(j - 6, k, 12, 0, 12, ySize);
 		}
 	}
 	
