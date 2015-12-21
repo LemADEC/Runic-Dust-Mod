@@ -84,23 +84,14 @@ public class BlockDust extends BlockContainer {
 		int meta = world.getBlockMetadata(x, y, z);
 		
 		if (entity instanceof EntityItem && meta != DEAD_DUST) {
-			EntityItem ei = (EntityItem) entity;
-			ei.age = 0;
-			EntityPlayer p = world.getClosestPlayerToEntity(ei, 0.6);
+			EntityItem entityItem = (EntityItem) entity;
+			entityItem.age = 0;
+			EntityPlayer p = world.getClosestPlayerToEntity(entityItem, 0.6);
 			
 			if (p == null) {
-				ei.delayBeforeCanPickup = 10;
+				entityItem.delayBeforeCanPickup = 10;
 				return;
 			}
-			
-			//double dist = p.getDistanceToEntity(ei);
-			
-			// if (dist < 0.2 && ei.delayBeforeCanPickup > 5) {
-			// System.out.println("Drop " + dist);
-			// ei.delayBeforeCanPickup = 5;
-			// } else {
-			// // System.out.println("Grab " + dist);
-			// }
 		}
 		
 		if (entity instanceof EntityXPOrb && meta != DEAD_DUST) {
@@ -428,38 +419,28 @@ public class BlockDust extends BlockContainer {
 					rz = 0;
 				}
 				
-				TileEntityDust ted = (TileEntityDust) world.getTileEntity(x, y, z);
+				TileEntityDust tileEntityDust = (TileEntityDust) world.getTileEntity(x, y, z);
 				
-				if (ted.getDust(rx, rz) != 0 && world.getBlockMetadata(x, y, z) == 0) {
-					if (ted.getDust(rx, rz) > 0 && !p.capabilities.isCreativeMode) {
-						this.dropBlockAsItem(world, x, y, z, new ItemStack(DustMod.itemDust, 1, ted.getDust(rx, rz)));
+				if (tileEntityDust.getDust(rx, rz) != 0 && world.getBlockMetadata(x, y, z) == 0) {
+					if (tileEntityDust.getDust(rx, rz) > 0 && !p.capabilities.isCreativeMode) {
+						this.dropBlockAsItem(world, x, y, z, new ItemStack(DustMod.itemDust, 1, tileEntityDust.getDust(rx, rz)));
 					}
 					
 					world.playSoundEffect(x + 0.5F, y + 0.5F, z + 0.5F, stepSound.getStepResourcePath(), (stepSound.getVolume() + 1.0F) / 6.0F, stepSound.getPitch() * 0.99F);
 					world.notifyBlockChange(x, y, z, this);
-					ted.setDust(p, rx, rz, 0);
+					tileEntityDust.setDust(p, rx, rz, 0);
 					
-					// System.out.println("drop click");
-					if (ted.isEmpty() && world.getBlockMetadata(x, y, z) != 10) {
-						// System.out.println("Destroying");
+					if (tileEntityDust.isEmpty() && world.getBlockMetadata(x, y, z) != 10) {
 						world.setBlockToAir(x, y, z);
 						this.onBlockDestroyedByPlayer(world, x, y, z, 0);
 					}
 				}
 				break;
 			}
-			
-			// world.setBlock((int)tx, (int)ty, (int)tz, Block.brick.blockID);
 		}
 		
 		// super.onBlockClicked(world, i, j, k, p);
 	}
-	
-	/*
-	@Override
-	public int idDropped(int i, Random random, int j) {
-		return 0;// i == 0 ? mod_DustMod.ITEM_DustID+256:0;
-	}*/
 	
 	public void updatePattern(World world, int i, int j, int k, EntityPlayer entityPlayer) {
 		// get all connected dusts

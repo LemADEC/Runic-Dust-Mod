@@ -228,7 +228,7 @@ public class TileEntityDust extends TileEntity implements IInventory {
 	
 	public int[][][] getRendArrays() {
 		int[][][] rtn = new int[3][SIZE + 1][SIZE + 1];
-		int[][] n = new int[SIZE + 2][SIZE + 2]; //neighbors
+		int[][] n = new int[SIZE + 2][SIZE + 2]; // neighbors
 		
 		for (int x = 0; x < SIZE; x++) {
 			for (int z = 0; z < SIZE; z++) {
@@ -269,8 +269,8 @@ public class TileEntityDust extends TileEntity implements IInventory {
 			}
 		}
 		
-		//        System.out.println("DERP " + Arrays.deepToString(n));
-		//horiz
+		
+		// horizontal
 		for (int x = 0; x < SIZE; x++) {
 			for (int y = 0; y < SIZE + 1; y++) {
 				if (n[x + 1][y] == n[x + 1][y + 1]) {
@@ -279,7 +279,7 @@ public class TileEntityDust extends TileEntity implements IInventory {
 			}
 		}
 		
-		//vert
+		// vertical
 		for (int x = 0; x < SIZE + 1; x++) {
 			for (int y = 0; y < SIZE; y++) {
 				if (n[x][y + 1] == n[x + 1][y + 1]) {

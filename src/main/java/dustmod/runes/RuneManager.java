@@ -226,7 +226,6 @@ public class RuneManager
 
         		if(!eventInstance.permission.equals("ALL")){
         			DustMod.logger.debug("Rune permission for " + eventInstance.name + " set to " + eventInstance.permission);
-//        			System.out.println("[DustMod] Rune permission for " + eventInstance.name + " set to " + eventInstance.permission);
         		}
             }
 
