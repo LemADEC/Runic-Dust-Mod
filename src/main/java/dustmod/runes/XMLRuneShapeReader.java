@@ -50,12 +50,12 @@ public class XMLRuneShapeReader extends DefaultHandler {
 			XMLReader xr = XMLReaderFactory.createXMLReader();
 			xr.setContentHandler(this);
 			xr.setErrorHandler(this);
-
 			
-			InputStream fileStream = this.getClass().getClassLoader()
-					.getResourceAsStream(runeFile);
-
+			InputStream fileStream = this.getClass().getClassLoader().getResourceAsStream(runeFile);
+			
 			xr.parse(new InputSource(fileStream));
+			
+			fileStream.close();
 		} catch (Exception ex) {
 			DustMod.logger.error("Unable to read rune XML file! " + runeFile, ex);
 			ex.printStackTrace();
@@ -207,14 +207,14 @@ public class XMLRuneShapeReader extends DefaultHandler {
 
 	@Override
 	public void endDocument() throws SAXException {
-		RuneShape s = new RuneShape(design, idName, solid, cx, cy, id);
+		RuneShape runeShape = new RuneShape(design, idName, solid, cx, cy, id);
 		//TODO Replacement for s.setRotationMatrix(rotationMatrix);
-		s.addAllowedVariable(allowedVariables);
-		s.setRuneName(displayName);
-		s.setNotes(sacrifices);
-		s.setDesc(description);
-		s.setAuthor(author);
+		runeShape.addAllowedVariable(allowedVariables);
+		runeShape.setRuneName(displayName);
+		runeShape.setNotes(sacrifices);
+		runeShape.setDesc(description);
+		runeShape.setAuthor(author);
 		
-		RuneManager.registerLocalDustShape(s, event);
+		RuneManager.registerLocalDustShape(runeShape, event);
 	}
 }
