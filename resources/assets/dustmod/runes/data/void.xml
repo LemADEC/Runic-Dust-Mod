@@ -4,16 +4,17 @@
 	<author>billythegoat101</author>
 	<solid value="true"/>
 	<sacrifices>
-		Sacrifice:
-		-3XP + Items to store
-		Notes:
-		-If there is a sacrifice, it will be stored.
-		-If there is not, all items in storage will be dropped.
-		-3XP will be taken either way.
-		-Inventories are separated by user. So you will not get yours mixed with someone elses.
+		Sacrifice
+		- 3 XP levels + Items to store
+		
+		Notes
+		- If there is a sacrifice, it will be stored.
+		- If there is not, all items in storage will be dropped.
+		- 3 XP levels will be taken either way.
+		- Inventories are separated by user. So you will not get yours mixed with someone elses.
 	</sacrifices>
 	<description>
-		Description:
+		Description
 		Stores sacrificed items in a void. When activated without a sacrifice, the items are returned.
 	</description>
 	<design width="8" height="6" ox="2" oy="3" cx="2" cy="1">

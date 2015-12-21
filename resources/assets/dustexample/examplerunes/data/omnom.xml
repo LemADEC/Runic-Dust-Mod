@@ -26,15 +26,17 @@
 	
 <!-- The text that will appear on the Information page of the tome. -->
 	<sacrifices>
-		Sacrifice:
-		-1xChest, 1xGoldIngot, 1XP, 1/2xHungerBars
+		Sacrifice
+		- 1x Chest, 1x Gold Ingot, 1 XP levels, 1/2x Hunger Bar
 	</sacrifices>
 	
 <!-- The text that will appear on the Description page of the tome. -->
-	<description>Description:
+	<description>Description
 		Creates a rune that sucks in items and puts them in a chest.
-		Demonstrates:
-		Item, XP, Hunger Sacrifices, and what happens after you die.</description>
+		
+		Demonstrates
+		Item, XP, Hunger Sacrifices, and what happens after you die.
+	</description>
 	
 <!-- 
 	Design of the rune. The numbers correspond to what dusts

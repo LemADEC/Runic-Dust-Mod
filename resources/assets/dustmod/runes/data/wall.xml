@@ -4,11 +4,11 @@
 	<author>billythegoat101</author>
 	<solid value="false"/>
 	<sacrifices>
-		Sacrifice:
-		-1xIronOre + 3XP
+		Sacrifice
+		- 1x Iron Ore + 3 XP levels
 	</sacrifices>
 	<description>
-		Description:
+		Description
 		Lifts a wall out of the earth.
 	</description>
 	<design width="14" height="6" ox="3" oy="3" cx="5" cy="1">

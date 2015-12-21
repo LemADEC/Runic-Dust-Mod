@@ -4,15 +4,17 @@
 	<author>billythegoat101 (Demonstrations pack)</author>
 	<solid value="false"/>
 	<sacrifices>
-		Sacrifice:
-		-4xSnowBlock + 1xGhastTear + 20XP
-		Notes:
-		-Will last for a three days unless fueled.
+		Sacrifice
+		- 4x Snow Block + 1x Ghast Tear + 20 XP levels
+		
+		Notes
+		- Will last for a three days unless fueled.
 	</sacrifices>
 	<description>
-		Description:
+		Description
 		Summons a sprite which follows the player and freezes the surface of liquids. Water turns to ice and lava turns to obsidian.
-		Demonstrates:
+		
+		Demonstrates
 		Item sacrifices, XP Sacrifices, Powered runes, Pausing, and Following sprites.
 	</description>
 	<design width="10" height="10" ox="1" oy="1" cx="3" cy="3">

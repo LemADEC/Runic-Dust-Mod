@@ -4,15 +4,17 @@
 	<author>billythegoat101</author>
 	<solid value="false"/>
 	<sacrifices>
-		Sacrifice:
-		-4xObsidian + 4xSlime + 1xLapisLaz
-		Notes:
-		-Expect bugs.
-		-Lasts for a day's time unless fueled.
+		Sacrifice
+		- 4x Obsidian + 4x Slime + 1x Lapis Lazuli
+		
+		Notes
+		- Expect bugs.
+		- Lasts for a day's time unless fueled.
 	</sacrifices>
 	<description>
-		Description:
-		Locks day/night time, sand falling, and water flowing for as long as it is fueled. BEWARE: Very high chance of bugs especially with other mods.
+		Description
+		Locks day/night time, sand falling, and water flowing for as long as it is fueled.
+		BEWARE: Very high chance of bugs especially with other mods.
 	</description>
 	<design width="6" height="6" ox="3" oy="2" cx="1" cy="2">
 		0,		200,	200,	200,	200,	0

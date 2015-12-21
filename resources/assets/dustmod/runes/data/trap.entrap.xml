@@ -4,11 +4,11 @@
 	<author>billythegoat101</author>
 	<solid value="false"/>
 	<sacrifices>
-		Sacrifice:
-		-6xIron + 2xRedstone
+		Sacrifice
+		- 6x Iron Ingot + 2x Redstone dust
 	</sacrifices>
 	<description>
-		Description:
+		Description
 		Entraps a single mob or player that walks nearby. Will not entrap the summoner (if not activated by redstone).
 	</description>
 	<design width="6" height="6" ox="3" oy="3" cx="1" cy="1">

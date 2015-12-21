@@ -4,11 +4,11 @@
 	<author>billythegoat101</author>
 	<solid value="false"/>
 	<sacrifices>
-		Sacrifice:
+		Sacrifice
 		- 8x Iron Ingot + 4x XP levels
 	</sacrifices>
 	<description>
-		Description:
+		Description
 		Instantly spawns a farm.
 	</description>
 	<design width="8" height="6" ox="2" oy="3" cx="2" cy="1">

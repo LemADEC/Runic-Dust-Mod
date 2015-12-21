@@ -4,11 +4,11 @@
 	<author>billythegoat101</author>
 	<solid value="false"/>
 	<sacrifices>
-		Sacrifice:
-		- 1x LiveEntity + 1x Egg + 1x Diamond + 10x XP levels
+		Sacrifice
+		- 1x Live Entity + 1x Egg + 1x Diamond + 10x XP levels
 	</sacrifices>
 	<description>
-		Description:
+		Description
 		Drops an egg containing the sacrificed mob.
 	</description>
 	<design width="6" height="7" ox="3" oy="2" cx="1" cy="2">

@@ -4,12 +4,15 @@
 	<author>billythegoat101</author>
 	<solid value="true"/>
 	<sacrifices>
-		Sacrifice:
-		-1xMobEgg + 2xEnderPearl + 10XP
+		Sacrifice
+		- 1x Mob Spawn Egg + 2x Ender Pearl + 10 XP levels
 	</sacrifices>
 	<description>
-		Description:
-		Reassigns a placed spawner to spawn mobs of the specified type. Note:The entity inside won't update visually until you re-log.
+		Description
+		Reassigns a placed spawner to spawn mobs of the specified type.
+
+		Note
+		The entity inside won't update visually until you re-log.
 	</description>
 	<design width="10" height="8" ox="2" oy="2" cx="2" cy="2">
 		0,		0,		300,	0,		0,		300,	0,		0

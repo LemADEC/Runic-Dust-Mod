@@ -26,13 +26,13 @@
 	
 <!-- The text that will appear on the Information page of the tome. -->
 	<sacrifices>
-		Sacrifice:
+		Sacrifice
 		-
 	</sacrifices>
 	
 <!-- The text that will appear on the Description page of the tome. -->
 	<description>
-		Description:
+		Description
 		
 	</description>
 	

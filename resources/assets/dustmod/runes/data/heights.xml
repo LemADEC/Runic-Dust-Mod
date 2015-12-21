@@ -4,15 +4,16 @@
 	<author>billythegoat101</author>
 	<solid value="true"/>
 	<sacrifices>
-		Sacrifice:
-		-1xIronOre
-		Notes:
-		-The obelisk will stay standing for one day waiting for you.
-		-Destroying the top block will cause it to go back down.
-		-If you do not destroy the top block within a day, it will simply remain standing.
+		Sacrifice
+		- 1x Iron Ore
+		
+		Notes
+		- The obelisk will stay standing for one day waiting for you.
+		- Destroying the top block will cause it to go back down.
+		- If you do not destroy the top block within a day, it will simply remain standing.
 	</sacrifices>
 	<description>
-		Description:
+		Description
 		Creates a ride-able pillar to the sky. When it reaches the top, you can destroy the top block to send it back down.
 	</description>
 	<design width="8" height="8" ox="2" oy="2" cx="2" cy="2">

@@ -4,13 +4,13 @@
 	<author>billythegoat101</author>
 	<solid value="false"/>
 	<sacrifices>
-		Sacrifice:
+		Sacrifice
 		- 1x Diamond Pickaxe + 1x Gold Block + 10x XP levels
 		OR
 		- 1x Diamond Shovel + 1x Gold Block + 10x XP levels
 	</sacrifices>
 	<description>
-		Description:
+		Description
 		Enchants and repairs your pick or shovel with Silk Touch I.
 	</description>
 	<design width="8" height="8" ox="2" oy="2" cx="2" cy="2">

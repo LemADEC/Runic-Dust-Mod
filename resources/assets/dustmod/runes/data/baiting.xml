@@ -4,14 +4,15 @@
 	<author>billythegoat101</author>
 	<solid value="false"/>
 	<sacrifices>
-		Sacrifice:
-		- 1x MobEgg + 1x GoldBlock + 5 XP levels
-		Notes:
+		Sacrifice
+		- 1x Mob spawn egg + 1x Gold Block + 5 XP levels
+		
+		Notes
 		- Will last seven days unless fueled.
 		- Will not attract flying mobs, swimming mobs, or slimes.
 	</sacrifices>
 	<description>
-		Description:
+		Description
 		Attracts any mobs with the specified drop type.
 	</description>
 	<design width="6" height="6" ox="3" oy="3" cx="1" cy="1">

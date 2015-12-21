@@ -4,13 +4,13 @@
 	<author>billythegoat101</author>
 	<solid value="false"/>
 	<sacrifices>
-		Sacrifice:
+		Sacrifice
 		- 1x Diamond Ore + 1x Lapis Ore + 1x Redstone Ore + 1x Diamond Pickaxe + 15x XP leves
 		OR
 		- 1x Diamond Ore + 1x Lapis Ore + 1x Redstone Ore + 1x Diamond Sword + 15x XP levels
 	</sacrifices>
 	<description>
-		Description:
+		Description
 		Enchants and repairs your pick or sword with Fortune IV or Looting IV respectively.
 	</description>
 	<design width="10" height="10" ox="1" oy="1" cx="3" cy="3">

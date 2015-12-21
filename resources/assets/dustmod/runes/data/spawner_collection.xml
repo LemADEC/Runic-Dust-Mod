@@ -4,13 +4,14 @@
 	<author>billythegoat101</author>
 	<solid value="false"/>
 	<sacrifices>
-		Sacrifice:
-		-6xGoldIngot + 10XP
+		Sacrifice
+		- 6x Gold Ingot + 10 XP levels
 	</sacrifices>
 	<description>
-		Description:
+		Description
 		Collects a spawner that it is placed around.
-		Note:
+		
+		Note
 		No matter what spawner you collect, it can only ever be placed as a pig spawner. 
 	</description>
 	<design width="8" height="7" ox="2" oy="3" cx="2" cy="3">

@@ -4,14 +4,16 @@
 	<author>billythegoat101</author>
 	<solid value="false"/>
 	<sacrifices>
-		Sacrifice:
-		-1xEnderEye + 5XP
-		Notes:
-		-Takes away 3 hearts upon every teleportation.
+		Sacrifice
+		- 1x Ender Eye + 5 XP levels
+		
+		Notes
+		- Takes away 3 hearts upon every teleportation.
 	</sacrifices>
 	<description>
-		Description:
-		Creates a teleporation network location for other teleportation runes to teleport to. Will cost 4 hearts every teleportation. The teleportation network frequency on which to send you depends on the block beneath the blaze square in the rune design.
+		Description
+		Creates a teleporation network location for other teleportation runes to teleport to. Will cost 3 hearts every teleportation.
+		The teleportation network frequency on which to send you depends on the block beneath the blaze square in the rune design.
 	</description>
 	<design width="10" height="12" ox="1" oy="0" cx="3" cy="8">
 		0,		0,		0,		0,		0,		400,	0,		0,		0,		0

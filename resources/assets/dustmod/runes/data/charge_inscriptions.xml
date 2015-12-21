@@ -4,11 +4,11 @@
 	<author>billythegoat101</author>
 	<solid value="false"/>
 	<sacrifices>
-		Sacrifice:
+		Sacrifice
 		Defined by the inscription.
 	</sacrifices>
 	<description>
-		Description:
+		Description
 		Placing a dried inscription on this rune along with its required sacrifices will imbue it with energy.
 	</description>
 	<design width="10" height="10" ox="1" oy="1" cx="3" cy="3">

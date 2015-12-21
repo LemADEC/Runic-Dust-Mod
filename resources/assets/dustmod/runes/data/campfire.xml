@@ -4,16 +4,17 @@
 	<author>billythegoat101</author>
 	<solid value="true"/>
 	<sacrifices>
-		Sacrifice:
+		Sacrifice
 		- 8x Log + 1x ZombieFlesh
-		Notes:
+		
+		Notes
 		- Lasts a fourth of a day unless fueled.
 	</sacrifices>
 	<description>
-		Description:
+		Description
 		Creates a flame that allows you to smelt items instantly. There is a small chance of getting double of what you throw in.
-		-
-		Items must be thrown in 1 at a time or else they will burn.
+		
+		Items must be thrown in 1 at a time or they will burn.
 	</description>
 	<design width="8" height="8" ox="2" oy="2" cx="2" cy="2">
 		0,		100,	0,		100,	100,	0,		100,	0

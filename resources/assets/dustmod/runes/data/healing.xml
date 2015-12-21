@@ -3,11 +3,11 @@
 	<id value="1" />
 	<solid value="true" />
 	<sacrifices>
-		Sacrifice:
-		-2xCoal + 2XP
+		Sacrifice
+		- 2x Coal + 2 XP levels
 	</sacrifices>
 	<description>
-		Description:
+		Description
 		Heals any nearby entities' hearts with regeneration.
 	</description>
 	<design width="4" height="4" ox="0" oy="0" cx="0" cy="0">

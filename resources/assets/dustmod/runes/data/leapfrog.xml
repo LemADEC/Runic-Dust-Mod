@@ -4,11 +4,11 @@
 	<author>billythegoat101</author>
 	<solid value="false"/>
 	<sacrifices>
-		Sacrifice:
-		-4xLeaves
+		Sacrifice
+		- 4x Leaves
 	</sacrifices>
 	<description>
-		Description:
+		Description
 		Spawns a bridge of lily pads over a body of water in front of it.
 	</description>
 	<design width="6" height="9" ox="3" oy="0" cx="1" cy="4">

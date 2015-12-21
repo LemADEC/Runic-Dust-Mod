@@ -4,11 +4,11 @@
 	<author>billythegoat101</author>
 	<solid value="true"/>
 	<sacrifices>
-		Sacrifice:
-		-4xSoulSand +2xMobDrop
+		Sacrifice
+		- 4x Soul Sand + 2x Mob Drop
 	</sacrifices>
 	<description>
-		Description:
+		Description
 		Spawns a mob of the specified drop type.
 	</description>
 	<design width="6" height="6" ox="3" oy="3" cx="1" cy="1">

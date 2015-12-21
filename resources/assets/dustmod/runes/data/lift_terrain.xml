@@ -4,14 +4,15 @@
 	<author>billythegoat101</author>
 	<solid value="false"/>
 	<sacrifices>
-		Sacrifice:
-		-1xLiveIronGolem + 1xRose + 10XP
-		Notes:
-		-The area you want to lift should be outline with etchings filled with clay blocks.
+		Sacrifice
+		- 1x Live Iron Golem + 1x Rose + 10 XP levels
+		
+		Notes
+		- The area you want to lift should be outlined with etchings filled with clay blocks.
 	</sacrifices>
 	<description>
-		Description:
-		Lifts the earth specified by the clay-filled etchings up high into the sky.The ruts must be connected to the rune.
+		Description
+		Lifts the earth specified by the clay-filled etchings up high into the sky. The ruts must be connected to the rune.
 	</description>
 	<design width="16" height="8" ox="2" oy="2" cx="6" cy="2">
 		0,		0,		0,		0,		0,		300,	200,	200,	200,	200,	300,	0,		0,		0,		0,		0

@@ -4,13 +4,14 @@
 	<author>billythegoat101</author>
 	<solid value="false"/>
 	<sacrifices>
-		Sacrifice:
-		-1xVillagerEgg + 15XP
-		Notes:
-		-Lasts for a day unless fueled.
+		Sacrifice
+		- 1x Villager Egg + 15 XP levels
+		
+		Notes
+		- Lasts for a day unless fueled.
 	</sacrifices>
 	<description>
-		Description:
+		Description
 		Creates a forcefield that will push away all hostile mobs.
 	</description>
 	<design width="12" height="12" ox="0" oy="0" cx="4" cy="4">

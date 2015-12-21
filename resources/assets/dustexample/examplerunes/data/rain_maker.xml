@@ -4,12 +4,13 @@
 	<author>billythegoat101 (Demonstrations pack)</author>
 	<solid value="false"/>
 	<sacrifices>
-		Sacrifice:
-		-2xHearts per rain change
+		Sacrifice
+		- 2x Hearts per rain change
 	</sacrifices>
-	<description>Description:
+	<description>Description
 		Right click the rune to toggle rainfall.
-		Demonstrates:
+		
+		Demonstrates
 		Right-clicking, health sacrifices</description>
 	<design width="4" height="4" ox="0" oy="0" cx="0" cy="0">
 		350,	350,	350,	300

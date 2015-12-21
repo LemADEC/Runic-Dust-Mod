@@ -4,11 +4,11 @@
 	<author>billythegoat101</author>
 	<solid value="true"/>
 	<sacrifices>
-		Sacrifice:
-		-4xNetherwart + 1xLapisLazuli
+		Sacrifice
+		- 4x Netherwart + 1x Lapis Lazuli
 	</sacrifices>
 	<description>
-		Description:
+		Description
 		Turns day into night. If it is already night, it will wait until the next day to activate.
 	</description>
 	<design width="4" height="4" ox="0" oy="0" cx="0" cy="0">

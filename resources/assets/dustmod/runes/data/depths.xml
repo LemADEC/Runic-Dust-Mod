@@ -4,14 +4,15 @@
 	<author>billythegoat101</author>
 	<solid value="true"/>
 	<sacrifices>
-		Sacrifice:
+		Sacrifice
 		- 2x Log at Plant &amp; Gunpowder levels
-		- 2x Coal at Lapis &amp; Blaze levels.
-		Notes:
+		- 2x Coal at Lapis &amp; Blaze levels
+		
+		Notes
 		- Requires hole in the center.
 	</sacrifices>
 	<description>
-		Description:
+		Description
 		Digs a pit down into the earth. Requires a hole at the center of the rune (1 block down).
 	</description>
 	<design width="8" height="8" ox="2" oy="2" cx="2" cy="2">

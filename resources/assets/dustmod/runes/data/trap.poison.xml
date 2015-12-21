@@ -4,13 +4,14 @@
 	<author>billythegoat101</author>
 	<solid value="true"/>
 	<sacrifices>
-		Sacrifice:
-		-1xSpiderEye
-		Notes:
-		-Dust must be gunpowder or better.
+		Sacrifice
+		- 1x Spider Eye
+		
+		Notes
+		- Dust must be gunpowder or better.
 	</sacrifices>
 	<description>
-		Description:
+		Description
 		Poisons entities when an entity comes near.
 	</description>
 	<design width="6" height="6" ox="3" oy="3" cx="1" cy="1">

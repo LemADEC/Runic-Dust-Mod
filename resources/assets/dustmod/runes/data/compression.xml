@@ -4,13 +4,14 @@
 	<author>billythegoat101</author>
 	<solid value="false"/>
 	<sacrifices>
-		Sacrifice:
-		- 32x Coal + 1x IronBlock
-		Notes:
+		Sacrifice
+		- 32x Coal + 1x Iron Block
+		
+		Notes
 		- Every 32 Coal will yield a diamond.
 	</sacrifices>
 	<description>
-		Description:
+		Description
 		Turns 32 coals into a single diamond.
 	</description>
 	<design width="6" height="6" ox="3" oy="3" cx="1" cy="1">

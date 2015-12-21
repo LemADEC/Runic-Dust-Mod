@@ -4,11 +4,11 @@
 	<author>billythegoat101</author>
 	<solid value="false"/>
 	<sacrifices>
-		Sacrifice:
-		- 9x FireCharge + 1x Bow + 1x GoldBlock + 5x XP levels
+		Sacrifice
+		- 9x FireCharge + 1x Bow + 1x Gold Block + 5x XP levels
 	</sacrifices>
 	<description>
-		Description:
+		Description
 		Enchants and repairs your bow with Fire Aspect I
 	</description>
 	<design width="6" height="6" ox="3" oy="3" cx="1" cy="1">

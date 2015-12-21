@@ -4,19 +4,19 @@
 	<author>billythegoat101</author>
 	<solid value="true"/>
 	<sacrifices>
-		Sacrifice:
-		-2xHunger.
-		Notes:
-		-Variable determines the volume of the den.
-		-Stepping on the rune will send you down.
-		-Standing directly below and crouching will send you back up.
+		Sacrifice
+		- 2x Hunger
+		
+		Notes
+		- Variable determines the volume of the den.
+		- Stepping on the rune will send you down.
+		- Standing directly below and crouching will send you back up.
 	</sacrifices>
 	<description>
-		Description:
-		Creates a small hole beneath the rune and allows you to jump
-		inside for safety. Walking over the top will send you down to
-		the next solid block below the rune. Pressing [crouch] while
-		directly beneath the rune will bring you back up.
+		Description
+		Creates a small hole beneath the rune and allows you to jump inside for safety.
+		Walking over the top will send you down to the next solid block below the rune.
+		Pressing [crouch] while directly beneath the rune will bring you back up.
 	</description>
 	<design width="4" height="4" ox="0" oy="0" cx="0" cy="0">
 		-1,		-1,		0,		0

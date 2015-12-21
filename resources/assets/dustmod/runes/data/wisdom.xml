@@ -4,15 +4,16 @@
 	<author>billythegoat101</author>
 	<solid value="false"/>
 	<sacrifices>
-		Sacrifice:
-		-16xIronIngot + 6XP
-		Notes:
-		-Right-clicking will give you back your XP and pause the rune for a short time.
-		-While the rune is paused, it will glow yellow and not absorb any XP.
-		-Not accessible by other players.
+		Sacrifice
+		- 16x Iron Ingots + 6 XP levels
+		
+		Notes
+		- Right-clicking will give you back your XP and pause the rune for a short time.
+		- While the rune is paused, it will glow yellow and not absorb any XP.
+		- Not accessible by other players.
 	</sacrifices>
 	<description>
-		Description:
+		Description
 		Stores all XP. When you walk over it it will take all your levels. It will also store any XP orbs dropped onto it. Not useable by other players.
 	</description>
 	<design width="6" height="6" ox="3" oy="3" cx="1" cy="1">

@@ -4,13 +4,14 @@
 	<author>billythegoat101</author>
 	<solid value="true"/>
 	<sacrifices>
-		Sacrifice:
-		-3xIronIngot
-		Notes:
-		-Dust must be gunpowder or better.
+		Sacrifice
+		- 3x Iron Ingot
+		
+		Notes
+		- Dust must be gunpowder or better.
 	</sacrifices>
 	<description>
-		Description:
+		Description
 		Zaps entities with lightning when an entity comes near.
 	</description>
 	<design width="4" height="4" ox="0" oy="0" cx="0" cy="0">

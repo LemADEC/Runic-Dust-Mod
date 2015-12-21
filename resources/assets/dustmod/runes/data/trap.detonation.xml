@@ -4,16 +4,17 @@
 	<author>billythegoat101</author>
 	<solid value="false"/>
 	<sacrifices>
-		Sacrifice:
-		-2xGunpowder
-		Notes:
-		-Center determines strength.
-		-Fuse determines triggering.
-		-If fuse is made out of plant runic dust, it will wait for a mob to trigger.
-		-Otherwise, the time until deonation will depend on the dust strength.
+		Sacrifice
+		- 2x Gunpowder
+		
+		Notes
+		- Center determines strength.
+		- Fuse determines triggering.
+		- If fuse is made out of plant runic dust, it will wait for a mob to trigger.
+		- Otherwise, the time until deonation will depend on the dust strength.
 	</sacrifices>
 	<description>
-		Description:
+		Description
 		Creates a variable-sized explosion when triggered by an entity or by time. Center determines the strength, fuse deteremines the triggering. If fuse is made out of plant runic dust, it will wait for a mob to trigger. Otherwise, the time until deonation will depend on the dust strength.
 	</description>
 	<design width="5" height="6" ox="0" oy="2" cx="0" cy="2">
