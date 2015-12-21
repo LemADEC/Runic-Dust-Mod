@@ -3,7 +3,6 @@ package dustmod.dusts;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
 import dustmod.DustMod;
 import dustmod.items.ItemInk;
 
@@ -48,17 +47,11 @@ public class DustManager {
 		
 		remoteDusts[value] = dust;
 
-		LanguageRegistry.instance().addStringLocalization("tile.dust." + dust.getId() + ".name", "en_US", dust.getName() + " Runic Dust");
-		LanguageRegistry.instance().addStringLocalization("tile.ink." + dust.getId() + ".name", "en_US", dust.getName() + " Runic Ink");
-		LanguageRegistry.instance().addStringLocalization("pouch." + dust.getId() + ".name", "en_US", dust.getName() + " Dust Pouch");
-
 		GameRegistry.addShapelessRecipe(ItemInk.getInk(value), new Object[] { new ItemStack(Items.potionitem, 1, 0), new ItemStack(DustMod.idust, 1, value), Items.ghast_tear });
 		GameRegistry.addShapelessRecipe(ItemInk.getInk(value), new Object[] { new ItemStack(Items.potionitem, 1, 0), new ItemStack(DustMod.pouch, 1, value * 2 + 1), Items.ghast_tear });
 
 		ItemStack craft = new ItemStack(DustMod.pouch, 1, value * 2);
 		GameRegistry.addRecipe(craft, new Object[] { " s ", "ldl", " l ", 's', new ItemStack(Items.string, 1), 'd', new ItemStack(DustMod.idust, 1, value), 'l', new ItemStack(Items.leather, 1) });
-		// GameRegistry.addShapelessRecipe(craft, new Object[]{craft, new
-		// ItemStack(DustMod.idust,1,value)});
 		GameRegistry.addShapelessRecipe(new ItemStack(DustMod.idust, 1, value), new ItemStack(DustMod.pouch, 1, value * 2 + 1));
 	}
 	
