@@ -5,10 +5,10 @@
 	<solid value="false"/>
 	<sacrifices>
 		Sacrifice:
-		-1xMobEgg + 1xGoldBlock + 5XP
+		- 1x MobEgg + 1x GoldBlock + 5 XP levels
 		Notes:
-		-Will last seven days unless fueled.
-		Will not attract flying mobs, swimming mobs, or slimes.
+		- Will last seven days unless fueled.
+		- Will not attract flying mobs, swimming mobs, or slimes.
 	</sacrifices>
 	<description>
 		Description:

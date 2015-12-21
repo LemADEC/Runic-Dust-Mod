@@ -171,48 +171,29 @@ public class RuneShape {
 		return this;
 	}
 
+	private static String ALLOWED_VARIABLE_DUSTS_HEADER = "\n\nAllowed variable dusts:\n";
 	/**
 	 * Set the text for the description page in the Tome
 	 * 
-	 * @param n
+	 * @param rawString
 	 *            Raw string to display
 	 * @return This DustShape
 	 */
-	public RuneShape setDesc(String d) {
-		this.desc = d;
+	public RuneShape setDesc(String rawString) {
+		this.desc = rawString;
 		if (!allowedVariable.isEmpty()) {
-			desc += "\n----\nAllowed Variable Dusts:\n";
+			desc += ALLOWED_VARIABLE_DUSTS_HEADER;
 			for (int i : allowedVariable) {
-				desc += DustManager.getName(i) + "\n";
+				desc += ((i != 0) ? ", " : "") + DustManager.getName(i);
 			}
 		}
 		return this;
 	}
 
-	/**
-	 * Add dust values to the allowed variable dust list. If this function is
-	 * never called (and the allowedVariable list is empty) then all dust's are
-	 * allowed;
-	 * 
-	 * @param dustValue
-	 *            Value to allow
-	 * @return This DustShape for convenience
-	 */
-	public RuneShape addAllowedVariable(int... dustValue) {
-		for (int i : dustValue)
-			allowedVariable.add(i);
-
-		if (desc.contains("\n----\nAllowed Variable Dusts:\n")) {
-			setDesc(desc.substring(0, desc.indexOf("\n----\nAllowed Variable Dusts:\n")));
-		}
-
-		return this;
-	}
-
 	public RuneShape addAllowedVariable(ArrayList<Integer> values) {
 		allowedVariable.addAll(values);
-		if (desc.contains("\n----\nAllowed Variable Dusts:\n")) {
-			setDesc(desc.substring(0, desc.indexOf("\n----\nAllowed Variable Dusts:\n")));
+		if (desc.contains(ALLOWED_VARIABLE_DUSTS_HEADER)) {
+			setDesc(desc.substring(0, desc.indexOf(ALLOWED_VARIABLE_DUSTS_HEADER)));
 		}
 		return this;
 	}
@@ -515,7 +496,7 @@ public class RuneShape {
 
 		for (ItemStack is : player.inventory.mainInventory) {
 			if (is != null) {
-				if (is.getItem() == DustMod.idust) {
+				if (is.getItem() == DustMod.itemDust) {
 					pDustAmount[is.getItemDamage()] += is.stackSize;
 				} else if (is.getItem() == DustMod.pouch) {
 					int dustID = ItemPouch.getValue(is);
@@ -621,7 +602,7 @@ public class RuneShape {
 					ItemStack is = player.inventory.mainInventory[sind];
 
 					if (is != null && reduceDustAmount[id] > 0) {
-						if (is.getItem() == DustMod.idust && is.getItemDamage() == id) {
+						if (is.getItem() == DustMod.itemDust && is.getItemDamage() == id) {
 							while (reduceDustAmount[id] > 0 && is.stackSize > 0) {
 								is.stackSize--;
 
@@ -719,7 +700,7 @@ public class RuneShape {
 
 		for (ItemStack is : player.inventory.mainInventory) {
 			if (is != null) {
-				if (is.getItem() == DustMod.idust) {
+				if (is.getItem() == DustMod.itemDust) {
 					pDustAmount[is.getItemDamage()] += is.stackSize;
 				} else if (is.getItem() == DustMod.pouch) {
 					int dustID = ItemPouch.getValue(is);
@@ -833,7 +814,7 @@ public class RuneShape {
 					ItemStack is = player.inventory.mainInventory[sind];
 
 					if (is != null && reduceDustAmount[id] > 0) {
-						if (is.getItem() == DustMod.idust && is.getItemDamage() == id) {
+						if (is.getItem() == DustMod.itemDust && is.getItemDamage() == id) {
 							while (reduceDustAmount[id] > 0 && is.stackSize > 0) {
 								is.stackSize--;
 

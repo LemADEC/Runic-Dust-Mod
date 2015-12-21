@@ -12,7 +12,8 @@
 	<description>
 		Description:
 		Summons a sprite which follows the player and freezes the surface of liquids. Water turns to ice and lava turns to obsidian.
-		Demonstrates: Item sacrifices, XP Sacrifices, Powered runes, Pausing, and Following sprites.
+		Demonstrates:
+		Item sacrifices, XP Sacrifices, Powered runes, Pausing, and Following sprites.
 	</description>
 	<design width="10" height="10" ox="1" oy="1" cx="3" cy="3">
 		0,		0,		0,		200,	0,		0,		200,	0,		0,		0

@@ -10,14 +10,9 @@
 	<description>
 		Description:
 		Constantly damages all entities (that aren't the summoning player) within range.Amount of damage depends on the variable dust.
-		Demonstrates: Identifying the rune creator, Powered runes, Pausing powered runes, Basic AOE effects.
-		----
-		Allowed Variable Dusts:
-		Plant
-		Gunpowder
-		Lapis
-		Glowing Runic Dust
-		Blaze
+		Demonstrates:
+		Identifying the rune creator, Powered runes, Pausing powered runes, Basic AOE effects.
+		
 	</description>
 	<design width="8" height="8" ox="2" oy="2" cx="2" cy="2">
 		0,		0,		0,		400,	400,	0,		0,		0

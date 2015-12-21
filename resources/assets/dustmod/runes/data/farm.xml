@@ -5,17 +5,11 @@
 	<solid value="false"/>
 	<sacrifices>
 		Sacrifice:
-		-8xIronIngot + 4XP
+		- 8x Iron Ingot + 4x XP levels
 	</sacrifices>
 	<description>
 		Description:
 		Instantly spawns a farm.
-		----
-		Allowed Variable Dusts:
-		Plant
-		Gunpowder
-		Lapis
-		Blaze
 	</description>
 	<design width="8" height="6" ox="2" oy="3" cx="2" cy="1">
 		0,		100,	100,	0,		0,		100,	100,	0

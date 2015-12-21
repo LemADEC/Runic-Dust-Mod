@@ -33,13 +33,7 @@
 <!-- The text that will appear on the Description page of the tome. -->
 	<description>
 		Description:
-		----
-		Allowed Variable Dusts:
-		Plant
-		Gunpowder
-		Lapis
-		Glowing Runic Dust
-		Blaze
+		
 	</description>
 	
 <!-- 

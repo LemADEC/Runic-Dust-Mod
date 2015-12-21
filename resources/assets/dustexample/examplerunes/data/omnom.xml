@@ -31,11 +31,10 @@
 	</sacrifices>
 	
 <!-- The text that will appear on the Description page of the tome. -->
-	<description>
-		Description:
+	<description>Description:
 		Creates a rune that sucks in items and puts them in a chest.
-		Demonstrates: Item,XP,Hunger Sacrifices, and what happens after you die. 
-	</description>
+		Demonstrates:
+		Item, XP, Hunger Sacrifices, and what happens after you die.</description>
 	
 <!-- 
 	Design of the rune. The numbers correspond to what dusts

@@ -5,9 +5,9 @@
 	<solid value="true"/>
 	<sacrifices>
 		Sacrifice:
-		-4xRedstoneDust + 1LapisLazuli
+		- 4x Redstone dust + 1x Lapis Lazuli
 		Notes:
-		-If it is already day, it will last through to the next night night to do anything.
+		- If it is already day, it will last through to the next night night to do anything.
 	</sacrifices>
 	<description>
 		Description:
