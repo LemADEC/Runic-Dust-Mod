@@ -622,7 +622,7 @@ public class RuneShape {
 		for (int slot = 0; slot < inv.getSizeInventory(); slot++) {
 			inv.getStackInSlot(slot);
 		}
-		player.inventory.inventoryChanged = true;
+		// TODO: force player's inventory refresh
 		
 		updateData();
 		return true;
@@ -820,9 +820,9 @@ public class RuneShape {
 							int did = ItemPouch.getValue(itemStack);
 							if (did == dustId) {
 								while (reduceDustAmount[dustId] > 0 && ItemPouch.getDustAmount(itemStack) > 0) {
-									ItemPouch.subtractDust(itemStack, 1);
-									
-									reduceDustAmount[dustId]--;
+									if (ItemPouch.subtractDust(itemStack, 1)) {
+										reduceDustAmount[dustId]--;
+									}
 								}
 							}
 						}
@@ -830,7 +830,7 @@ public class RuneShape {
 				}
 			}
 		}
-		player.inventory.inventoryChanged = true;
+		// TODO: force player's inventory refresh
 		
 		updateData();
 		return true;
