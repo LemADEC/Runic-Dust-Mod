@@ -277,52 +277,51 @@ public class RuneShape {
 
 	/**
 	 * 
-	 * @param d
-	 * @return -1: no match, 0: match but incomplete, 1:complete match
+	 * @param map
+	 * @return -1: no match, 0 to 3: match against that direction
 	 */
-	public boolean dataMatches(int[][] d) {
-		int w = d.length;
-		int l = d[0].length;
+	public int dataMatches(int[][] map) {
+		int w = map.length;
+		int l = map[0].length;
 		
 		if ((w != width || l != length) && (w != length || l != width)) {
-			return false;
+			return -1;
 		}
 		
-		boolean checkAllRotations = false;
-		
+		boolean checkAllRotations = (w == l) || true;
+		int rotationOffset = 0;
+		/*
 		if (w != width) {
-			d = rotateMatrixLeft(d);
-			w = d.length;
-			l = d[0].length;
-		} else if (w == l) {
-			checkAllRotations = true;
+			map = rotateMatrixLeft(map);
+			rotationOffset = 1;
+			checkAllRotations = false;
+		}/**/
+		
+		if (dataMatches(map, 0, 0, 0)) {
+			return checkSolid(map) ? (rotationOffset + 2) : -1;
 		}
 		
-		if (dataMatches(d, 0, 0, 0)) {
-			return checkSolid(d);
-		}
+		map = flipMatrixXY(map);
 		
-		d = flipMatrixXY(d);
-		
-		if (dataMatches(d, 0, 0, 0)) {
-			return checkSolid(d);
+		if (dataMatches(map, 0, 0, 0)) {
+			return checkSolid(map) ? (rotationOffset + 0) : -1;
 		}
 		
 		if (checkAllRotations) {
-			d = rotateMatrixLeft(d);
+			map = rotateMatrixLeft(map);
 			
-			if (dataMatches(d, 0, 0, 0)) {
-				return checkSolid(d);
+			if (dataMatches(map, 0, 0, 0)) {
+				return checkSolid(map) ? (rotationOffset + 1) : -1;
 			}
 			
-			d = flipMatrixXY(d);
+			map = flipMatrixXY(map);
 			
-			if (dataMatches(d, 0, 0, 0)) {
-				return checkSolid(d);
+			if (dataMatches(map, 0, 0, 0)) {
+				return checkSolid(map) ? ((rotationOffset + 3) % 4) : -1;
 			}
 		}
 
-		return false;
+		return -1;
 	}
 	
 	public boolean checkSolid(int[][] d) {
@@ -366,72 +365,72 @@ public class RuneShape {
 	}
 
 	// Rotates the matrix counterclockwise
-	public static int[][] rotateMatrixLeft(int[][] mat) {
-		int width = mat.length;
-		int height = mat[0].length;
-		int[][] rtn = new int[height][width];
+	public static int[][] rotateMatrixLeft(int[][] matrixIn) {
+		int width = matrixIn.length;
+		int height = matrixIn[0].length;
+		int[][] matrixOut = new int[height][width];
 
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
-				rtn[y][width - 1 - x] = mat[x][y];
+				matrixOut[y][width - 1 - x] = matrixIn[x][y];
 			}
 		}
 
-		return rtn;
+		return matrixOut;
 	}
 	
 	// Rotates the matrix clockwise
-	public static int[][] rotateMatrixRight(int[][] mat) {
-		int width = mat.length;
-		int height = mat[0].length;
-		int[][] rtn = new int[height][width];
+	public static int[][] rotateMatrixRight(int[][] matrixIn) {
+		int width = matrixIn.length;
+		int height = matrixIn[0].length;
+		int[][] matrixOut = new int[height][width];
 
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
-				rtn[height - 1 - y][x] = mat[x][y];
+				matrixOut[height - 1 - y][x] = matrixIn[x][y];
 			}
 		}
 
-		return rtn;
+		return matrixOut;
 	}
 
-	public static int[][] flipMatrixX(int[][] mat) {
-		int width = mat.length;
-		int height = mat[0].length;
-		int[][] rtn = new int[width][height];
+	public static int[][] flipMatrixX(int[][] matrixIn) {
+		int width = matrixIn.length;
+		int height = matrixIn[0].length;
+		int[][] matrixOut = new int[width][height];
 
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
-				rtn[width - 1 - x][y] = mat[x][y];
+				matrixOut[width - 1 - x][y] = matrixIn[x][y];
 			}
 		}
-		return rtn;
-	}
-	
-	public static int[][] flipMatrixY(int[][] mat) {
-		int width = mat.length;
-		int height = mat[0].length;
-		int[][] rtn = new int[width][height];
-
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
-				rtn[x][height - 1 - y] = mat[x][y];
-			}
-		}
-		return rtn;
+		return matrixOut;
 	}
 	
-	public static int[][] flipMatrixXY(int[][] mat) {
-		int width = mat.length;
-		int height = mat[0].length;
-		int[][] rtn = new int[width][height];
+	public static int[][] flipMatrixY(int[][] matrixIn) {
+		int width = matrixIn.length;
+		int height = matrixIn[0].length;
+		int[][] matrixOut = new int[width][height];
 
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
-				rtn[width - 1 - x][height - 1 - y] = mat[x][y];
+				matrixOut[x][height - 1 - y] = matrixIn[x][y];
 			}
 		}
-		return rtn;
+		return matrixOut;
+	}
+	
+	public static int[][] flipMatrixXY(int[][] matrixIn) {
+		int width = matrixIn.length;
+		int height = matrixIn[0].length;
+		int[][] matrixOut = new int[width][height];
+
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				matrixOut[width - 1 - x][height - 1 - y] = matrixIn[x][y];
+			}
+		}
+		return matrixOut;
 	}
 	
 	public boolean drawOnWorldWhole(World world, int x, int y, int z, EntityPlayer player, int rotation) {

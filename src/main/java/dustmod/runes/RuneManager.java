@@ -57,7 +57,7 @@ public class RuneManager
         return events;
     }
     
-    public static EntityRune initiate(RuneShape shape, String name, double x, double y, double z, World world, List<Integer[]> points, int[][] map, UUID playerId, int rot)
+    public static EntityRune initiate(RuneShape shape, String name, double x, double y, double z, World world, List<Integer[]> points, int[][] map, UUID playerId, int runeRotation)
     {
         RuneEvent evt = events.get(name);
 
@@ -74,13 +74,13 @@ public class RuneManager
 //        result.posY = y-0.8;//EntityDust.yOffset;
 //        result.posZ = z;
 //        result.dustPoints = points;
-        for(int i = 0; i < rot; i++){
+        for(int i = 0; i < runeRotation; i++){
         	map = RuneShape.rotateMatrixLeft(map);
         }
         result.dusts = map;
-        result.runeWidth = map[0].length/4;
-        result.runeLength = map.length/4;
-        result.rot = rot;
+        result.runeWidth = map[0].length / 4;
+        result.runeLength = map.length / 4;
+        result.runeRotation = runeRotation;
         result.setSummonerId(playerId);
 
         for (Integer[] pos: points)
@@ -269,7 +269,6 @@ public class RuneManager
 	 *            by redstone.
 	 */
 	public static void callShape(World world, double i, double j, double k, int[][] map, List<Integer[]> points, EntityPlayer entityPlayer) {
-		RuneShape found = null;
 		// trim shape
 		int shapeMinX = map.length;
 		int shapeMinZ = map[0].length;
@@ -322,10 +321,10 @@ public class RuneManager
 			}
 		}
 
+		// check for variable dusts
 		for (int[] a : trim) {
 			for (int b : a) {
 				if (b == -2) {
-
 					for (Integer[] point : points) {
 						Block block = world.getBlock(point[0], point[1], point[2]);
 
@@ -339,23 +338,23 @@ public class RuneManager
 				}
 			}
 		}
-
-		int rot = 0;
 		
 		// DustMod.logger.info("Trim: {}", Arrays.deepToString(trim));
 
-		for (int iter = 0; iter < RuneManager.shapes.size(); iter++) {
-			RuneShape s = RuneManager.shapes.get(iter);
-
-			if (s.dataMatches(trim)) {
-				found = s;
+		// identify the rune shape
+		RuneShape found = null;
+		int shapeRotation = 0;
+		for (RuneShape runeShape : RuneManager.shapes) {
+			shapeRotation = runeShape.dataMatches(trim); 
+			if (shapeRotation != -1) {
+				found = runeShape;
 				break;
 			}
 		}
 
 		if (found != null) {
 			DustMod.logger.info("Rune triggered at {}, {}, {}: {}", (int)i, (int)j, (int)k, found.name);
-			RuneManager.initiate(found, found.name, i, j, k, world, points, trim, (entityPlayer == null) ? null : entityPlayer.getGameProfile().getId(), rot);
+			RuneManager.initiate(found, found.name, i, j, k, world, points, trim, (entityPlayer == null) ? null : entityPlayer.getGameProfile().getId(), shapeRotation);
 		} else {
 
 			for (Integer[] p : points) {
