@@ -7,7 +7,6 @@ package dustmod.defaults.runes;
 import java.util.HashMap;
 import java.util.List;
 
-import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityList;
@@ -16,7 +15,6 @@ import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import dustmod.runes.EntityRune;
 import dustmod.runes.PoweredEvent;
@@ -31,58 +29,58 @@ public class REBait extends PoweredEvent {
 	}
 	
 	@Override
-	public void initGraphics(EntityRune e) {
-		super.initGraphics(e);
+	public void initGraphics(EntityRune entityRune) {
+		super.initGraphics(entityRune);
 		
-		e.setRenderStar(true);
-		e.setStarScale(1.005F);
-		e.setColorStarOuter(255, 1, 1);
+		entityRune.setRenderStar(true);
+		entityRune.setStarScale(1.005F);
+		entityRune.setColorStarOuter(255, 1, 1);
 		
 	}
 	
 	@Override
-	public void onInit(EntityRune e) {
-		super.onInit(e);
+	public void onInit(EntityRune entityRune) {
+		super.onInit(entityRune);
 		int entClass = -1;
-		List l = getEntities(e);
+		List<Entity> entities = getEntities(entityRune);
 		
-		for (Object o : l) {
-			if (o instanceof EntityItem) {
-				EntityItem ei = (EntityItem) o;
-				ItemStack item = ei.getEntityItem();
+		for (Entity entity : entities) {
+			if (entity instanceof EntityItem) {
+				EntityItem entityItem = (EntityItem) entity;
+				ItemStack item = entityItem.getEntityItem();
 				
 				if (item.getItem() == Items.spawn_egg) {
 					entClass = item.getItemDamage();
 					item.stackSize--;
 					
 					if (item.stackSize <= 0) {
-						ei.setDead();
+						entityItem.setDead();
 					}
 				}
-				ei.setEntityItemStack(item);
+				entityItem.setEntityItemStack(item);
 			}
 		}
 		
 		ItemStack[] req = new ItemStack[] { new ItemStack(Blocks.gold_block, 1) };
-		req = this.sacrifice(e, req);
+		req = this.sacrifice(entityRune, req);
 		
-		if (!checkSacrifice(req) || entClass == -1 || !takeXP(e, 5)) {
-			e.fizzle();
+		if (!checkSacrifice(req) || entClass == -1 || !takeXP(entityRune, 5)) {
+			entityRune.fizzle();
 			return;
 		}
 		
-		e.data[0] = entClass;
-		e.setStarScale(1.005F);
-		e.setColorStarOuter(255, 1, 1);
+		entityRune.data[0] = entClass;
+		entityRune.setStarScale(1.005F);
+		entityRune.setColorStarOuter(255, 1, 1);
 	}
 	
 	@Override
-	public void onTick(EntityRune e) {
-		super.onTick(e);
-		List<Entity> bait = getEntities(e, 16D);
+	public void onTick(EntityRune entityRune) {
+		super.onTick(entityRune);
+		List<Entity> bait = getEntities(entityRune, 16D);
 		
 		for (Entity k : bait) {
-			if (k instanceof EntityCreature && EntityList.getEntityID(k) == e.data[0]) {
+			if (k instanceof EntityCreature && EntityList.getEntityID(k) == entityRune.data[0]) {
 				EntityCreature el = (EntityCreature)k;
 
 //                System.out.println("Found entity " + mod_DustMod.isAIEnabled(el));
@@ -115,8 +113,8 @@ public class REBait extends PoweredEvent {
 				EntityAITasks tasks = el.tasks;
 				List taskList = tasks.taskEntries;
 				boolean hasTaskAlready = false;
-				for (Object o : taskList) {
-					EntityAIBase task = (EntityAIBase) o;
+				for (Object object : taskList) {
+					EntityAIBase task = (EntityAIBase) object;
 					if (task.getClass() == EntityAIRuneFollowBaitRune.class) {
 						hasTaskAlready = true;
 						break;

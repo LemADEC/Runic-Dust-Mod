@@ -30,11 +30,10 @@ public class REFireBowEnch extends RuneEvent {
 		e.setRenderBeam(true);
 		e.setColorStarOuter(0, 0, 255);
 		e.setColorBeam(0, 0, 255);
-		
 	}
 	
 	@Override
-	public void onInit(EntityRune e) {
+	public void onInit(EntityRune entityRune) {
 		//        List<EntityItem> sacrifice = getSacrifice(e);
 		//        int item = Item.bow.itemID;
 		//        for(EntityItem i:sacrifice){
@@ -46,35 +45,32 @@ public class REFireBowEnch extends RuneEvent {
 		//            }
 		//        }
 		//        int gold = ((item == Item.pickaxeDiamond.itemID) ? Item.pickaxeGold.itemID:Item.shovelGold.itemID);
-		ItemStack[] req = this.sacrifice(e, new ItemStack[] { new ItemStack(Items.bow, 1, 0), new ItemStack(Blocks.gold_block, 1, 0), new ItemStack(Items.fire_charge, 9) });
+		ItemStack[] req = this.sacrifice(entityRune, new ItemStack[] { new ItemStack(Items.bow, 1, 0), new ItemStack(Blocks.gold_block, 1, 0), new ItemStack(Items.fire_charge, 9) });
 		
-		if (!checkSacrifice(req) || !takeXP(e, 30)) {
-			e.fizzle();
+		if (!checkSacrifice(req) || !takeXP(entityRune, 30)) {
+			entityRune.fizzle();
 			return;
 		}
 		
-		e.setRenderStar(true);
-		e.setRenderBeam(true);
-		e.setColorStarOuter(0, 0, 255);
-		e.setColorBeam(0, 0, 255);
+		entityRune.setRenderStar(true);
+		entityRune.setRenderBeam(true);
+		entityRune.setColorStarOuter(0, 0, 255);
+		entityRune.setColorBeam(0, 0, 255);
 	}
 	
 	@Override
-	public void onTick(EntityRune e) {
-		e.setStarScale(e.getStarScale() + 0.001F);
+	public void onTick(EntityRune entityRune) {
+		entityRune.setStarScale(entityRune.getStarScale() + 0.001F);
 		
-		if (e.ticksExisted > 20) {
-			Entity en = null;
+		if (entityRune.ticksExisted > 20) {
 			ItemStack create = new ItemStack(Items.bow, 1, 0);
 			create.addEnchantment(Enchantment.flame, 1);
-			en = new EntityItem(e.worldObj, e.posX, e.posY - EntityRune.yOffset, e.posZ, create);
+			Entity entityItem = new EntityItem(entityRune.worldObj, entityRune.posX, entityRune.posY - entityRune.yOffset, entityRune.posZ, create);
 			
-			if (en != null) {
-				en.setPosition(e.posX, e.posY, e.posZ);
-				e.worldObj.spawnEntityInWorld(en);
-			}
+			entityItem.setPosition(entityRune.posX, entityRune.posY, entityRune.posZ);
+			entityRune.worldObj.spawnEntityInWorld(entityItem);
 			
-			e.fade();
+			entityRune.fade();
 		}
 	}
 }

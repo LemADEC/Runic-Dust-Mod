@@ -17,91 +17,74 @@ import dustmod.runes.EntityRune;
  *
  * @author billythegoat101
  */
-public class REVoid extends RuneEvent
-{
-    public REVoid()
-    {
-        super();
-    }
+public class REVoid extends RuneEvent {
+	public REVoid() {
+		super();
+	}
 	
 	@Override
-    public void initGraphics(EntityRune e){
-    	super.initGraphics(e);
-
-		e.setRenderStar(true);
-        e.setColorStarInner(255, 0, 255);
-        e.setColorStarOuter(255, 0, 255);
+	public void initGraphics(EntityRune entityRune) {
+		super.initGraphics(entityRune);
 		
-    }
-
-    public void onInit(EntityRune e)
-    {
-        if (!this.takeXP(e, 3))
-        {
-            e.fizzle();
-            return;
-        }
-
-		e.setRenderStar(true);
-        e.setColorStarInner(255, 0, 255);
-        e.setColorStarOuter(255, 0, 255);
-        List<EntityItem> sacrifice = this.getItems(e);
-
-        if (sacrifice == null || sacrifice.isEmpty())
-        {
-        	e.setStarScale(1.02F);
-            e.data[0] = 1;
-        }
-        else
-        {
-            for (EntityItem i: sacrifice)
-            {
-            	VoidStorageManager.addItemToVoidInventory(e, i.getEntityItem());
-                i.setDead();
-            }
-
-            VoidStorageManager.updateVoidInventory();
-            e.data[0] = 0;
-        }
-    }
-
-    public void onTick(EntityRune e)
-    {
-        if (e.data[0] == 1)
-        {
-            if (e.ticksExisted > 100)
-            {
-                e.fade();
-                ArrayList<ItemStack> list = VoidStorageManager.getVoidInventory(e);
-                if(list == null) return;
-                for (ItemStack i: list)
-                {
-                    Entity en = null;
-                    en = new EntityItem(e.worldObj, e.posX, e.posY - EntityRune.yOffset, e.posZ, i);
-
-                    if (en != null)
-                    {
-                        en.setPosition(e.posX, e.posY, e.posZ);
-                        e.worldObj.spawnEntityInWorld(en);
-                    }
-                }
-
-                VoidStorageManager.clearVoidInventory(e);
-                VoidStorageManager.updateVoidInventory();
-            }
-        }
-        else
-        {
-            if (e.ticksExisted > 35)
-            {
-                e.ticksExisted += 3;
-                e.setStarScale(e.getStarScale() - 0.001F);
-            }
-
-            if (e.ticksExisted > 100)
-            {
-                e.kill();
-            }
-        }
-    }
+		entityRune.setRenderStar(true);
+		entityRune.setColorStarInner(255, 0, 255);
+		entityRune.setColorStarOuter(255, 0, 255);
+	}
+	
+	@Override
+	public void onInit(EntityRune entityRune) {
+		if (!this.takeXP(entityRune, 3)) {
+			entityRune.fizzle();
+			return;
+		}
+		
+		entityRune.setRenderStar(true);
+		entityRune.setColorStarInner(255, 0, 255);
+		entityRune.setColorStarOuter(255, 0, 255);
+		List<EntityItem> sacrifice = this.getItems(entityRune);
+		
+		if (sacrifice == null || sacrifice.isEmpty()) {
+			entityRune.setStarScale(1.02F);
+			entityRune.data[0] = 1;
+		} else {
+			for (EntityItem i : sacrifice) {
+				VoidStorageManager.addItemToVoidInventory(entityRune, i.getEntityItem());
+				i.setDead();
+			}
+			
+			VoidStorageManager.updateVoidInventory();
+			entityRune.data[0] = 0;
+		}
+	}
+	
+	@Override
+	public void onTick(EntityRune entityRune) {
+		if (entityRune.data[0] == 1) {
+			if (entityRune.ticksExisted > 100) {
+				entityRune.fade();
+				ArrayList<ItemStack> itemStacks = VoidStorageManager.getVoidInventory(entityRune);
+				if (itemStacks == null) {
+					return;
+				}
+				for (ItemStack itemStack : itemStacks) {
+					Entity entityItem = new EntityItem(entityRune.worldObj, entityRune.posX, entityRune.posY - entityRune.yOffset, entityRune.posZ, itemStack);
+					
+					entityItem.setPosition(entityRune.posX, entityRune.posY, entityRune.posZ);
+					entityRune.worldObj.spawnEntityInWorld(entityItem);
+				}
+				
+				VoidStorageManager.clearVoidInventory(entityRune);
+				VoidStorageManager.updateVoidInventory();
+			}
+		} else {
+			if (entityRune.ticksExisted > 35) {
+				entityRune.ticksExisted += 3;
+				entityRune.setStarScale(entityRune.getStarScale() - 0.001F);
+			}
+			
+			if (entityRune.ticksExisted > 100) {
+				entityRune.kill();
+			}
+		}
+	}
 }

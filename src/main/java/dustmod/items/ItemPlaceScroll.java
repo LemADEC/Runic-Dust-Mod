@@ -49,7 +49,8 @@ public class ItemPlaceScroll extends DustModItem {
 		}
 		
 		RuneShape runeShape = RuneManager.getShapeFromID(item.getItemDamage());
-		int rotation = MathHelper.floor_double((entityPlayer.rotationYaw * 4F) / 360F + 0.5D) & 3;
+		int rotation = Math.round(6F - entityPlayer.rotationYaw / 90F) % 4;
+		DustMod.logger.error("Using scroll with rotation " + entityPlayer.rotationYaw + " -> " + rotation);
 		
 		if (DustMod.isDust(world.getBlock(i, j, k))) {
 			j--;

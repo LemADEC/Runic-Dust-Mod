@@ -36,7 +36,7 @@ public class REWall extends RuneEvent {
 			return;
 		}
 		
-		entityRune.data[0] = (entityRune.runeRotation + 1) % 2;
+		entityRune.data[0] = entityRune.runeRotation % 2;
 	}
 	
 	@Override

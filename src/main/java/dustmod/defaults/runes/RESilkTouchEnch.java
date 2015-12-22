@@ -6,104 +6,82 @@ package dustmod.defaults.runes;
 
 import java.util.List;
 
-import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import dustmod.DustMod;
 import dustmod.runes.RuneEvent;
 import dustmod.runes.EntityRune;
-import dustmod.runes.Sacrifice;
 
 /**
  *
  * @author billythegoat101
  */
-public class RESilkTouchEnch extends RuneEvent
-{
-    public RESilkTouchEnch()
-    {
-        super();
-    }
+public class RESilkTouchEnch extends RuneEvent {
+	public RESilkTouchEnch() {
+		super();
+	}
 	
 	@Override
-    public void initGraphics(EntityRune e){
-    	super.initGraphics(e);
-
-		e.setRenderStar(true);
-		e.setRenderBeam(true);
-        e.setColorStarOuter(0, 0, 255);
-        e.setColorBeam(0, 0, 255);
+	public void initGraphics(EntityRune entityRune) {
+		super.initGraphics(entityRune);
 		
-    }
-
-    public void onInit(EntityRune e)
-    {
-        List<EntityItem> sacrifice = getItems(e);
-        Item item = null;
-
-        for (EntityItem i: sacrifice)
-        {
-            ItemStack is = i.getEntityItem();
-
-            if (is.getItem() == Items.diamond_pickaxe || is.getItem() == Items.diamond_shovel)
-            {
-                item = is.getItem();
-//                i.setDead();
-                break;
-            }
-        }
-        
-        if (item == null) {
-        	e.fizzle();
-        	return;
-        }
-
-        ItemStack[] req = this.sacrifice(e, new ItemStack[] {new ItemStack(item, 1, 0), new ItemStack(Blocks.gold_block, 1, 0)});
-
-        if (!checkSacrifice(req) || !takeXP(e, 10) || item == null)
-        {
-            e.fizzle();
-            return;
-        }
-
-		e.setRenderStar(true);
-		e.setRenderBeam(true);
-        e.setColorStarOuter(0, 0, 255);
-        e.setColorBeam(0, 0, 255);
-//        e.data = item;
-        e.data[1] = Item.getIdFromItem(item); //the sacrifice entity id will be set to data
-//        e.sacrificeWaiting = 600;
-//        this.addSacrificeList(new Sacrifice(120));
-    }
-
-    public void onTick(EntityRune e)
-    {
-        e.setStarScale(e.getStarScale() + 0.001F);
-
-        DustMod.log("GROW");
-        if (e.ticksExisted > 20)
-        {
-        	DustMod.log("Drop");
-            Entity en = null;
-            ItemStack create =  new ItemStack(Item.getItemById(e.data[1]), 1, 0);
-//            if(e.data == mod_DustMod.spiritSword.itemID){
-            create.addEnchantment(Enchantment.silkTouch, 1);
-//            }
-//            System.out.println("derp " + create.itemID);
-            en = new EntityItem(e.worldObj, e.posX, e.posY - EntityRune.yOffset, e.posZ, create);
-
-            if (en != null)
-            {
-                en.setPosition(e.posX, e.posY, e.posZ);
-                e.worldObj.spawnEntityInWorld(en);
-            }
-
-            e.fade();
-        }
-    }
+		entityRune.setRenderStar(true);
+		entityRune.setRenderBeam(true);
+		entityRune.setColorStarOuter(0, 0, 255);
+		entityRune.setColorBeam(0, 0, 255);
+		
+	}
+	
+	@Override
+	public void onInit(EntityRune entityRune) {
+		List<EntityItem> sacrifice = getItems(entityRune);
+		Item item = null;
+		
+		for (EntityItem i : sacrifice) {
+			ItemStack is = i.getEntityItem();
+			
+			if (is.getItem() == Items.diamond_pickaxe || is.getItem() == Items.diamond_shovel) {
+				item = is.getItem();
+				//                i.setDead();
+				break;
+			}
+		}
+		
+		if (item == null) {
+			entityRune.fizzle();
+			return;
+		}
+		
+		ItemStack[] req = this.sacrifice(entityRune, new ItemStack[] { new ItemStack(item, 1, 0), new ItemStack(Blocks.gold_block, 1, 0) });
+		
+		if (!checkSacrifice(req) || !takeXP(entityRune, 10)) {
+			entityRune.fizzle();
+			return;
+		}
+		
+		entityRune.setRenderStar(true);
+		entityRune.setRenderBeam(true);
+		entityRune.setColorStarOuter(0, 0, 255);
+		entityRune.setColorBeam(0, 0, 255);
+		entityRune.data[1] = Item.getIdFromItem(item); //the sacrifice entity id will be set to data
+	}
+	
+	@Override
+	public void onTick(EntityRune entityRune) {
+		entityRune.setStarScale(entityRune.getStarScale() + 0.001F);
+		
+		if (entityRune.ticksExisted > 20) {
+			ItemStack create = new ItemStack(Item.getItemById(entityRune.data[1]), 1, 0);
+			create.addEnchantment(Enchantment.silkTouch, 1);
+			EntityItem entityItem = new EntityItem(entityRune.worldObj, entityRune.posX, entityRune.posY - entityRune.yOffset, entityRune.posZ, create);
+			
+			entityItem.setPosition(entityRune.posX, entityRune.posY, entityRune.posZ);
+			entityRune.worldObj.spawnEntityInWorld(entityItem);
+			
+			entityRune.fade();
+		}
+	}
 }

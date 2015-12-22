@@ -358,7 +358,7 @@ public abstract class RuneEvent {
 	@SuppressWarnings("rawtypes")
 	public final List<EntityItem> getItems(EntityRune entityRune, double radius) {
 		ArrayList<EntityItem> itemstacks = new ArrayList<EntityItem>();
-		List<Entity> entities = getEntities(entityRune.worldObj, entityRune.posX, entityRune.posY - EntityRune.yOffset, entityRune.posZ, radius);
+		List<Entity> entities = getEntities(entityRune.worldObj, entityRune.posX, entityRune.posY - entityRune.yOffset, entityRune.posZ, radius);
 		
 		for (Entity entity : entities) {
 			if (entity instanceof EntityItem) {

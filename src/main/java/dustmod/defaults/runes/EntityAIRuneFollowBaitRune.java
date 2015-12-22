@@ -14,47 +14,40 @@ import net.minecraft.entity.ai.EntityAIBase;
  *
  * @author billythegoat101
  */
-public class EntityAIRuneFollowBaitRune extends EntityAIBase
-{
-    private EntityCreature theEntity;
-    private EntityRune dust;
-    private double movePosX;
-    private double movePosY;
-    private double movePosZ;
-    private float speed;
-//    private float field_48331_g;
-
-    public EntityAIRuneFollowBaitRune(EntityCreature par1EntityCreature, float speed)
-    {
-        theEntity = par1EntityCreature;
-        this.speed = speed;
-//        field_48331_g = par3;
-        setMutexBits(1);
-    }
-
-    /**
-     * Returns whether the EntityAIBase should begin execution.
-     */
-    @Override
-    public boolean shouldExecute()
-    {
-        Entity target = theEntity.getAttackTarget();
-
-        if (target == null)
-        {
-            return false;
-        }
-
-        if (target instanceof EntityRune)
-        {
-            dust = (EntityRune)target;
-            movePosX = dust.getX();
-            movePosY = dust.getY();
-            movePosZ = dust.getZ();
-            return true;
-        }
-
-        return false;
+public class EntityAIRuneFollowBaitRune extends EntityAIBase {
+	private EntityCreature theEntity;
+	private EntityRune dust;
+	private double movePosX;
+	private double movePosY;
+	private double movePosZ;
+	private float speed;
+	
+	public EntityAIRuneFollowBaitRune(EntityCreature par1EntityCreature, float speed) {
+		theEntity = par1EntityCreature;
+		this.speed = speed;
+		setMutexBits(1);
+	}
+	
+	/**
+	 * Returns whether the EntityAIBase should begin execution.
+	 */
+	@Override
+	public boolean shouldExecute() {
+		Entity target = theEntity.getAttackTarget();
+		
+		if (target == null) {
+			return false;
+		}
+		
+		if (target instanceof EntityRune) {
+			dust = (EntityRune) target;
+			movePosX = dust.getX();
+			movePosY = dust.getY();
+			movePosZ = dust.getZ();
+			return true;
+		}
+		
+		return false;
 //        if (targetEntity.getDistanceSqToEntity(theEntity) > (double)(field_48331_g * field_48331_g))
 //        {
 //            return false;
@@ -73,49 +66,47 @@ public class EntityAIRuneFollowBaitRune extends EntityAIBase
 //            movePosZ = vec3d.zCoord;
 //            return true;
 //        }
-    }
-
-    @Override
-    public void updateTask()
-    {
-        super.updateTask();
-        
-        if(!continueExecuting()){
-        	theEntity.getNavigator().clearPathEntity();
-        	theEntity.tasks.taskEntries.remove(this);
-        	return;
-        }
-        
-        theEntity.getNavigator().tryMoveToXYZ(movePosX, movePosY, movePosZ, speed);
-        
-        if(Math.random() < 0.2){
-        	DustMod.spawnParticles(theEntity.worldObj, "smoke", theEntity.posX, theEntity.posY+theEntity.height/2, theEntity.posZ,
-        			0, Math.random() * 0.05, 0, (int)(Math.random()*20), 0.75, theEntity.height/2, 0.75);
-        }
-    }
-
-    /**
-     * Returns whether an in-progress EntityAIBase should continue executing
-     */
-    public boolean continueExecuting()
-    {
-        return (dust != null && !dust.isDead);
-//    	return false;
-    }
-
-    /**
-     * Resets the task
-     */
-    public void resetTask()
-    {
-        dust = null;
-    }
-
-    /**
-     * Execute a one shot task or start executing a continuous task
-     */
-    public void startExecuting()
-    {
-        theEntity.getNavigator().tryMoveToXYZ(movePosX, movePosY, movePosZ, speed);
-    }
+	}
+	
+	@Override
+	public void updateTask() {
+		super.updateTask();
+		
+		if (!continueExecuting()) {
+			theEntity.getNavigator().clearPathEntity();
+			theEntity.tasks.taskEntries.remove(this);
+			return;
+		}
+		
+		theEntity.getNavigator().tryMoveToXYZ(movePosX, movePosY, movePosZ, speed);
+		
+		if (Math.random() < 0.2) {
+			DustMod.spawnParticles(theEntity.worldObj, "smoke", theEntity.posX, theEntity.posY + theEntity.height / 2, theEntity.posZ, 0, Math.random() * 0.05, 0, (int) (Math.random() * 20), 0.75,
+					theEntity.height / 2, 0.75);
+		}
+	}
+	
+	/**
+	 * Returns whether an in-progress EntityAIBase should continue executing
+	 */
+	@Override
+	public boolean continueExecuting() {
+		return (dust != null && !dust.isDead);
+	}
+	
+	/**
+	 * Resets the task
+	 */
+	@Override
+	public void resetTask() {
+		dust = null;
+	}
+	
+	/**
+	 * Execute a one shot task or start executing a continuous task
+	 */
+	@Override
+	public void startExecuting() {
+		theEntity.getNavigator().tryMoveToXYZ(movePosX, movePosY, movePosZ, speed);
+	}
 }

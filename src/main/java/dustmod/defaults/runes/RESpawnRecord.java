@@ -6,10 +6,7 @@ package dustmod.defaults.runes;
 
 import java.lang.reflect.Field;
 import java.util.Map;
-import java.util.Random;
 
-import cpw.mods.fml.common.registry.GameData;
-import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -23,60 +20,52 @@ import dustmod.runes.EntityRune;
  *
  * @author billythegoat101
  */
-public class RESpawnRecord extends RuneEvent
-{
-    public RESpawnRecord()
-    {
-        super();
-    }
+public class RESpawnRecord extends RuneEvent {
+	public RESpawnRecord() {
+		super();
+	}
 	
 	@Override
-    public void initGraphics(EntityRune e){
-    	super.initGraphics(e);
-
-		e.setRenderStar(true);
-		e.setRenderBeam(true);
-        e.setColorStarOuter(0, 255, 0);
-        e.setColorBeam(0, 255, 0);
+	public void initGraphics(EntityRune entityRune) {
+		super.initGraphics(entityRune);
 		
-    }
-
-    public void onInit(EntityRune e)
-    {
-		e.setRenderStar(true);
-		e.setRenderBeam(true);
-        e.setColorStarOuter(0, 255, 0);
-        e.setColorBeam(0, 255, 0);
-        ItemStack[] sacrifice = new ItemStack[] {new ItemStack(Items.diamond, 1)};
-        this.sacrifice(e, sacrifice);
-
-        if (sacrifice[0].stackSize > 0)
-        {
-            e.fizzle();
-            return;
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-	public void onTick(EntityRune e)
-    {
-        e.setStarScale(e.getStarScale() + 0.001F);
-
-        if (e.ticksExisted > 120)
-        {
-            Random r = new Random();
-            
+		entityRune.setRenderStar(true);
+		entityRune.setRenderBeam(true);
+		entityRune.setColorStarOuter(0, 255, 0);
+		entityRune.setColorBeam(0, 255, 0);
+	}
+	
+	@Override
+	public void onInit(EntityRune entityRune) {
+		entityRune.setRenderStar(true);
+		entityRune.setRenderBeam(true);
+		entityRune.setColorStarOuter(0, 255, 0);
+		entityRune.setColorBeam(0, 255, 0);
+		ItemStack[] sacrifice = new ItemStack[] { new ItemStack(Items.diamond, 1) };
+		this.sacrifice(entityRune, sacrifice);
+		
+		if (sacrifice[0].stackSize > 0) {
+			entityRune.fizzle();
+			return;
+		}
+	}
+	
+	@Override
+	public void onTick(EntityRune entityRune) {
+		entityRune.setStarScale(entityRune.getStarScale() + 0.001F);
+		
+		if (entityRune.ticksExisted > 120) {
 			try {
 				
 				Field recordMapField = ItemRecord.class.getDeclaredField("field_150928_b");
-	            recordMapField.setAccessible(true);
-	            Map<String, ItemRecord> recordMap = (Map<String, ItemRecord>) recordMapField.get(null);
-	            Object[] recordList = recordMap.values().toArray();
-	            int recordNr = r.nextInt(recordList.length);
-	            
-	            EntityItem en = new EntityItem(e.worldObj, e.posX, e.posY - EntityRune.yOffset - 1, e.posZ, new ItemStack((Item) recordList[recordNr], 1, 0));
-	            e.worldObj.spawnEntityInWorld(en);
-	            
+				recordMapField.setAccessible(true);
+				Map<String, ItemRecord> recordMap = (Map<String, ItemRecord>) recordMapField.get(null);
+				Object[] recordList = recordMap.values().toArray();
+				int recordNr = entityRune.worldObj.rand.nextInt(recordList.length);
+				
+				EntityItem en = new EntityItem(entityRune.worldObj, entityRune.posX, entityRune.posY - entityRune.yOffset - 1, entityRune.posZ, new ItemStack((Item) recordList[recordNr], 1, 0));
+				entityRune.worldObj.spawnEntityInWorld(en);
+				
 			} catch (NoSuchFieldException e1) {
 				DustMod.logger.catching(e1);
 			} catch (SecurityException e1) {
@@ -87,8 +76,8 @@ public class RESpawnRecord extends RuneEvent
 				DustMod.logger.catching(e1);
 			}
 			
-			e.fade();
-
-        }
-    }
+			entityRune.fade();
+			
+		}
+	}
 }

@@ -34,7 +34,8 @@ public class RESpawnerCollector extends RuneEvent
 		e.setStarScale(1.05F);
 		
     }
-    public void onInit(EntityRune e)
+    @Override
+	public void onInit(EntityRune e)
     {
 		e.setRenderBeam(true);
 		e.setStarScale(1.05F);
@@ -54,11 +55,12 @@ public class RESpawnerCollector extends RuneEvent
 //        e.worldObj.spawnEntityInWorld(ei);
     }
 
-    public void onTick(EntityRune e)
+    @Override
+	public void onTick(EntityRune entityRune)
     {
         int[] fin = new int[3];
 
-        for (Integer[] i: e.dustPoints)
+        for (Integer[] i: entityRune.dustPoints)
         {
             fin[0] += i[0];
             fin[1] += i[1];
@@ -69,30 +71,30 @@ public class RESpawnerCollector extends RuneEvent
         fin[1] /= 8;
         fin[2] /= 8;
 
-        if (e.worldObj.getBlock(fin[0], fin[1], fin[2]) == Blocks.mob_spawner)
+        if (entityRune.worldObj.getBlock(fin[0], fin[1], fin[2]) == Blocks.mob_spawner)
         {
-        	TileEntityMobSpawner tems =(TileEntityMobSpawner)e.worldObj.getTileEntity(fin[0], fin[1], fin[2]);
+        	TileEntityMobSpawner tems =(TileEntityMobSpawner)entityRune.worldObj.getTileEntity(fin[0], fin[1], fin[2]);
 //        	String entID = tems.func_92015_a();
             tems.invalidate();
 
-            if (e.ticksExisted > 100)
+            if (entityRune.ticksExisted > 100)
             {
-                e.worldObj.setBlockToAir(fin[0], fin[1], fin[2]);
-                EntityItem ei = new EntityItem(e.worldObj);
-                ei.setPosition(e.posX, e.posY - e.yOffset, e.posZ);
+                entityRune.worldObj.setBlockToAir(fin[0], fin[1], fin[2]);
+                EntityItem ei = new EntityItem(entityRune.worldObj);
+                ei.setPosition(entityRune.posX, entityRune.posY - entityRune.yOffset, entityRune.posZ);
                 ItemStack item = new ItemStack(Blocks.mob_spawner, 1);
 //                NBTTagCompound nbt = new NBTTagCompound();
 //                item.setTagCompound(nbt);
 //                nbt.setString("EntityID", entID); 
                 ei.setEntityItemStack(item); 
-                e.worldObj.spawnEntityInWorld(ei);
-                e.worldObj.markBlockForUpdate(fin[0], fin[1], fin[2]);
+                entityRune.worldObj.spawnEntityInWorld(ei);
+                entityRune.worldObj.markBlockForUpdate(fin[0], fin[1], fin[2]);
             }
         }
 
-        if (e.ticksExisted > 100)
+        if (entityRune.ticksExisted > 100)
         {
-            e.fade();
+            entityRune.fade();
 //            e.worldObj.setBlock(fin[0], fin[1]-1, fin[2], Block.brick.blockID);
         }
     }

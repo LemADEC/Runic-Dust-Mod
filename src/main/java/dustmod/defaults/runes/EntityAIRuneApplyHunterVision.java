@@ -16,13 +16,10 @@ public class EntityAIRuneApplyHunterVision extends EntityAIBase
 {
     private EntityCreature theEntity;
     private EntityPlayer player;
-//    private float field_48331_g;
 
     public EntityAIRuneApplyHunterVision(EntityCreature par1EntityCreature)
     {
         theEntity = par1EntityCreature;
-//        player = ModLoader.getMinecraftInstance().thePlayer;
-//        field_48331_g = par3;
         setMutexBits(0);
     }
 
@@ -55,7 +52,8 @@ public class EntityAIRuneApplyHunterVision extends EntityAIBase
     /**
      * Returns whether an in-progress EntityAIBase should continue executing
      */
-    public boolean continueExecuting()
+    @Override
+	public boolean continueExecuting()
     {
 //        for(int i = 0; i < 5; i++)
 //        Profiler.startSection("dust:hunter");
@@ -67,14 +65,16 @@ public class EntityAIRuneApplyHunterVision extends EntityAIBase
     /**
      * Resets the task
      */
-    public void resetTask()
+    @Override
+	public void resetTask()
     {
     }
 
     /**
      * Execute a one shot task or start executing a continuous task
      */
-    public void startExecuting()
+    @Override
+	public void startExecuting()
     {
     }
 }

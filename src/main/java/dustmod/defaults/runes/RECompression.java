@@ -76,18 +76,18 @@ public class RECompression extends RuneEvent {
 			for (int i = 0; i < stacks; i++) {
 				Entity entity = null;
 				ItemStack create = new ItemStack(Items.diamond, 64, 0);
-				entity = new EntityItem(entityRune.worldObj, entityRune.posX, entityRune.posY - EntityRune.yOffset, entityRune.posZ, create);
+				entity = new EntityItem(entityRune.worldObj, entityRune.posX, entityRune.posY - entityRune.yOffset, entityRune.posZ, create);
 				
-				entity.setPosition(entityRune.posX, entityRune.posY - EntityRune.yOffset, entityRune.posZ);
+				entity.setPosition(entityRune.posX, entityRune.posY - entityRune.yOffset, entityRune.posZ);
 				entityRune.worldObj.spawnEntityInWorld(entity);
 			}
 			
 			if (leftover > 0) {
 				Entity entity = null;
 				ItemStack create = new ItemStack(Items.diamond, leftover, 0);
-				entity = new EntityItem(entityRune.worldObj, entityRune.posX, entityRune.posY - EntityRune.yOffset, entityRune.posZ, create);
+				entity = new EntityItem(entityRune.worldObj, entityRune.posX, entityRune.posY - entityRune.yOffset, entityRune.posZ, create);
 				
-				entity.setPosition(entityRune.posX, entityRune.posY - EntityRune.yOffset, entityRune.posZ);
+				entity.setPosition(entityRune.posX, entityRune.posY - entityRune.yOffset, entityRune.posZ);
 				entityRune.worldObj.spawnEntityInWorld(entity);
 			}
 			

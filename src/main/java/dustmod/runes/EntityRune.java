@@ -94,10 +94,7 @@ public class EntityRune extends Entity {
 	public long entityDustID;
 	public int[] data;
 	private UUID summonerUUID;
-	public static final double yOffset = 0;//-1.5D;
 	protected int runeWidth, runeLength;
-	
-	//    public int lifetime = -1;
 	
 	public EntityRune(World world) {
 		super(world);
@@ -111,6 +108,7 @@ public class EntityRune extends Entity {
 		this.noClip = true;
 		renderDistanceWeight = 50.0D;
 		data = new int[16];
+		yOffset = 0.0F;
 	}
 	
 	public EntityRune(World world, List<Integer[]> dustPoints) {
@@ -618,7 +616,7 @@ public class EntityRune extends Entity {
 				int x = (int) Math.floor(posX);
 				int z = (int) Math.floor(posZ);
 				
-				DustMod.spawnParticles(worldObj, "largesmoke", (double) x + 0.5, (double) posY, (double) z + 0.5, 0.0D, 0.0D, 0.0D, (int) (Math.random() * 3D + 4D) * runeWidth * runeLength,
+				DustMod.spawnParticles(worldObj, "largesmoke", x + 0.5, posY, z + 0.5, 0.0D, 0.0D, 0.0D, (int) (Math.random() * 3D + 4D) * runeWidth * runeLength,
 						runeWidth, 0.5, runeLength);
 				
 				kill();
@@ -779,11 +777,11 @@ public class EntityRune extends Entity {
 		float f2 = 0;
 		
 		for (int j = 1; j <= 2; j++) {
-			float f3 = f / (float) j;
+			float f3 = f / j;
 			
 			for (double d3 = 0.0D; d3 < (Math.PI / 2D); d3 += 0.1D) {
-				float f4 = (float) ((double) f3 * Math.cos(d3));
-				float f5 = (float) ((double) f3 * Math.sin(d3));
+				float f4 = (float) (f3 * Math.cos(d3));
+				float f5 = (float) (f3 * Math.sin(d3));
 				
 				for (int k = 0; k < i; k++) {
 					worldObj.spawnParticle(s, ((float) posX + f4 + random.nextFloat() * f1) - 0.5F, (float) posY + f2, ((float) posZ + f5 + random.nextFloat() * f1) - 0.5F, d, d1, d2);
@@ -812,47 +810,40 @@ public class EntityRune extends Entity {
 		String s = "reddust";
 		float f3 = 0;
 		
-		double max = Math.PI / 2D;
-		double iter = 0.05;
-		
-		//        double[] locations = new double[12288];
-		
-		for (double d3 = 0.0D; d3 < (3.14 / 2D); d3 += 0.05) {
+		for (double d3 = 0.0D; d3 < (Math.PI / 2D); d3 += 0.05D) {
 			float f4 = (float) Math.sin(d3);
 			float f5 = (float) Math.cos(d3);
 			float f6 = f2 * f4;
 			
-			for (double d4 = 0.0D; d4 < (3.14 / 2D); d4 += 0.05) {
+			for (double d4 = 0.0D; d4 < (Math.PI / 2D); d4 += 0.05D) {
 				double[] locations = new double[12];
 				int i = 0;
 				float f7 = (float) Math.sin(d4);
 				float f8 = (float) Math.cos(d4);
 				float f9 = f2 * f8 * f5;
 				float f10 = f2 * f7 * f5;
-				locations[i] = ((double) posX + f9 + random.nextFloat() * f1) - 0.5D;
-				locations[i + 1] = (double) posY + f3 + f6 + random.nextFloat() * f1;
-				locations[i + 2] = ((double) posZ + f10 + random.nextFloat() * f1) - 0.5D;
+				locations[i] = (posX + f9 + random.nextFloat() * f1) - 0.5D;
+				locations[i + 1] = posY + f3 + f6 + random.nextFloat() * f1;
+				locations[i + 2] = (posZ + f10 + random.nextFloat() * f1) - 0.5D;
 				i += 3;
 				
-				locations[i] = (double) ((((float) posX - f9) + random.nextFloat() * f1) - 0.5F);
-				locations[i + 1] = (double) ((float) posY + f3 + f6 + random.nextFloat() * f1);
-				locations[i + 2] = (double) (((float) posZ + f10 + random.nextFloat() * f1) - 0.5F);
+				locations[i] = (((float) posX - f9) + random.nextFloat() * f1) - 0.5F;
+				locations[i + 1] = (float) posY + f3 + f6 + random.nextFloat() * f1;
+				locations[i + 2] = ((float) posZ + f10 + random.nextFloat() * f1) - 0.5F;
 				i += 3;
 				
-				locations[i] = (double) (((float) posX + f9 + random.nextFloat() * f1) - 0.5F);
-				locations[i + 1] = (double) ((float) posY + f3 + f6 + random.nextFloat() * f1);
-				locations[i + 2] = (double) ((((float) posZ - f10) + random.nextFloat() * f1) - 0.5F);
+				locations[i] = ((float) posX + f9 + random.nextFloat() * f1) - 0.5F;
+				locations[i + 1] = (float) posY + f3 + f6 + random.nextFloat() * f1;
+				locations[i + 2] = (((float) posZ - f10) + random.nextFloat() * f1) - 0.5F;
 				i += 3;
 				
-				locations[i] = (double) ((((float) posX - f9) + random.nextFloat() * f1) - 0.5F);
-				locations[i + 1] = (double) ((float) posY + f3 + f6 + random.nextFloat() * f1);
-				locations[i + 2] = (double) ((((float) posZ - f10) + random.nextFloat() * f1) - 0.5F);
+				locations[i] = (((float) posX - f9) + random.nextFloat() * f1) - 0.5F;
+				locations[i + 1] = (float) posY + f3 + f6 + random.nextFloat() * f1;
+				locations[i + 2] = (((float) posZ - f10) + random.nextFloat() * f1) - 0.5F;
 				i += 3;
 				DustMod.spawnParticles(worldObj, s, locations, d, d1, d2, 1, 0.01, 0.01, 0.01);
 			}
 		}
-		//        System.out.println("You bitch " + i + " " + locations.length);
-		
 	}
 	
 	/**
@@ -918,7 +909,7 @@ public class EntityRune extends Entity {
 	}
 	
 	public int getY() {
-		return (int) Math.floor(this.posY - EntityRune.yOffset);
+		return (int) Math.floor(this.posY - yOffset);
 	}
 	
 	public int getZ() {
@@ -943,12 +934,7 @@ public class EntityRune extends Entity {
 		return fueledExternally;
 	}
 	
-	//    @Override
-	//    public boolean isEntityInsideOpaqueBlock() {
-	//        return false;
-	//    }
-	//
-	
+	@Override
 	@SideOnly(Side.CLIENT)
 	public int getBrightnessForRender(float par1) {
 		return 15728880;

@@ -110,7 +110,7 @@ public class RETeleportation extends PoweredEvent {
 						
 						if (gamt == 0 && bamt == 0) {
 							entityRune.posX = (fnd[0] + x) + 0.5D;
-							entityRune.posY = (fnd[1]) + 1.5D + EntityRune.yOffset;
+							entityRune.posY = (fnd[1]    ) + 1.5D + entityRune.yOffset;
 							entityRune.posZ = (fnd[2] + z) + 0.5D;
 							
 							if (x == -1) {
@@ -151,6 +151,8 @@ public class RETeleportation extends PoweredEvent {
 			break;
 		case 3:
 			cz--;
+			break;
+		default:
 			break;
 		}
 		//        e.worldObj.setBlockWithNotify(cx,cy,cz,Block.brick.blockID);
