@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package dustmod.items;
 
 import java.util.List;
@@ -11,7 +7,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.EnumRarity;
-import net.minecraft.item.ItemPickaxe;
+import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
@@ -24,9 +20,9 @@ import dustmod.DustMod;
  * 
  * @author billythegoat101
  */
-public class ItemSpiritPickaxe extends ItemPickaxe {
+public class ItemSpiritAxe extends ItemAxe {
 	
-	public ItemSpiritPickaxe() {
+	public ItemSpiritAxe() {
 		super(ToolMaterial.EMERALD);
 		setMaxDamage(ToolMaterial.IRON.getMaxUses());
 	}
@@ -36,9 +32,6 @@ public class ItemSpiritPickaxe extends ItemPickaxe {
 		return EnumRarity.epic;
 	}
 	
-	/**
-	 * How long it takes to use or consume an item
-	 */
 	@Override
 	public int getMaxItemUseDuration(ItemStack par1ItemStack) {
 		return 72000;
@@ -58,7 +51,7 @@ public class ItemSpiritPickaxe extends ItemPickaxe {
 	@Override
 	public ItemStack onItemRightClick(ItemStack itemStack, World world, EntityPlayer entityPlayer) {
 		entityPlayer.setItemInUse(itemStack, this.getMaxItemUseDuration(itemStack));
-		return super.onItemRightClick(itemStack, world, entityPlayer);
+		return itemStack;
 	}
 	
 	@Override
@@ -98,7 +91,7 @@ public class ItemSpiritPickaxe extends ItemPickaxe {
 					if (itemStack.getItemDamage() >= itemStack.getMaxDamage()) {
 						return;
 					}
-					DustMod.breakAblock(entityPlayer, itemStack, world, x + dx, y + dy, z + dz, dropChance, 300);
+					DustMod.breakAblock(entityPlayer, itemStack, world, x + dx, y + dy, z + dz, dropChance, 100);
 				}
 			}
 		}

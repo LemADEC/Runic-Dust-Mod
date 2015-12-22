@@ -4,7 +4,7 @@
  */
 package dustmod.items;
 
-import java.util.Random;
+import java.util.List;
 
 import com.google.common.collect.Multimap;
 
@@ -12,8 +12,8 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import dustmod.DustMod;
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.item.EntityItem;
@@ -30,7 +30,7 @@ import net.minecraft.world.World;
 public class ItemSpiritSword extends ItemSword {
 	public ItemSpiritSword() {
 		super(ToolMaterial.EMERALD);
-		setMaxDamage(131);
+		setMaxDamage(ToolMaterial.GOLD.getMaxUses());
 	}
 	
 	@Override
@@ -39,12 +39,9 @@ public class ItemSpiritSword extends ItemSword {
 	}
 	
 	@Override
-	public void onUpdate(ItemStack itemstack, World world, Entity entity, int i, boolean flag) {
-		if (!itemstack.isItemEnchanted()) {
-			itemstack.addEnchantment(Enchantment.knockback, 10);
-			itemstack.addEnchantment(Enchantment.smite, 5);
-		}
-		super.onUpdate(itemstack, world, entity, i, flag);
+	public void onUpdate(ItemStack itemStackTool, World world, Entity entity, int slotIndexTool, boolean isCurrentItem) {
+		super.onUpdate(itemStackTool, world, entity, slotIndexTool, isCurrentItem);
+		DustMod.repairToolWithDust(itemStackTool, world, entity, slotIndexTool, isCurrentItem, 300);
 	}
 	
 	@Override
@@ -56,28 +53,33 @@ public class ItemSpiritSword extends ItemSword {
 	}
 	
 	@Override
-	public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) {
-		
-		Random rand = new Random();
-		double r = rand.nextDouble();
-		
-		int level = player.experienceLevel + 5;
-		double dropChance = level / 25.0D;
-		
-		if (r < dropChance) {
-			int amt = 1;
-			if (rand.nextDouble() < 0.5D)
-				amt = 2;
-			EntityItem ei = new EntityItem(entity.worldObj, entity.posX, entity.posY, entity.posZ, new ItemStack(DustMod.itemDust, amt, 200));
-			ei.delayBeforeCanPickup = 0;
+	public boolean hitEntity(ItemStack itemStackTool, EntityLivingBase entityLivingBaseHit, EntityLivingBase entityLivingBaseAttacker) {
+		if (entityLivingBaseAttacker instanceof EntityPlayer && !entityLivingBaseHit.worldObj.isRemote) {
+			EntityPlayer entityPlayer = (EntityPlayer) entityLivingBaseAttacker;
+			
+			int level = entityPlayer.experienceLevel + 5;
+			double dropChance = Math.min(1.0D, level / 25.0D) * 0.80D;
+			
+			if (entityPlayer.worldObj.rand.nextDouble() < dropChance) {
+				int amount = 1 + entityPlayer.worldObj.rand.nextInt(4);
+				EntityItem entityItem = new EntityItem(entityPlayer.worldObj, entityPlayer.posX, entityPlayer.posY, entityPlayer.posZ, new ItemStack(DustMod.itemDust, amount, 200));
+				entityItem.delayBeforeCanPickup = 0;
+				entityPlayer.worldObj.spawnEntityInWorld(entityItem);
+			}
 		}
-		
-		return false;
+		return super.hitEntity(itemStackTool, entityLivingBaseHit, entityLivingBaseAttacker);
 	}
 	
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister iconRegister) {
 		this.itemIcon = iconRegister.registerIcon(DustMod.spritePath + this.getUnlocalizedName().replace("item.", ""));
+	}
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void addInformation(ItemStack item, EntityPlayer player, List list, boolean flag) {
+		super.addInformation(item, player, list, flag);
+		list.add("Consume lapis dust to repair itself");
 	}
 }

@@ -5,16 +5,17 @@
 	<solid value="true"/>
 	<sacrifices>
 		Sacrifice
-		- Spirit Pickaxe: 1x Gold Pickaxe + 4x TNT + 18 XP levels
-		- Spirit Sword: 1x Gold Sword + 1x Glowstone Block + 18 XP levels
+		- 1x Gold Axe + 1x Coal block + 18 XP levels
+		- 1x Gold Pickaxe + 4x TNT + 18 XP levels
+		- 1x Gold Shovel + 3x Sandstone + 18 XP levels
+		- 1x Gold Sword + 1x Glowstone Block + 18 XP levels
 	</sacrifices>
 	<description>
 		Description
-		Spawns either a spirit sword or spirit pickaxe.
-		
-		The spirit pick on right-click breaks a bigger area and has a chance to drop Lapis dust depending on your XP level. 
-		
-		The spirit sword comes with high-enchantments and may drop Gunpowder dust in the same way.
+		Spawns either a spirit axe, a spirit pickaxe, a spirit shovel or a spirit sword.
+		All spirit tools comes with bonus enchantments and automatically repair with lapis dust.
+		 
+		Hold right click to charge your spirit tool and break a bigger area. When charged, spirit tool as a chance to drop Plant, Lapis, Glowstone or Gunpowder dust, depending on your XP level.
 	</description>
 	<design width="4" height="4" ox="0" oy="0" cx="0" cy="0">
 		300,	300,	300,	300

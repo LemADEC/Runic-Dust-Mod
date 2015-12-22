@@ -7,6 +7,7 @@ package dustexample;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -44,24 +45,29 @@ import dustmod.runes.XMLRuneShapeReader;
 public class DustExample {
 	@Instance("DustExample")
 	public static DustExample instance;
-
+	
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
-		 registerDusts();
-		 registerRunes();
-		// registerInscriptions();
+		registerDusts();
+		registerRunes();
+		registerInscriptions();
 	}
 
 	public void registerDusts() {
 		DustManager.registerDust(350, "Glowing Runic Dust", "glowdust",
 				0xEEEE00, 0xFFFF00, 0xFFFF00, 15);
-
+		
 		// Register recipe for our dust (2xGlowstoneDust + 1xCoal)
-		GameRegistry.addShapelessRecipe(new ItemStack(DustMod.getItemDust(), 4,
-				350), new ItemStack(Items.glowstone_dust, 1), new ItemStack(
-				Items.glowstone_dust, 1), new ItemStack(Items.coal, 1, -1));
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(DustMod.getItemDust(), 4, 350),
+				"coal",
+				"dustGlowstone",
+				"dustGlowstone" ));
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(DustMod.getItemDust(), 10, 350),
+				"coal",
+				"coal",
+				"glowstone" ));
 	}
-
+	
 	/**
 	 * Here is where you register all your runes with the DustManager.
 	 */
@@ -69,16 +75,16 @@ public class DustExample {
 		
 		// Note that the order in which these runes appear in the tome is
 		// dependent upon the order by which they are registered into the system.
-
+		
 		//Read and load properties from the XML file for the rune, then register it to the DustEvent.
 		XMLRuneShapeReader.readAndRegisterShape("assets/dustexample/examplerunes/data/omnom.xml", new REChestNom());
-
+		
 		XMLRuneShapeReader.readAndRegisterShape("assets/dustexample/examplerunes/data/cheating1_make_block.xml", new REMakeBlockFromItem());
-
+		
 		XMLRuneShapeReader.readAndRegisterShape("assets/dustexample/examplerunes/data/rain_maker.xml", new REMakeItRain());
-
+		
 		XMLRuneShapeReader.readAndRegisterShape("assets/dustexample/examplerunes/data/pain.xml", new REPain());
-
+		
 		XMLRuneShapeReader.readAndRegisterShape("assets/dustexample/examplerunes/data/sprite.ice.xml", new REIceSprite());
 		
 		// Note that the solid flag is now changed to true because it is all variable and 
@@ -94,8 +100,8 @@ public class DustExample {
 		// reanimate. Use this in case you make a major changes/updates to that
 		// rune.
 	}
-
+	
 	public void registerInscriptions() {
 	}
-
+	
 }

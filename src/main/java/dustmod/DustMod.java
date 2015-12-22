@@ -7,16 +7,18 @@ import java.util.HashMap;
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.monster.IMob;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
-import net.minecraft.item.Item.ToolMaterial;
+import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemPickaxe;
+import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
@@ -27,6 +29,7 @@ import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -69,7 +72,9 @@ import dustmod.items.ItemInscription;
 import dustmod.items.ItemPlaceScroll;
 import dustmod.items.ItemPouch;
 import dustmod.items.ItemRunicTome;
+import dustmod.items.ItemSpiritAxe;
 import dustmod.items.ItemSpiritPickaxe;
+import dustmod.items.ItemSpiritShovel;
 import dustmod.items.ItemSpiritSword;
 import dustmod.items.ItemWornInscription;
 import dustmod.network.DustDeclarationHandler;
@@ -99,40 +104,40 @@ import dustmod.util.EntityLivingBaseHelper;
 public class DustMod {
 	
 	public static final String MOD_ID = "DustMod";
-
+	
 	@Instance(MOD_ID)
 	public static DustMod instance;
 	
 	public static SimpleNetworkWrapper networkWrapper;
 	
 	public static Logger logger = LogManager.getLogger(MOD_ID);
-
+	
 	public static final int warpVer = 1;
 	public static boolean debug = false;
-
+	
 	public static int plantDID = 1;
 	public static int gunDID = 2;
 	public static int lapisDID = 3;
 	public static int blazeDID = 4;
-
+	
 	public static String spritePath = "dustmod:";
 	public static File suggestedConfig;
 	public static int[] tex;
 	public static int groundTex;
 	public static boolean allTex = true;
-
+	
 	public static int DustMetaDefault = 0;
 	public static int DustMetaUsing = 1;
 	public static int DustMetaUsed = 2;
-
+	
 	public static int ENTITY_FireSpriteID = 149;
 	public static int ENTITY_BlockEntityID = 150;
 	public static boolean Enable_Render_Flames_On_Dust = true;
 	public static boolean Enable_Render_Flames_On_Ruts = true;
 	public static boolean Enable_Decorative_Ruts = false;
-
+	
 	public static boolean verbose = false;
-
+	
 	public static Block dust;
 	protected static Block dustTable;
 	public static Block rutBlock;
@@ -140,6 +145,8 @@ public class DustMod {
 	public static DustModItem tome;
 	public static DustModItem dustScroll;
 	public static Item spiritPickaxe;
+	public static Item spiritShovel;
+	public static Item spiritAxe;
 	public static Item spiritSword;
 	public static DustModItem chisel;
 	public static DustModItem negateSacrifice;
@@ -148,16 +155,16 @@ public class DustMod {
 	public static ItemInk ink;
 	public static ItemWornInscription wornInscription;
 	public static ItemPouch pouch;
-
+	
 	public static DustModTab creativeTab;
-
+	
 	public static int prevVoidSize;
 	public static HashMap<String, ArrayList<ItemStack>> voidInventory;
 	public static ArrayList<int[]> voidNetwork;
 	public static int skipWarpTick = 0;
-
+	
 	public static int numSec = 0; // number of secret runes
-
+	
 	@SidedProxy(clientSide = "dustmod.client.ClientProxy", serverSide = "dustmod.common.CommonProxy")
 	public static CommonProxy proxy;
 	public static CommonMouseHandler keyHandler = new CommonMouseHandler();
@@ -165,10 +172,10 @@ public class DustMod {
 	public static Random random = new Random();
 	public static DamageSource destroyDrops = new DamageSource("magic").setDamageBypassesArmor().setMagicDamage();
 	public static EntityLivingBaseHelper entityLivingHelper = new EntityLivingBaseHelper();
-
+	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
-
+		
 		networkWrapper = new SimpleNetworkWrapper(MOD_ID);
 		networkWrapper.registerMessage(DustDeclarationHandler.class, DustDeclarationMessage.class, 1, Side.CLIENT);
 		networkWrapper.registerMessage(InscriptionDeclarationHandler.class, InscriptionDeclarationMessage.class, 2, Side.CLIENT);
@@ -181,37 +188,26 @@ public class DustMod {
 		networkWrapper.registerMessage(SetInscriptionHandler.class, SetInscriptionMessage.class, 102, Side.SERVER);
 		networkWrapper.registerMessage(UseInkHandler.class, UseInkMessage.class, 103, Side.SERVER);
 		
-		suggestedConfig = new File(evt.getSuggestedConfigurationFile()
-				.getParent() + File.separator + "DustModConfigv2.cfg");
-		// suggestedConfig.renameTo(new File("DustModConfigv2.cfg"));
+		suggestedConfig = new File(evt.getSuggestedConfigurationFile().getParent() + File.separator + "DustModConfigv2.cfg");
 		
 		entityLivingHelper.init();
-
+		
 		creativeTab = new DustModTab();
-
-		// System.out.println("CONFIG " + suggestedConfig.getParent());
+		
 		Configuration config = new Configuration(suggestedConfig);
 		try {
-			// File f = new File(configPath);
-			// f.mkdirs();
 			config.load();
-
-			ENTITY_FireSpriteID = config.get(Configuration.CATEGORY_GENERAL,
-					"FireSpriteEntityID", ENTITY_FireSpriteID).getInt(
-					ENTITY_FireSpriteID);
-			ENTITY_BlockEntityID = config.get(Configuration.CATEGORY_GENERAL,
-					"BlockEntityID", ENTITY_BlockEntityID).getInt(
-					ENTITY_BlockEntityID);
-			Enable_Decorative_Ruts = config.get("config", "DecorativeRuts",
-					Enable_Decorative_Ruts).getBoolean(Enable_Decorative_Ruts);
-			verbose = config.get("config", "verbose", verbose).getBoolean(
-					verbose);
-		} catch (Exception e) {
-			FMLLog.log(Level.FATAL, e, "[DustMod] : Error loading config.");
+			
+			ENTITY_FireSpriteID = config.get(Configuration.CATEGORY_GENERAL, "FireSpriteEntityID", ENTITY_FireSpriteID).getInt(ENTITY_FireSpriteID);
+			ENTITY_BlockEntityID = config.get(Configuration.CATEGORY_GENERAL, "BlockEntityID", ENTITY_BlockEntityID).getInt(ENTITY_BlockEntityID);
+			Enable_Decorative_Ruts = config.get("config", "DecorativeRuts", Enable_Decorative_Ruts).getBoolean(Enable_Decorative_Ruts);
+			verbose = config.get("config", "verbose", verbose).getBoolean(verbose);
+		} catch (Exception exception) {
+			FMLLog.log(Level.FATAL, exception, "[DustMod] : Error loading config.");
 		} finally {
 			config.save();
 		}
-
+		
 		dust = new BlockDust().setBlockName("dust");
 		
 		itemDust = (DustModItem) (new ItemDust(dust)).setUnlocalizedName("idust").setCreativeTab(creativeTab);
@@ -230,8 +226,9 @@ public class DustMod {
 		
 		chisel = (DustModItem) new ItemChisel().setUnlocalizedName("itemdustchisel").setCreativeTab(creativeTab);
 		
-		spiritPickaxe = (new ItemSpiritPickaxe(ToolMaterial.EMERALD)).setUnlocalizedName("spiritPickaxe").setCreativeTab(creativeTab);
-		
+		spiritPickaxe = (new ItemSpiritPickaxe()).setUnlocalizedName("spiritPickaxe").setCreativeTab(creativeTab);
+		spiritShovel = (new ItemSpiritShovel()).setUnlocalizedName("spiritShovel").setCreativeTab(creativeTab);
+		spiritAxe = (new ItemSpiritAxe()).setUnlocalizedName("spiritAxe").setCreativeTab(creativeTab);
 		spiritSword = (new ItemSpiritSword()).setUnlocalizedName("spiritSword").setCreativeTab(creativeTab);
 		
 		inscription = (ItemInscription) (new ItemInscription()).setUnlocalizedName("runicinscription").setCreativeTab(creativeTab);
@@ -242,19 +239,16 @@ public class DustMod {
 		wornInscription.setCreativeTab(creativeTab);
 		wornInscription.setUnlocalizedName("wornInscription");
 		
-		pouch = new ItemPouch(dust);
-		pouch.setCreativeTab(creativeTab);
-		pouch.setUnlocalizedName("dustPouch");
-
+		pouch = (ItemPouch) (new ItemPouch(dust)).setUnlocalizedName("dustPouch").setCreativeTab(creativeTab);
 	}
-
+	
 	@EventHandler
 	public void load(FMLInitializationEvent evt) {
-
+		
 		NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
-
+		
 		proxy.registerEventHandlers();
-
+		
 		GameRegistry.registerBlock(dust, ItemBlock.class, dust.getUnlocalizedName());
 		GameRegistry.registerBlock(dustTable, ItemBlock.class, dustTable.getUnlocalizedName());
 		GameRegistry.registerBlock(rutBlock, ItemBlock.class, rutBlock.getUnlocalizedName());
@@ -265,171 +259,197 @@ public class DustMod {
 		GameRegistry.registerItem(runicPaper, runicPaper.getUnlocalizedName());
 		GameRegistry.registerItem(dustScroll, dustScroll.getUnlocalizedName());
 		GameRegistry.registerItem(chisel, chisel.getUnlocalizedName());
+		GameRegistry.registerItem(spiritAxe, spiritAxe.getUnlocalizedName());
 		GameRegistry.registerItem(spiritPickaxe, spiritPickaxe.getUnlocalizedName());
+		GameRegistry.registerItem(spiritShovel, spiritShovel.getUnlocalizedName());
 		GameRegistry.registerItem(spiritSword, spiritSword.getUnlocalizedName());
 		GameRegistry.registerItem(inscription, inscription.getUnlocalizedName());
 		GameRegistry.registerItem(ink, ink.getUnlocalizedName());
 		GameRegistry.registerItem(wornInscription, wornInscription.getUnlocalizedName());
 		GameRegistry.registerItem(pouch, pouch.getUnlocalizedName());
-
+		
 		GameRegistry.registerTileEntity(TileEntityDust.class, "dusttileentity");
-		GameRegistry.registerTileEntity(TileEntityDustTable.class,
-				"dusttabletileentity");
-		GameRegistry.registerTileEntity(TileEntityRut.class,
-				"dustruttileentity");
-
+		GameRegistry.registerTileEntity(TileEntityDustTable.class, "dusttabletileentity");
+		GameRegistry.registerTileEntity(TileEntityRut.class, "dustruttileentity");
+		
 		proxy.registerTileEntityRenderers();
-
+		
 		OreDictionary.registerOre("runicDust", new ItemStack(itemDust, 1, 100));
 		OreDictionary.registerOre("runicDust", new ItemStack(itemDust, 1, 200));
 		OreDictionary.registerOre("runicDust", new ItemStack(itemDust, 1, 300));
 		OreDictionary.registerOre("runicDust", new ItemStack(itemDust, 1, 350));
 		OreDictionary.registerOre("runicDust", new ItemStack(itemDust, 1, 400));
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(dustTable, 1), false, 
-				"dwd", "wbw", "dwd", 'd', "runicDust", 'w',
-				new ItemStack(Blocks.planks, 1, -1), 'b',
-				new ItemStack(tome, -1) ));
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(dustTable, 1), false,
-				"wdw", "dbd", "wdw", 'd', "runicDust", 'w',
-				new ItemStack(Blocks.planks, 1, -1), 'b',
-				new ItemStack(tome, -1) ));
-		GameRegistry.addRecipe(new ItemStack(chisel, 1), new Object[] { "st",
-				"i ", 's', new ItemStack(Blocks.cobblestone, 1), 't',
-				new ItemStack(Items.stick, 1), 'i',
-				new ItemStack(Items.iron_ingot, 1) });
-		GameRegistry.addRecipe(new ItemStack(inscription, 1), new Object[] {
-				"s", "p", "p", 's', new ItemStack(Items.string, 1), 'p',
-				new ItemStack(runicPaper, 1) });
-
-		GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 8, 100),
-				new Object[] { new ItemStack(Items.coal, 1, -1),
-						new ItemStack(Blocks.tallgrass, 1, -1),
-						new ItemStack(Blocks.tallgrass, 1, -1) /* , mortar */});
-		GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 8, 100),
-				new Object[] { new ItemStack(Items.coal, 1, -1),
-						new ItemStack(Blocks.leaves, 1, -1),
-						new ItemStack(Blocks.leaves, 1, -1) /* , mortar */});
-		GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 8, 100),
-				new Object[] { new ItemStack(Items.coal, 1, -1),
-						new ItemStack(Blocks.sapling, 1, -1),
-						new ItemStack(Blocks.sapling, 1, -1) /* , mortar */});
-		GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 8, 100),
-				new Object[] { new ItemStack(Items.coal, 1, -1),
-						Items.wheat_seeds, Items.wheat_seeds /* , mortar */});
-		GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 8, 100),
-				new Object[] { new ItemStack(Items.coal, 1, -1),
-						Blocks.cactus, Blocks.cactus /* , mortar */});
-		GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 8, 100),
-				new Object[] { new ItemStack(Items.coal, 1, -1),
-						Blocks.cactus, Items.wheat_seeds });
-		GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 8, 100),
-				new Object[] { new ItemStack(Items.coal, 1, -1),
-						Blocks.cactus, new ItemStack(Blocks.sapling, 1, -1) });
-		GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 8, 100),
-				new Object[] { new ItemStack(Items.coal, 1, -1),
-						Blocks.cactus, new ItemStack(Blocks.leaves, 1, -1) });
-		GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 8, 100),
-				new Object[] { new ItemStack(Items.coal, 1, -1),
-						Blocks.cactus, new ItemStack(Blocks.tallgrass, 1, -1) });
-		GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 8, 100),
-				new Object[] { new ItemStack(Items.coal, 1, -1),
-						Items.wheat_seeds, new ItemStack(Blocks.sapling, 1, -1) });
-		GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 8, 100),
-				new Object[] { new ItemStack(Items.coal, 1, -1),
-						Items.wheat_seeds, new ItemStack(Blocks.leaves, 1, -1) });
-		GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 8, 100),
-				new Object[] { new ItemStack(Items.coal, 1, -1),
-						Items.wheat_seeds, new ItemStack(Blocks.tallgrass, 1, -1) });
-		GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 8, 100),
-				new Object[] { new ItemStack(Items.coal, 1, -1),
-						new ItemStack(Blocks.sapling, 1, -1),
-						new ItemStack(Blocks.leaves, 1, -1) /* , mortar */});
-		GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 8, 100),
-				new Object[] { new ItemStack(Items.coal, 1, -1),
-						new ItemStack(Blocks.sapling, 1, -1),
-						new ItemStack(Blocks.tallgrass, 1, -1) /* , mortar */});
-		GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 8, 100),
-				new Object[] { new ItemStack(Items.coal, 1, -1),
-						new ItemStack(Blocks.leaves, 1, -1),
-						new ItemStack(Blocks.tallgrass, 1, -1) /* , mortar */});
-		GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 12, 200),
-				new Object[] { Items.gunpowder, new ItemStack(itemDust, 1, 100),
-						new ItemStack(itemDust, 1, 100) /* , mortar */});
-		GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 8, 300),
-				new Object[] { new ItemStack(Items.coal, 1, -1),
-						new ItemStack(Items.dye, 2, 4),
-						new ItemStack(Items.dye, 2, 4),
-						new ItemStack(Items.dye, 2, 4) });
-		GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 12, 400),
-				new Object[] { Items.blaze_powder, new ItemStack(itemDust, 1, 300),
-						new ItemStack(itemDust, 1, 300),
-						new ItemStack(itemDust, 1, 300) /* , mortar */});
-		GameRegistry.addShapelessRecipe(new ItemStack(tome, 1, 0),
-				new Object[] {
-					new ItemStack(itemDust, 1, 100),
-					new ItemStack(itemDust, 1, 200),
-					new ItemStack(itemDust, 1, 300),
-					new ItemStack(itemDust, 1, 400),
-					Items.book });
-		GameRegistry.addShapelessRecipe(new ItemStack(runicPaper, 1),
-				new Object[] { Items.paper, Items.gold_nugget, Items.gold_nugget });
-
+		
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(dustTable, 1), false, "dwd", "wbw", "dwd",
+				'd', "runicDust",
+				'w', "plankWood",
+				'b', new ItemStack(tome, -1)));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(dustTable, 1), false, "wdw", "dbd", "wdw",
+				'd', "runicDust",
+				'w', "plankWood",
+				'b', new ItemStack(tome, -1)));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(chisel, 1), false, "st", "i ",
+				's', "cobblestone",
+				't', "stickWood",
+				'i', "ingotIron"));
+		
+		// Plant dust
+		OreDictionary.registerOre("grass", new ItemStack(Blocks.tallgrass, 1, 0));
+		OreDictionary.registerOre("grass", new ItemStack(Blocks.tallgrass, 1, 1));
+		OreDictionary.registerOre("grass", new ItemStack(Blocks.tallgrass, 1, 2));
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(itemDust, 6, 100),
+				"coal",
+				"grass",
+				"grass" ));
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(itemDust, 6, 100),
+				"coal",
+				"treeLeaves",
+				"treeLeaves"));
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(itemDust, 6, 100),
+				"coal",
+				"treeSapling",
+				"treeSapling"));
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(itemDust, 6, 100),
+				"coal",
+				Items.wheat_seeds,
+				Items.wheat_seeds ));
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(itemDust, 10, 100),
+				"coal",
+				Blocks.cactus,
+				Blocks.cactus));
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(itemDust, 10, 100),
+				"coal",
+				Blocks.cactus,
+				Items.wheat_seeds ));
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(itemDust, 10, 100),
+				"coal",
+				Blocks.cactus,
+				"treeSapling" ));
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(itemDust, 10, 100),
+				"coal",
+				Blocks.cactus,
+				"treeLeaves" ));
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(itemDust, 10, 100),
+				"coal",
+				Blocks.cactus,
+				"grass" ));
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(itemDust, 6, 100),
+				"coal",
+				Items.wheat_seeds,
+				"treeSapling" ));
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(itemDust, 6, 100),
+				"coal",
+				Items.wheat_seeds,
+				"treeLeaves" ));
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(itemDust, 6, 100),
+				"coal",
+				Items.wheat_seeds,
+				"grass" ));
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(itemDust, 6, 100),
+				"coal",
+				"treeSapling",
+				"treeLeaves"));
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(itemDust, 6, 100),
+				"coal",
+				"treeSapling",
+				"grass" ));
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(itemDust, 6, 100),
+				"coal",
+				"treeLeaves",
+				"grass" ));
+		
+		// gunpowder dust
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(itemDust, 8, 200),
+				"dustGunpowder",
+				new ItemStack(itemDust, 1, 100),
+				new ItemStack(itemDust, 1, 100) ));
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(itemDust, 14, 200),
+				"dustGunpowder",
+				new ItemStack(itemDust, 1, 100),
+				new ItemStack(itemDust, 1, 100),
+				"dustGunpowder" ));
+		
+		// lapis dust
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(itemDust, 8, 300),
+				"coal",
+				"gemLapis",
+				"gemLapis",
+				"gemLapis" ));
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(itemDust, 27, 300),
+				"coal",
+				"coal",
+				"coal",
+				"blockLapis" ));
+		
+		// blaze dust
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(itemDust, 12, 400),
+				Items.blaze_powder,
+				new ItemStack(itemDust, 1, 300),
+				new ItemStack(itemDust, 1, 300),
+				new ItemStack(itemDust, 1, 300) ));
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(itemDust, 16, 400),
+				Items.blaze_powder,
+				new ItemStack(itemDust, 1, 300),
+				new ItemStack(itemDust, 1, 300),
+				new ItemStack(itemDust, 1, 200) ));
+		
+		// Runic tome
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(tome, 1, 0), 
+				"runicDust",
+				"runicDust",
+				"runicDust",
+				"runicDust",
+				Items.book ));
+		
+		// Scroll
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(runicPaper, 1),
+				Items.paper,
+				"nuggetGold",
+				"nuggetGold" ));
+		
+		// Blank inscription
+		GameRegistry.addRecipe(new ItemStack(inscription, 1), new Object[] { "s", "p", "p",
+			's', new ItemStack(Items.string, 1),
+			'p', new ItemStack(runicPaper, 1) });
+		
+		// Migration from old system
 		for (int i = 1; i < 5; i++) {
-			// Migration from old system
-			GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 1, i * 100),
-					new ItemStack(itemDust, 1, i));
+			GameRegistry.addShapelessRecipe(new ItemStack(itemDust, 1, i * 100), new ItemStack(itemDust, 1, i));
 		}
-
-		EntityRegistry.registerModEntity(EntityRune.class, "dustentity",
-				ENTITY_FireSpriteID, this, 192, 2, false);
-		// EntityRegistry.registerGlobalEntityID(EntityDust.class, "dustentity",
-		// ENTITY_FireSpriteID);
-		EntityRegistry.registerModEntity(EntityBlock.class, "dustblockentity",
-				ENTITY_BlockEntityID, this, 64, 1, false);
-		// EntityRegistry.registerGlobalEntityID(EntityBlock.class,
-		// "dustblockentity", ENTITY_BlockEntityID);
-
+		
+		EntityRegistry.registerModEntity(EntityRune.class, "dustentity", ENTITY_FireSpriteID, this, 192, 2, false);
+		EntityRegistry.registerModEntity(EntityBlock.class, "dustblockentity", ENTITY_BlockEntityID, this, 64, 1, false);
+		
 		// NetworkRegistry.instance().registerGuiHandler(instance, proxy);
-
+		
 		proxy.registerRenderInformation();
-
+		
 		DustManager.registerDefaultDusts();
 		RuneManager.registerDefaultShapes();
 		InscriptionManager.registerDefaultInscriptions();
-
+		
 		MinecraftForge.EVENT_BUS.register(this);
 	}
-
+	
 	@EventHandler
 	public void modsLoaded(FMLPostInitializationEvent evt) {
-		// if(FMLCommonHandler.instance().getSide() == Side.CLIENT){
-		// try{//Debugging
-		// Class c = Class.forName("net.minecraft.src.World");
-		// Minecraft.getMinecraft().session.username = "BILLYTG101";
-		// System.err.println("[DustMod] WARNING: This is being run in a debug environment!");
-		// }catch(Exception e){
-		// //not debugging
-		// }
-		//
-		// }
 	}
-
+	
 	@SubscribeEvent
 	public void onWorldEvent(WorldEvent.Load evt) {
-
+		
 		if (evt.world.isRemote)
 			return;
-
+		
 		ISaveHandler save = evt.world.getSaveHandler();
-		int nameLength = (new StringBuilder())
-				.append(save.getWorldDirectoryName()).append(".dat").length();
-
+		int nameLength = (new StringBuilder()).append(save.getWorldDirectoryName()).append(".dat").length();
+		
 		File mapFile = save.getMapFileFromName(save.getWorldDirectoryName());
 		if (mapFile == null)
 			return;
 		String savePath = mapFile.getPath();
 		savePath = savePath.substring(0, savePath.length() - nameLength);
-
+		
 		VoidStorageManager.load(savePath);
 		VoidTeleManager.load(savePath);
 		EntityRuneManager.load(savePath);
@@ -442,30 +462,21 @@ public class DustMod {
 			event.setCanceled(true);
 		}
 	}
-
-	public static void spawnParticles(World world, String type, double x,
-			double y, double z, double velx, double vely, double velz, int amt,
-			double radius) {
-		spawnParticles(world, type, x, y, z, velx, vely, velz, amt, radius,
-				radius, radius);
+	
+	public static void spawnParticles(World world, String type, double x, double y, double z, double velx, double vely, double velz, int amt, double radius) {
+		spawnParticles(world, type, x, y, z, velx, vely, velz, amt, radius, radius, radius);
 	}
-
-	public static void spawnParticles(World world, String type, double x,
-			double y, double z, double velx, double vely, double velz, int amt,
-			double rx, double ry, double rz) {
-		spawnParticles(world, type, new double[] { x, y, z }, velx, vely, velz,
-				amt, rx, ry, rz);
+	
+	public static void spawnParticles(World world, String type, double x, double y, double z, double velx, double vely, double velz, int amt, double rx, double ry, double rz) {
+		spawnParticles(world, type, new double[] { x, y, z }, velx, vely, velz, amt, rx, ry, rz);
 	}
-
-	public static void spawnParticles(World world, String type,
-			double[] locations, double velx, double vely, double velz, int amt,
-			double rx, double ry, double rz) {
-		ParticleMessage message = new ParticleMessage(type, (short) 0,
-				locations, velx, vely, velz, amt, rx, ry, rz);
+	
+	public static void spawnParticles(World world, String type, double[] locations, double velx, double vely, double velz, int amt, double rx, double ry, double rz) {
+		ParticleMessage message = new ParticleMessage(type, (short) 0, locations, velx, vely, velz, amt, rx, ry, rz);
 		
 		networkWrapper.sendToDimension(message, world.provider.dimensionId);
 	}
-
+	
 	/**
 	 * 
 	 * Compares the two dust's values to find which is better.
@@ -474,38 +485,37 @@ public class DustMod {
 	 *            The reference dust
 	 * @param dustB
 	 *            The check dust
-	 * @return 0 if dusts are equal, -1 if the reference is worth less than the
-	 *         check, and 1 if the reference is worth more than the check
+	 * @return 0 if dusts are equal, -1 if the reference is worth less than the check, and 1 if the reference is worth more than the check
 	 */
 	public static int compareDust(int dustA, int dustB) {
-
+		
 		if (dustA == -1 || dustB == -1) {
 			throw new IllegalArgumentException("Invalid dust ID.");
 		}
-
+		
 		if (dustA == dustB) {
 			return 0;
 		}
-
+		
 		if (dustA > dustB) {
 			return -1;
 		}
-
+		
 		if (dustB > dustA) {
 			return 1;
 		}
-
+		
 		return -1;
 	}
-
+	
 	public static void sendEntMotionTraits(EntityLivingBase wearer) {
 		networkWrapper.sendToDimension(new SetVelocityMessage(wearer), wearer.worldObj.provider.dimensionId);
 	}
 	
-	public static void sendRenderBreakItem(EntityPlayer ent, ItemStack tool){
+	public static void sendRenderBreakItem(EntityPlayer ent, ItemStack tool) {
 		networkWrapper.sendToDimension(new RenderBrokenToolMessage(ent, tool), ent.worldObj.provider.dimensionId);
 	}
-
+	
 	/**
 	 * Returns the itemstack that represents the given entity
 	 * 
@@ -520,7 +530,7 @@ public class DustMod {
 		}
 		return null;
 	}
-
+	
 	/**
 	 * Gets the entityID for a certain mob drop type.
 	 * 
@@ -528,83 +538,48 @@ public class DustMod {
 	 *            The item to check
 	 * @param mul
 	 *            The multiplier for the itemstack size
-	 * @return -1 if not found or the item stacksize isn't big enough, else the
-	 *         entityID
+	 * @return -1 if not found or the item stacksize isn't big enough, else the entityID
 	 */
 	public static int getEntityIDFromDrop(ItemStack is, int mul) {
-		// System.out.println("CHECK " + is + " " + is.stackSize + " " +
-		// is.getItemDamage());
+		// System.out.println("CHECK " + is + " " + is.stackSize + " " + is.getItemDamage());
 		for (ItemStack i : entdrops.keySet()) {
-			// System.out.println("grr " + i + " " + i.stackSize + " " +
-			// i.getItemDamage());
-			if (i == is
-					&& (is.stackSize >= i.stackSize * mul || is.stackSize == -1)
-					&& (i.getItemDamage() == is.getItemDamage() || i
-							.getItemDamage() == -1)) {
+			// System.out.println("grr " + i + " " + i.stackSize + " " + i.getItemDamage());
+			if (i == is && (is.stackSize >= i.stackSize * mul || is.stackSize == -1) && (i.getItemDamage() == is.getItemDamage() || i.getItemDamage() == -1)) {
 				// System.out.println("ent found");
 				return entdrops.get(i);
 			}
 		}
-
-		// System.out.println("ent not found");
+		
 		return -1;
 	}
-
+	
 	/**
-	 * Checks to see if a mob is hostile.
-	 * 
-	 * @param id
-	 *            The EntityID of the mob
-	 * @return true if hostile, false if not
-	 */
-	public static boolean isMobIDHostile(int id) {
-		Entity ent = EntityList.createEntityByID(id, null);
-
-		if (ent instanceof IMob) {
-			return true;
-		}
-
-		return false;
-	}
-
-	/**
-	 * Register an item that should represent the given mob. Used for runes like
-	 * the resurrection rune where an item is sacrificed to determine which mob
-	 * to spawn. The stacksize should be an amount related to the worth of the
-	 * mob/item. For example, to spawn a chicken you need relatively less to
-	 * chickenRaw(4) items than you need blazerods to spawn a blaze(16)
+	 * Register an item that should represent the given mob. Used for runes like the resurrection rune where an item is sacrificed to determine which mob to spawn. The stacksize should be an amount
+	 * related to the worth of the mob/item. For example, to spawn a chicken you need relatively less to chickenRaw(4) items than you need blazerods to spawn a blaze(16)
 	 * 
 	 * @param item
-	 *            The item that should represent the entity (generally the item
-	 *            that the mob should drop)
+	 *            The item that should represent the entity (generally the item that the mob should drop)
 	 * @param entityID
 	 *            The entityID that should be represented by the item.
 	 */
-	public static void registerNewEntityDropForSacrifice(ItemStack item,
-			int entityID) {
+	public static void registerNewEntityDropForSacrifice(ItemStack item, int entityID) {
 		entdrops.put(item, entityID);
 	}
-
+	
 	public static ItemWornInscription getWornInscription() {
 		return wornInscription;
 	}
-
+	
 	public static Item getItemDust() {
-		// if(!hasLoaded){
-		// instance.preInit(null);
-		// }
 		return itemDust;
 	}
-
+	
 	public static Item getNegator() {
-		// if(!hasLoaded){
-		// instance.preInit(null);
-		// }
 		return negateSacrifice;
 	}
-
+	
 	public static HashMap<ItemStack, Integer> entdrops;
-
+	
 	public static void log(String msg, Object... objs) {
 		String message = "[DustMod] " + msg;
 		for (Object o : Arrays.asList(objs)) {
@@ -612,7 +587,7 @@ public class DustMod {
 		}
 		FMLLog.log(Level.INFO, message);
 	}
-
+	
 	static {
 		entdrops = new HashMap<ItemStack, Integer>();
 		entdrops.put(new ItemStack(Items.chicken, 4, 0), 93); // chicken
@@ -626,14 +601,14 @@ public class DustMod {
 		entdrops.put(new ItemStack(Items.ender_pearl, 8, 0), 58); // enderman
 		entdrops.put(new ItemStack(Items.leather, 16, 0), 95); // wolf
 		entdrops.put(new ItemStack(Items.gold_nugget, 16, 0), 57); // zombie
-																				// pigman
+																	// pigman
 		entdrops.put(new ItemStack(Items.blaze_rod, 16, 0), 61); // blaze
 		entdrops.put(new ItemStack(Items.spider_eye, 8, 0), 59); // cave
-																			// spider
+																	// spider
 		entdrops.put(new ItemStack(Items.gunpowder, 8, 0), 50); // creeper
 		entdrops.put(new ItemStack(Items.ghast_tear, 8, 0), 56); // ghast
 		entdrops.put(new ItemStack(Items.magma_cream, 8, 0), 62); // magma
-																				// slime
+																	// slime
 		entdrops.put(new ItemStack(Blocks.stonebrick, 16, 1), 60); // silverfish
 		entdrops.put(new ItemStack(Items.bone, 16, 0), 51); // skeleton
 		entdrops.put(new ItemStack(Items.slime_ball, 16, 0), 55); // slime
@@ -641,13 +616,126 @@ public class DustMod {
 		entdrops.put(new ItemStack(Items.rotten_flesh, 8, 0), 54); // zombie
 		entdrops.put(new ItemStack(Blocks.snow, 8, 0), 97); // snow golem
 		entdrops.put(new ItemStack(Blocks.iron_block, 8, 0), 99); // iron
-																			// golem
+																	// golem
 		entdrops.put(new ItemStack(Blocks.dragon_egg, 64, 0), 63); // ender
-																			// dragon
+																	// dragon
 		entdrops.put(new ItemStack(Blocks.diamond_block, 64, 0), 53); // giant
 	}
-
+	
 	public static boolean isDust(Block block) {
 		return block == dust;
+	}
+	
+	static private int damageRepairedPerDust = 4;
+	
+	public static void repairToolWithDust(ItemStack itemStackTool, World world, Entity entity, int slotIndexTool, boolean isCurrentItem, int dustId) {
+		if (!(entity instanceof EntityPlayer) || itemStackTool.getItemDamage() == 0) {
+			return;
+		}
+		
+		EntityPlayer entityPlayer = (EntityPlayer) entity;
+		int repairDelay = isCurrentItem ? 6 : 70;
+		if (itemStackTool.getItemDamage() < damageRepairedPerDust) {
+			repairDelay = 300;
+		}
+		
+		if (entity.ticksExisted % repairDelay != 0) {
+			return;
+		}
+		
+		// search for lapis dust
+		int dustAvailable = 0;
+		if (entityPlayer.capabilities.isCreativeMode) {
+			dustAvailable = 256;
+		} else {
+			for (int slotIndexScan = 0; slotIndexScan < entityPlayer.inventory.mainInventory.length; slotIndexScan++) {
+				ItemStack itemStack = entityPlayer.inventory.mainInventory[slotIndexScan];
+				if (itemStack == null) {
+					continue;
+				}
+				if (itemStack.getItem() == DustMod.itemDust && itemStack.getItemDamage() == dustId) {
+					dustAvailable += itemStack.stackSize;
+				} else if (itemStack.getItem() == DustMod.pouch) {
+					if (ItemPouch.getValue(itemStack) == dustId) {
+						dustAvailable += ItemPouch.getDustAmount(itemStack);
+					}
+				}
+			}
+		}
+		if (dustAvailable <= 0) {
+			return;
+		}
+		
+		int maxRepairable = (int) Math.ceil(itemStackTool.getItemDamage() / (float) damageRepairedPerDust);
+		int dustToConsume = Math.min(5, Math.min(maxRepairable, dustAvailable));
+		int dustConsumed = 0;
+		for (int slotIndexScan = 0; slotIndexScan < entityPlayer.inventory.mainInventory.length; slotIndexScan++) {
+			if (dustConsumed >= dustToConsume) {
+				break;
+			}
+			ItemStack itemStack = entityPlayer.inventory.mainInventory[slotIndexScan];
+			if (itemStack == null) {
+				continue;
+			}
+			if (itemStack.getItem() == DustMod.itemDust && itemStack.getItemDamage() == dustId) {
+				int subStack = Math.min(itemStack.stackSize, dustToConsume);
+				itemStack.stackSize -= subStack;
+				dustConsumed -= subStack;
+				
+				if (itemStack.stackSize == 0) {
+					entityPlayer.inventory.mainInventory[slotIndexScan] = null;
+				}
+			} else if (itemStack.getItem() == DustMod.pouch) {
+				if (ItemPouch.getValue(itemStack) == dustId) {
+					int subStack = Math.min(ItemPouch.getDustAmount(itemStack), dustToConsume);
+					ItemPouch.subtractDust(itemStack, subStack);
+					dustConsumed -= subStack;
+				}
+			}
+		}
+		itemStackTool.setItemDamage(itemStackTool.getItemDamage() - damageRepairedPerDust * dustToConsume);
+	}
+	
+	public static void breakAblock(EntityPlayer entityPlayer, ItemStack itemStack, World world, int x, int y, int z, double dropChance, int dropDustId) {
+		if (!world.blockExists(x, y, z) || world.isRemote) {
+			return;
+		}
+		
+		Block block = world.getBlock(x, y, z);
+		int metadata = world.getBlockMetadata(x, y, z);
+		
+		Material material = block.getMaterial();
+		if (!block.isAir(world, x, y, z) && block.getPlayerRelativeBlockHardness(entityPlayer, world, x, y, z) > 0) {
+			if (!block.canHarvestBlock(entityPlayer, metadata)) {
+				return;
+			}
+			if (itemStack.getItem() instanceof ItemPickaxe && material != Material.iron && material != Material.anvil && material != Material.rock && material != Material.ice
+					&& material != Material.glass && material != Material.piston) {// ice, glass & piston are bonus
+				return;
+			}
+			if (itemStack.getItem() instanceof ItemAxe && material != Material.wood && material != Material.plants && material != Material.vine && material != Material.leaves) {// leaves are a bonus
+				return;
+			}
+			if (itemStack.getItem() instanceof ItemSpade && material != Material.grass && material != Material.ground && material != Material.sand && material != Material.snow
+					&& material != Material.clay) {
+				return;
+			}
+			
+			block.onBlockHarvested(world, x, y, z, metadata, entityPlayer);
+			
+			if (block.removedByPlayer(world, entityPlayer, x, y, z, true)) {
+				block.onBlockDestroyedByPlayer(world, x, y, z, metadata);
+				block.harvestBlock(world, entityPlayer, x, y, z, metadata);
+				
+				if (world.rand.nextDouble() < dropChance) {
+					EntityItem entityItem = new EntityItem(entityPlayer.worldObj, x + 0.5, y + 0.5, z + 0.5, new ItemStack(DustMod.itemDust, 1, dropDustId));
+					world.spawnEntityInWorld(entityItem);
+				}
+				
+				itemStack.damageItem(1, entityPlayer);
+				
+				world.playAuxSFX(2001, x, y, z, Block.getIdFromBlock(block) + (metadata << 12));
+			}
+		}
 	}
 }
