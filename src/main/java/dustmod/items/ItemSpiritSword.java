@@ -27,59 +27,53 @@ import net.minecraft.world.World;
  *
  * @author billythegoat101
  */
-public class ItemSpiritSword extends ItemSword
-{
-    public ItemSpiritSword()
-    {
-        super(ToolMaterial.EMERALD);
-        setMaxDamage(131);
-    }
-    
-    @Override
-    public EnumRarity getRarity(ItemStack p_77613_1_) {
-    	return EnumRarity.epic;
-    }
-
-    @Override
-    public void onUpdate(ItemStack itemstack, World world, Entity entity, int i, boolean flag)
-    {
-        if (!itemstack.isItemEnchanted())
-        {
-            itemstack.addEnchantment(Enchantment.knockback, 10);
-            itemstack.addEnchantment(Enchantment.smite, 5);
-        }
-        super.onUpdate(itemstack, world, entity, i, flag);
-    }
-    
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+public class ItemSpiritSword extends ItemSword {
+	public ItemSpiritSword() {
+		super(ToolMaterial.EMERALD);
+		setMaxDamage(131);
+	}
+	
 	@Override
-    public Multimap getItemAttributeModifiers()
-    {
-        Multimap multimap = super.getItemAttributeModifiers();
-        multimap.removeAll(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName());
-        multimap.put(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(), new AttributeModifier(field_111210_e, "Tool modifier", (double)12, 0));
-        return multimap;
-    }
-    
-    @Override
-    public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player,
-    		Entity entity) {
-
-    	Random rand = new Random();
-    	double r = rand.nextDouble();
-    	
-    	int level = player.experienceLevel+5;
-    	double tol = (double)level/25D;
-    	
-    	if(r < tol){
-    		int amt = 1;
-    		if(rand.nextDouble() < 0.5D) amt = 2;
-    		EntityItem ei = new EntityItem(entity.worldObj, entity.posX, entity.posY, entity.posZ, new ItemStack(DustMod.itemDust,amt,200));
-    		ei.delayBeforeCanPickup = 0;
-    	}
-    	
-    	return false;
-    }
+	public EnumRarity getRarity(ItemStack p_77613_1_) {
+		return EnumRarity.epic;
+	}
+	
+	@Override
+	public void onUpdate(ItemStack itemstack, World world, Entity entity, int i, boolean flag) {
+		if (!itemstack.isItemEnchanted()) {
+			itemstack.addEnchantment(Enchantment.knockback, 10);
+			itemstack.addEnchantment(Enchantment.smite, 5);
+		}
+		super.onUpdate(itemstack, world, entity, i, flag);
+	}
+	
+	@Override
+	public Multimap getItemAttributeModifiers() {
+		Multimap multimap = super.getItemAttributeModifiers();
+		multimap.removeAll(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName());
+		multimap.put(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(), new AttributeModifier(field_111210_e, "Tool modifier", 12.0D, 0));
+		return multimap;
+	}
+	
+	@Override
+	public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) {
+		
+		Random rand = new Random();
+		double r = rand.nextDouble();
+		
+		int level = player.experienceLevel + 5;
+		double dropChance = level / 25.0D;
+		
+		if (r < dropChance) {
+			int amt = 1;
+			if (rand.nextDouble() < 0.5D)
+				amt = 2;
+			EntityItem ei = new EntityItem(entity.worldObj, entity.posX, entity.posY, entity.posZ, new ItemStack(DustMod.itemDust, amt, 200));
+			ei.delayBeforeCanPickup = 0;
+		}
+		
+		return false;
+	}
 	
 	@Override
 	@SideOnly(Side.CLIENT)
