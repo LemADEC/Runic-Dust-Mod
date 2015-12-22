@@ -5,7 +5,6 @@
 package dustmod.runes;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -15,7 +14,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 import net.minecraftforge.common.config.Configuration;
-import cpw.mods.fml.common.registry.LanguageRegistry;
 import dustmod.DustMod;
 import dustmod.blocks.BlockDust;
 import dustmod.blocks.TileEntityDust;
@@ -37,8 +35,6 @@ public class RuneManager
     public RuneManager()
     {
     }
-
-
 
     public static int getNextPageNumber(){
     	return names.size();
@@ -70,10 +66,6 @@ public class RuneManager
         result.entityDustID = EntityRuneManager.getNextDustEntityID();
         EntityRuneManager.registerEntityDust(result, result.entityDustID);
         result.setPosition(x, y - 0.8, z);
-//        result.posX = x;
-//        result.posY = y-0.8;//EntityDust.yOffset;
-//        result.posZ = z;
-//        result.dustPoints = points;
         for(int i = 0; i < runeRotation; i++){
         	map = RuneShape.rotateMatrixLeft(map);
         }
@@ -144,7 +136,6 @@ public class RuneManager
         events.put(name, evt);
         names.add(name);
         evt.name = name;
-//        System.out.println("Added event " + name +". Total:" + names.size() );
     }
 
     public static RuneShape getShape(int ind)
@@ -175,7 +166,6 @@ public class RuneManager
      */
     public static void resetMultiplayerRunes(){
 		DustMod.logger.debug("Reseting remote runes.");
-//		System.out.println("[DustMod] Resetting remote runes.");
         namesRemote = new ArrayList<String>();
         shapesRemote = new ArrayList<RuneShape>();
         DustMod.proxy.resetPlayerTomePage();
@@ -353,7 +343,7 @@ public class RuneManager
 		}
 
 		if (found != null) {
-			DustMod.logger.info("Rune triggered at {}, {}, {}: {}", (int)i, (int)j, (int)k, found.name);
+			DustMod.logger.info("Rune {} triggered by {} at {}, {}, {}", found.name, (entityPlayer == null) ? "redstone" : entityPlayer.getGameProfile().getName(), (int)i, (int)j, (int)k);
 			RuneManager.initiate(found, found.name, i, j, k, world, points, trim, (entityPlayer == null) ? null : entityPlayer.getGameProfile().getId(), shapeRotation);
 		} else {
 
