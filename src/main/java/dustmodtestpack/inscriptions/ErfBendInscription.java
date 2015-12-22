@@ -6,13 +6,10 @@ import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.BlockLiquid;
-import net.minecraft.block.BlockSand;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -33,8 +30,8 @@ public class ErfBendInscription extends InscriptionEvent {
 		super(design, idName, properName, id);
 		this.setAuthor("billythegoat101");
 		this.setDescription("Description\n"
-				+ "Launch your enemies sky-high with a pillar of earth! Or drop them deep into an abyss! \n-\n Shift+left and right click with an empty hand at an enemy to activate. \n"
-				+ "Design is still a WIP\n.\n.\n.\n(Earthbending is from the awesome show Avatar, please don't sue me.)");
+				+ "Launch your enemies sky-high with a pillar of earth! Or drop them deep into an abyss!\n\nShift+left and right click with an empty hand at an enemy to activate.\n"
+				+ "Design is still a WIP\n\n\n(Earthbending is from the awesome show Avatar, please don't sue me.)");
 		this.setNotes("Sacrifice\n" + "To be defined");
 	}
 	
