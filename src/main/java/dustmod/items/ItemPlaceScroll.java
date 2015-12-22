@@ -5,6 +5,7 @@
 package dustmod.items;
 
 import java.util.List;
+import java.util.Set;
 
 import org.lwjgl.input.Keyboard;
 
@@ -40,9 +41,10 @@ public class ItemPlaceScroll extends DustModItem {
 	}
 	
 	@Override
-	public boolean onItemUse(ItemStack item, EntityPlayer entityPlayer, World world, int i, int j, int k, int l, float x, float y, float z) {
-		if (!world.canMineBlock(entityPlayer, i, j, k))
+	public boolean onItemUse(ItemStack item, EntityPlayer entityPlayer, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
+		if (!world.canMineBlock(entityPlayer, x, y, z)) {
 			return false;
+		}
 		
 		if (entityPlayer == null) {
 			return false;
@@ -51,15 +53,15 @@ public class ItemPlaceScroll extends DustModItem {
 		RuneShape runeShape = RuneManager.getShapeFromID(item.getItemDamage());
 		int rotation = Math.round(6F - entityPlayer.rotationYaw / 90F) % 4;
 		
-		if (DustMod.isDust(world.getBlock(i, j, k))) {
-			j--;
+		if (DustMod.isDust(world.getBlock(x, y, z))) {
+			y--;
 		}
 		
 		try {
 			if (entityPlayer.capabilities.isCreativeMode) {
-				runeShape.drawOnWorldWhole(world, i, j + 1, k, entityPlayer, rotation);
+				runeShape.drawOnWorldWhole(world, x, y + 1, z, entityPlayer, rotation);
 			} else {
-				runeShape.drawOnWorldPart(world, i, j + 1, k, entityPlayer, rotation, entityPlayer.getItemInUseCount());
+				runeShape.drawOnWorldPart(world, x, y + 1, z, entityPlayer, rotation, entityPlayer.getItemInUseCount());
 			}
 		} catch (Exception exception) {
 			DustMod.logger.error("Unable to use scroll: " + exception.getMessage(), exception);
@@ -75,9 +77,6 @@ public class ItemPlaceScroll extends DustModItem {
 		return itemStack;
 	}
 	
-	/**
-	 * returns the action that specifies what animation to play when the items is being used
-	 */
 	@Override
 	public EnumAction getItemUseAction(ItemStack itemStack) {
 		return EnumAction.block;
