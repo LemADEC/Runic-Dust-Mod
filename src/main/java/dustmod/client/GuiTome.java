@@ -142,11 +142,17 @@ public class GuiTome extends GuiScreen {
 				updateRandomPun();
 			}
 		}
-		// transform color codes
+		
+		// add formating
 		notes = notes
 				.replace("Sacrifice\n", "§fSacrifice§7\n")
 				.replace("Notes\n", "§fNotes§7\n")
 				.replace("Description\n", "§fDescription§7\n");
+		
+		// transform color codes
+		header = header.replace("§", "" + (char)167);
+		notes = notes.replace("§", "" + (char)167);
+		author = author.replace("§", "" + (char)167);
 		
 		GL11.glColor3f(255, 0, 0);
 		fontRendererObj.drawString(header, (width - xSize) / 2 - xOffset, (height - ySize) / 2 - fontRendererObj.FONT_HEIGHT - 2, recolor ? 0xFF0000 : 0xEEEEEE);
