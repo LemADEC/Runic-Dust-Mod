@@ -5,7 +5,6 @@
 package dustmod.items;
 
 import java.util.List;
-import java.util.Set;
 
 import org.lwjgl.input.Keyboard;
 
@@ -37,7 +36,7 @@ public class ItemPlaceScroll extends DustModItem {
 		super();
 		setMaxDamage(0);
 		setHasSubtypes(true);
-		this.setMaxStackSize(4);
+		setMaxStackSize(4);
 	}
 	
 	@Override
@@ -120,6 +119,7 @@ public class ItemPlaceScroll extends DustModItem {
 		} else {
 			tooltip = "§f§l" + shape.getRuneName() + "§7\n" + shape.getDescription().replace("Description\n", "") + "\n\n§b<Press shift to show sacrifices>";
 		}
+		tooltip = tooltip.replace("§", "" + (char)167);
 		
 		String[] split = tooltip.split("\n");
 		for (String line : split) {
