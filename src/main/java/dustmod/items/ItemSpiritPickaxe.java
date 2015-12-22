@@ -6,8 +6,6 @@ package dustmod.items;
 
 import java.util.List;
 
-import org.lwjgl.input.Keyboard;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -24,8 +22,6 @@ import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import dustmod.DustMod;
-import dustmod.runes.RuneManager;
-import dustmod.runes.RuneShape;
 
 /**
  * 
@@ -189,7 +185,6 @@ public class ItemSpiritPickaxe extends ItemPickaxe {
 		double dropChance = Math.min(1.0D, level * level / 900D) * 0.50D;
 		
 		int use = getMaxItemUseDuration(itemStack) - itemInUseCount;
-		System.out.println("use " + use + " itemInUseCount " + itemInUseCount);
 		int radius = 0;
 		if (use <= 5) {
 			return;
@@ -217,7 +212,6 @@ public class ItemSpiritPickaxe extends ItemPickaxe {
 	public void registerIcons(IIconRegister iconRegister) {
 		this.itemIcon = iconRegister.registerIcon(DustMod.spritePath + getUnlocalizedName().replace("item.", ""));
 	}
-	
 	
 	@Override
 	@SideOnly(Side.CLIENT)
