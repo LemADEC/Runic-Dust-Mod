@@ -45,7 +45,7 @@ public class GuiTome extends GuiScreen {
 	
 	public int xOffset;
 	
-	public static boolean showSacrifices = true;
+	public static boolean showSacrifices = false;
 	public ItemStack itemstack;
 	
 	public GuiTome(ItemStack itemstack) {
@@ -80,7 +80,7 @@ public class GuiTome extends GuiScreen {
 				(height - ySize) / 2 + 2 + ySize - 20,
 				Math.min(200, (width - xSize) / 2 + xOffset - 2),
 				20,
-				"Description > "));
+				"< Information  "));
 	}
 	
 	/**
@@ -99,7 +99,7 @@ public class GuiTome extends GuiScreen {
 	}
 	
 	/**
-	 * Draw the foreground layer for the GuiContainer (everythin in front of the items)
+	 * Draw the foreground layer for the GuiContainer (everything in front of the items)
 	 */
 	protected void drawGuiContainerForegroundLayer() {
 		String header = "";
@@ -110,18 +110,18 @@ public class GuiTome extends GuiScreen {
 		if ((isRunes() && getRunePage() == 0) || (!isRunes() && getInscriptionPage() == 0)) {
 			header = "- " + (isRunes() ? (RuneManager.namesRemote.size() + " runes are installed") : (InscriptionManager.eventsRemote.size()) + " inscriptions are installed") + " -";
 			if (showSacrifices) {
+				notes = "§fTips§7\n"
+						+ "- Meat means any Pork, Beef or Chicken (raw or cooked).\n"
+						+ "- Drops means any item corresponding to a particular mob.\n"
+						+ "- §5Purple dust§7 is variable: use it to set traits of the rune.\n"
+						+ "- §4Red text§7 indicates powered runes: you need to provide fuel through smeltables.\n"
+						+ "- Area is set by ruts using §fHammer & Chisel§7.\n";
+			} else {
 				notes = "§fWelcome to §6§lRunic Dust§f!§7\n"
 						+ "Draw shapes with dust/pouch, drop sacrifices on it, then right-click with this tome or redstone.\n"
 						+ "\n"
 						+ "Use Left click to view next page.\n"
 						+ "Use Right click to view previous page.\n";
-			} else {
-				notes = "§fTips§7\n"
-					+ "- Meat means any Pork, Beef or Chicken (raw or cooked).\n"
-					+ "- Drops means any item corresponding to a particular mob.\n"
-					+ "- §5Purple dust§7 is variable: use it to set traits of the rune.\n"
-					+ "- §4Red text§7 indicates powered runes: you need to provide fuel through smeltables.\n"
-					+ "- Area is set by ruts using §fHammer & Chisel§7.\n";
 			}
 			author = pun;
 		} else {
@@ -173,16 +173,16 @@ public class GuiTome extends GuiScreen {
 		super.updateScreen();
 	}
 	
-	public void setRunePage(int p) {
-		runePage = p;
+	public void setRunePage(int page) {
+		runePage = page;
 	}
 	
 	public int getRunePage() {
 		return runePage;
 	}
 	
-	public void setInscriptionPage(int p) {
-		insPage = p;
+	public void setInscriptionPage(int page) {
+		insPage = page;
 	}
 	
 	public int getInscriptionPage() {
@@ -229,12 +229,13 @@ public class GuiTome extends GuiScreen {
 	protected void mouseClicked(int x, int y, int m) {
 		super.mouseClicked(x, y, m);
 		
-		if (x < xStart + 6 && y - yStart < 100 && y - yStart > 16) {
+		if (x < xStart + 6 && y - yStart < 117 && y - yStart > 16) {
 			y -= yStart;
-			if (y > 56)
+			if (y > 55) {
 				setType(1);
-			else if (y > 16)
+			} else if (y > 16) {
 				setType(0);
+			}
 		} else if (y >= (height / 2 - ySize / 2) && y <= (height / 2 + ySize / 2)) {
 			if (x >= width / 2 - xSize / 2 - xOffset && x <= width / 2 + xSize / 2 - xOffset) {
 				if (m == 0) {
@@ -351,9 +352,9 @@ public class GuiTome extends GuiScreen {
 			showSacrifices = !showSacrifices;
 			
 			if (showSacrifices) {
-				but.displayString = "Description >";
+				but.displayString = "    Description >";
 			} else {
-				but.displayString = "< Information";
+				but.displayString = "< Information    ";
 			}
 		} else {
 			super.actionPerformed(but);
