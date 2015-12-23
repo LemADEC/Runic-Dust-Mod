@@ -855,13 +855,15 @@ public class EntityRune extends Entity {
 	 * @return true if player can edit block, false otherwise
 	 */
 	public boolean canAlterBlock(int x, int y, int z) {
-		
-		EntityPlayer p = worldObj.func_152378_a(summonerUUID);
-		if (p != null && !worldObj.canMineBlock(p, x, y, z)) {
+		if (y < 0 && y > worldObj.getHeight()) {
+			return false;
+		}
+		EntityPlayer entityPlayer = worldObj.func_152378_a(summonerUUID);
+		if (entityPlayer == null || !worldObj.canMineBlock(entityPlayer, x, y, z)) {
 			return false;
 		}
 		
-		return y > -0 && y < worldObj.getHeight();
+		return true;
 	}
 	
 	public void onRightClick(TileEntityDust ted, EntityPlayer p) {
