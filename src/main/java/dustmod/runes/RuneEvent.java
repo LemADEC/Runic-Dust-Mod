@@ -72,15 +72,15 @@ public abstract class RuneEvent {
 		return this;
 	}
 	
-	public final void init(EntityRune e) {
-		onInit(e);
+	public final void init(EntityRune entityRune) {
+		onInit(entityRune);
 	}
 	
-	protected void initGraphics(EntityRune e) {
+	protected void initGraphics(EntityRune entityRune) {
 		
 	}
 	
-	protected void onInit(EntityRune e) {
+	protected void onInit(EntityRune entityRune) {
 	}
 	
 	public final void tick(EntityRune entityRune) {
