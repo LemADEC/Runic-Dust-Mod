@@ -36,53 +36,53 @@ public class REPain extends PoweredEvent //This is a Powered rune
 	
 	/**
 	 * Called to set the graphical components of the rune
-     * @param e EntityDust instance
+     * @param entityRune EntityDust instance
 	 */
 	@Override
-    public void initGraphics(EntityRune e){
-    	super.initGraphics(e);
+    public void initGraphics(EntityRune entityRune){
+    	super.initGraphics(entityRune);
     	
 		//no graphics!
     	
     }
     
     @Override
-    public void onInit(EntityRune e)
+    public void onInit(EntityRune entityRune)
     {
-        super.onInit(e);
+        super.onInit(entityRune);
         
         //These 4 points are the 4 variable dusts in the center of the rune.
         int a,b,c,d;
-        a = e.dusts[3][3];
-        b = e.dusts[3][4];
-        c = e.dusts[4][4];
-        d = e.dusts[4][3];
+        a = entityRune.dusts[3][3];
+        b = entityRune.dusts[3][4];
+        c = entityRune.dusts[4][4];
+        d = entityRune.dusts[4][3];
         
         //First we check to make sure they are all equal
         if(a == b && b == c && c == d){
             //Then we store the dust for future reference
-            e.data[0] = a;
+            entityRune.data[0] = a;
         }else{
         //If not we end here
-            e.fizzle();
+            entityRune.fizzle();
             return;
         }
     }
     
     @Override
-    public void onTick(EntityRune e)
+    public void onTick(EntityRune entityRune)
     {
-        super.onTick(e);
+        super.onTick(entityRune);
         
         //Doing entity checks every single tick just seems like it would cause 
         //an unnecessary amount of lag, so I don't do it
-        if(e.ticksExisted % 10 == 0)
+        if(entityRune.ticksExisted % 10 == 0)
         {
             
             //Set stats based off of the dust level set earlier
             int damage = 0;
             double rad = 0;
-            switch(e.data[0]){
+            switch(entityRune.data[0]){
                 case 100:
                     damage = 1;
                     rad = 8D;
@@ -106,32 +106,31 @@ public class REPain extends PoweredEvent //This is a Powered rune
             }
             
             //Get all entities within radius
-            @SuppressWarnings("unchecked")
-			List<Entity> ents = this.getEntities(e, rad);
-            for(Entity i: ents){
-                if(i instanceof EntityPlayer){
+			List<Entity> entities = this.getEntities(entityRune, rad);
+            for(Entity entity : entities){
+                if(entity instanceof EntityPlayer){
                     //Check if it is the summoning player
-                    EntityPlayer player = (EntityPlayer) i;
-                    if(e.isSummoner(player)){
+                    EntityPlayer entityPlayer = (EntityPlayer) entity;
+                    if(entityRune.isSummoner(entityPlayer)){
                         continue; //Skip this entity, don't hurt them
                     }
                 }
                 
                 //hurt the entity
-                i.attackEntityFrom(DamageSource.magic, damage);
+                entity.attackEntityFrom(DamageSource.magic, damage);
             }
         }
     }
     
     @Override
-    public void onRightClick(EntityRune e, TileEntityDust ted, EntityPlayer p)
+    public void onRightClick(EntityRune entityRune, TileEntityDust tileEntityDust, EntityPlayer entityPlayer)
     {
-        super.onRightClick(e, ted, p);
+        super.onRightClick(entityRune, tileEntityDust, entityPlayer);
         //Used to toggle paused.
-        if(e.data[1] == 0)
-            e.data[1] = 1;
+        if(entityRune.data[1] == 0)
+            entityRune.data[1] = 1;
         else
-            e.data[1] = 0;
+            entityRune.data[1] = 0;
     }
     
     @Override

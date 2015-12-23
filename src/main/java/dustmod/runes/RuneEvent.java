@@ -308,31 +308,24 @@ public abstract class RuneEvent {
 	 *            The radius around the location to check
 	 * @return A list containing all entities within the radius of the coordinates
 	 */
-	@SuppressWarnings("unchecked")
 	public List<Entity> getEntities(World world, double x, double y, double z, double radius) {
-		List<Entity> l = world.getEntitiesWithinAABBExcludingEntity(null, AxisAlignedBB.getBoundingBox(x, y, z, x + 1.0D, y + 1.0D, z + 1.0D).expand(radius, radius, radius));
-		return l;
+		List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(null, AxisAlignedBB.getBoundingBox(x, y, z, x + 1.0D, y + 1.0D, z + 1.0D).expand(radius, radius, radius));
+		return list;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public <T extends Entity> List<? extends T> getEntities(World world, Class<T> entType, double x, double y, double z, double radius) {
-		List<? extends T> l = world.getEntitiesWithinAABB(entType, AxisAlignedBB.getBoundingBox(x, y, z, x + 1.0D, y + 1.0D, z + 1.0D).expand(radius, radius, radius));
-		return l;
+		List<? extends T> list = world.getEntitiesWithinAABB(entType, AxisAlignedBB.getBoundingBox(x, y, z, x + 1.0D, y + 1.0D, z + 1.0D).expand(radius, radius, radius));
+		return list;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public <T extends Entity> List<? extends T> getEntities(World world, Class<T> entType, double x, double y, double z, double radius, IEntitySelector selector) {
-		List<? extends T> l = world.selectEntitiesWithinAABB(entType, AxisAlignedBB.getBoundingBox(x, y, z, x + 1.0D, y + 1.0D, z + 1.0D).expand(radius, radius, radius), selector);
-		return l;
+		List<? extends T> list = world.selectEntitiesWithinAABB(entType, AxisAlignedBB.getBoundingBox(x, y, z, x + 1.0D, y + 1.0D, z + 1.0D).expand(radius, radius, radius), selector);
+		return list;
 	}
 	
-	@SuppressWarnings("rawtypes")
 	public List getEntitiesExcluding(World world, Entity e, double x, double y, double z, double radius) {
-		List l = world.getEntitiesWithinAABBExcludingEntity(e, AxisAlignedBB.getBoundingBox(x, y, z, x + 1.0D, y + 1.0D, z + 1.0D).expand(radius, radius, radius));
-		// System.out.println("Retrieving entities " +
-		// world.worldProvider.worldType + " [" + x + "," + y + "," + z + "] " +
-		// l.size());
-		return l;
+		List list = world.getEntitiesWithinAABBExcludingEntity(e, AxisAlignedBB.getBoundingBox(x, y, z, x + 1.0D, y + 1.0D, z + 1.0D).expand(radius, radius, radius));
+		return list;
 	}
 	
 	/**
@@ -355,7 +348,6 @@ public abstract class RuneEvent {
 	 *            The radius in which to check for dropped items
 	 * @return A List<EntityItem> of all nearby dropped items.
 	 */
-	@SuppressWarnings("rawtypes")
 	public final List<EntityItem> getItems(EntityRune entityRune, double radius) {
 		ArrayList<EntityItem> itemstacks = new ArrayList<EntityItem>();
 		List<Entity> entities = getEntities(entityRune.worldObj, entityRune.posX, entityRune.posY - entityRune.yOffset, entityRune.posZ, radius);
