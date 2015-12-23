@@ -7,8 +7,11 @@ package dustmod.defaults.runes;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockFalling;
+import net.minecraft.block.BlockGravel;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.BlockSand;
+import net.minecraft.block.BlockTorch;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -34,7 +37,8 @@ public class REHideout extends RuneEvent {
 		super.initGraphics(entityRune);
 		
 		entityRune.setRenderStar(true);
-		entityRune.setColorStar(255, 255, 255);
+		entityRune.setColorStarInner(255, 200, 200);
+		entityRune.setColorStarOuter(200, 255, 255);
 	}
 	
 	@Override
@@ -47,152 +51,208 @@ public class REHideout extends RuneEvent {
 		}
 		
 		entityRune.setRenderStar(true);
-		entityRune.setColorStar(255, 255, 255);
+		entityRune.setColorStarInner(255, 200, 00);
+		entityRune.setColorStarOuter(200, 255, 255);
 		int x = entityRune.getX();
 		int y = entityRune.getY();
 		int z = entityRune.getZ();
 		World world = entityRune.worldObj;
 		
-		int r = 1;
-		int h = 3;
-		
-		Block block = world.getBlock(x, y - h - thick - 1, z);
-		
-		if (world.isAirBlock(x, y - thick - 1, z)) {
-			doCheck(entityRune);
-			world.setBlock(x, y - h - thick - 1, z, Blocks.cobblestone, 0, 0);
-			world.setBlock(x, y - h - thick, z, Blocks.torch, 0, 0);
-			return;
-		}
+		int radius = 1;
+		int height = 3;
+		boolean groundSafety = false;
+		boolean wallSafety = false;
+		boolean roofSafety = false;
 		
 		switch (entityRune.dustID) {
 		case 100:
-			r = 1;
-			h = 3;
+			radius = 1;
+			height = 3;
 			break;
+			
 		case 200:
-			r = 2;
-			h = 3;
+			radius = 2;
+			height = 3;
+			groundSafety = true;
 			break;
+			
 		case 300:
-			r = 2;
-			h = 5;
+			radius = 2;
+			height = 4;
+			groundSafety = true;
+			roofSafety = true;
 			break;
+			
 		case 400:
-			r = 4;
-			h = 6;
+			radius = 3;
+			height = 5;
+			groundSafety = true;
+			roofSafety = true;
+			wallSafety = true;
 			break;
+			
 		default:
 			entityRune.fizzle();
 			return;
 		}
-		for (int i = -r; i <= r; i++) {
-			for (int k = -r; k <= r; k++) {
-				for (int j = -thick; j >= -h - thick; j--) {
-					if (j == -thick) {
-						Block above = world.getBlock(x + i, y + j + 1, z + k);
-						
-						if (above != null && above instanceof BlockSand) {
-							world.setBlock(x + i, y + j, z + k, Blocks.sandstone, 0, 3);
+		
+		if ( world.isAirBlock(x, y - thick - 1, z)
+		  && world.isAirBlock(x, y - thick - 2, z)
+		  && world.getBlock(x, y - height - thick, z) instanceof BlockTorch) {
+			if ( (!wallSafety)
+			  || ( !(world.getBlock(x, y - thick - 1, z) instanceof BlockLiquid)
+			    && !(world.getBlock(x, y - thick - 2, z) instanceof BlockLiquid) ) ) {
+				updateDestination(entityRune);
+				System.out.println("skipping");
+				return;
+			}
+		}
+		for (int dx = -radius; dx <= radius; dx++) {
+			for (int dz = -radius; dz <= radius; dz++) {
+				// carve inner room
+				for (int dy = -thick - 1; dy >= -height - thick; dy--) {
+					if (entityRune.canBreakBlock(x + dx, y + dy, z + dz)) {
+						world.setBlockToAir(x + dx, y + dy, z + dz);
+					}
+				}
+				
+				// add safeties
+				if (roofSafety) {
+					int yRoof = y - thick;
+					Block roof = world.getBlock(x + dx, yRoof, z + dz);
+					if (roof != null && entityRune.canAlterBlock(x, y, z)) {
+						if (roof instanceof BlockSand) {
+							world.setBlock(x + dx, yRoof, z + dz, Blocks.sandstone, 0, 3);
+						} else if (roof instanceof BlockGravel) {
+							world.setBlock(x + dx, yRoof, z + dz, Blocks.cobblestone, 0, 3);
+						} else if (roof instanceof BlockFalling || roof instanceof BlockLiquid) {
+							world.setBlock(x + dx, yRoof, z + dz, Blocks.fence, 0, 3);
 						}
-					} else if (canBreakBlock(entityRune, x + i, y + j, z + k)) {
-						world.setBlockToAir(x + i, y + j, z + k);
+					}
+				}
+				
+				if (groundSafety) {
+					int yGround = y - thick - height - 1;
+					Block ground = world.getBlock(x + dx, yGround, z + dz);
+					if (ground == null || ground == Blocks.air) {
+						if (entityRune.canPlaceBlock(x + dx, yGround, z + dz)) {
+							world.setBlock(x + dx, yGround, z + dz, Blocks.cobblestone, 0, 3);
+						}
+					} else if (entityRune.canBreakBlock(x + dx, yGround, z + dz)) {
+						if (ground instanceof BlockLiquid) {
+							world.setBlock(x + dx, yGround, z + dz, Blocks.fence, 0, 3);
+						} else if (ground.isAir(world, x + dx, yGround, z + dz)) {
+							world.setBlock(x + dx, yGround, z + dz, Blocks.cobblestone, 0, 3);
+						}
+					}
+				}
+			}
+		}
+		if (wallSafety) {
+			for (int dx = -radius - 1; dx <= radius + 1; dx++) {
+				for (int dz = -radius - 1; dz <= radius + 1; dz++) {
+					if (dx != -radius - 1 && dx != radius + 1 && dz != -radius - 1 && dz != radius + 1) {// only walls
+						continue;
+					}
+					for (int dy = -thick; dy >= -height - thick; dy--) {
+						Block wall = world.getBlock(x + dx, y + dy, z + dz);
+						if (wall == null || wall instanceof BlockLiquid) {
+							if (entityRune.canBreakBlock(x + dx, y + dy, z + dz)) {
+								world.setBlock(x + dx, y + dy, z + dz, Blocks.fence, 0, 3);
+							}
+						}
 					}
 				}
 			}
 		}
 		
-		if (block != null && !(block instanceof BlockLiquid)) {
-			world.setBlock(x, y - h - thick - 1, z, Blocks.cobblestone, 0, 0);
-			world.setBlock(x, y - h - thick, z, Blocks.torch, 0, 0);
+		// add a torch on the center for light and reference
+		Block block = world.getBlock(x, y - height - thick - 1, z);
+		if ( block != null && !(block instanceof BlockLiquid) && entityRune.canPlaceBlock(x, y - height - thick - 1, z)) {
+			world.setBlock(x, y - height - thick - 1, z, Blocks.cobblestone, 0, 0);
+		}
+		block = world.getBlock(x, y - height - thick - 1, z);
+		if (block != null && block.isOpaqueCube() && entityRune.canPlaceBlock(x, y - height - thick, z)) {
+			world.setBlock(x, y - height - thick, z, Blocks.torch, 0, 0);
 		}
 		
-		doCheck(entityRune);
+		updateDestination(entityRune);
 	}
 	
 	@Override
 	public void onTick(EntityRune entityRune) {
 		super.onTick(entityRune);
 		
-		if (entityRune.ticksExisted % 10 == 0) {
-			yCheck(entityRune);
-		}
-		
-		List<Entity> ents;
-		
 		if (entityRune.ram <= 0) {
-			entityRune.setColorStar(255, 255, 255);
-			ents = this.getEntities(entityRune, 0.2D);
+			entityRune.setColorStarInner(255, 255, 150);
+			entityRune.setColorStarOuter(150, 255, 255);
+			if (entityRune.ticksExisted % 10 != 0) {
+				return;
+			}
+			boolean isUpdated = false;
 			
-			for (Entity ei : ents) {
-				if (ei instanceof EntityPlayer) {
-					EntityPlayer ep = (EntityPlayer) ei;
+			// entering down
+			List<Entity> entities = getEntities(entityRune, 0.2D);
+			for (Entity entity : entities) {
+				if (entity instanceof EntityPlayer) {
 					entityRune.ram = 45;
-					ep.setPositionAndUpdate(entityRune.getX() + 0.5D, entityRune.data[0] + 1 / +0.5D, entityRune.getZ() + 0.5D);
-					ep.fallDistance = 0;
+					if (!isUpdated) {
+						isUpdated = true;
+						checkAndUpdateDestination(entityRune);
+					}
+					EntityPlayer entityPlayer = (EntityPlayer) entity;
+					entityPlayer.setPositionAndUpdate(entityRune.getX() + 0.5D, entityRune.data[0] + 1.5D, entityRune.getZ() + 0.5D);
+					entityPlayer.fallDistance = 0;
 				}
 			}
 			
-			ents = this.getEntities(entityRune.worldObj, entityRune.getX(), entityRune.data[0] + 2, entityRune.getZ(), 0.5D);
-			
-			for (Entity ei : ents) {
-				if (ei instanceof EntityPlayer && ei.isSneaking()) {
-					EntityPlayer ep = (EntityPlayer) ei;
-					ep.setPositionAndUpdate(entityRune.getX() + 0.5D, entityRune.getY() /*+ 0 + ei.yOffset*/+ 0.5D, entityRune.getZ() + 0.5D);
-					ep.fallDistance = 0;
+			// exiting up
+			if (!isUpdated) {
+				isUpdated = true;
+				checkAndUpdateDestination(entityRune);
+			}
+			entities = getEntities(entityRune.worldObj, entityRune.getX(), entityRune.data[0] + 2, entityRune.getZ(), 0.5D);
+			for (Entity entity : entities) {
+				if (entity instanceof EntityPlayer && entity.isSneaking()) {
 					entityRune.ram = 45;
+					EntityPlayer entityPlayer = (EntityPlayer) entity;
+					entityPlayer.setPositionAndUpdate(entityRune.getX() + 0.5D, entityRune.getY() + 0.5D, entityRune.getZ() + 0.5D);
+					entityPlayer.fallDistance = 0;
 				}
 			}
 		} else {
+			entityRune.setColorStarInner(255, 255,   0);
+			entityRune.setColorStarOuter(150, 255, 150);
 			entityRune.setColorStar(255, 255, 0);
 			entityRune.ram--;
 		}
 	}
 	
-	public boolean canBreakBlock(EntityRune entityRune, int x, int y, int z) {
-		
-		if (!entityRune.canAlterBlock(x, y, z))
-			return false;
-		
-		Block b = entityRune.worldObj.getBlock(x, y, z);
-		if (b.getMaterial() == Material.air)
-			return false;
-		
-		if (b.getBlockHardness(entityRune.worldObj, x, y, z) >= Blocks.obsidian.getBlockHardness(entityRune.worldObj, x, y, z)) {
-			return false;
-		} else if (b == Blocks.bedrock) {
-			return false;
-		}
-		return true;
-	}
-	
-	private void yCheck(EntityRune entityRune) {
+	private void checkAndUpdateDestination(EntityRune entityRune) {
 		int x = entityRune.getX();
 		int y = entityRune.data[0];
 		int z = entityRune.getZ();
-		World w = entityRune.worldObj;
-		Block b1 = w.getBlock(x, y, z);
-		Block b2 = w.getBlock(x, y + 1, z);
+		World world = entityRune.worldObj;
+		Block block1 = world.getBlock(x, y    , z);
+		Block block2 = world.getBlock(x, y + 1, z);
 		
-		if (!b1.isOpaqueCube() || b1.getMaterial() == Material.air) {
-			doCheck(entityRune);
-		} else if (b2.isOpaqueCube()) {
-			doCheck(entityRune);
+		if (!block1.isOpaqueCube() || block1.getMaterial() == Material.air || block2.isOpaqueCube()) {
+			updateDestination(entityRune);
 		}
 	}
 	
-	private void doCheck(EntityRune e) {
+	private void updateDestination(EntityRune entityRune) {
 		int y;
 		
-		for (y = e.getY() - 1 - thick; y > 3 && y > e.getY() - 1 - thick - 64; y--) {
-			Block block = e.worldObj.getBlock(e.getX(), y, e.getZ());
+		for (y = entityRune.getY() - 1 - thick; y > 3 && y > entityRune.getY() - 1 - thick - 64; y--) {
+			Block block = entityRune.worldObj.getBlock(entityRune.getX(), y, entityRune.getZ());
 			
 			if (block.isOpaqueCube()) {
 				break;
 			}
 		}
 		
-		e.data[0] = y;
+		entityRune.data[0] = y;
 	}
 	
 	@Override

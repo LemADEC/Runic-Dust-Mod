@@ -11,8 +11,10 @@ import java.util.Random;
 import java.util.UUID;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -863,6 +865,40 @@ public class EntityRune extends Entity {
 			return false;
 		}
 		
+		return true;
+	}
+	
+	public boolean canPlaceBlock(int x, int y, int z) {
+		
+		if (!canAlterBlock(x, y, z)) {
+			return false;
+		}
+		
+		Block block = worldObj.getBlock(x, y, z);
+		if (block.isAir(worldObj, x, y, z) || block instanceof BlockLiquid) {
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean canBreakBlock(int x, int y, int z) {
+		
+		if (!canAlterBlock(x, y, z)) {
+			return false;
+		}
+		
+		Block block = worldObj.getBlock(x, y, z);
+		if (block.isAir(worldObj, x, y, z)) {
+			return false;
+		}
+		if (block instanceof BlockLiquid) {// (liquids can be harder than obsidian, so we test them first)
+			return true;
+		}
+		
+		float blockHardness = block.getBlockHardness(worldObj, x, y, z);
+		if (blockHardness < 0.0F || blockHardness >= Blocks.obsidian.getBlockHardness(worldObj, x, y, z)) {
+			return false;
+		}
 		return true;
 	}
 	
