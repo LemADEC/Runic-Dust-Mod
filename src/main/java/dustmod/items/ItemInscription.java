@@ -39,11 +39,12 @@ public class ItemInscription extends DustModItem {
 		return item;
 	}
 	
-	public static int[] getDesign(ItemStack item) {
-		if (item == null || !item.hasTagCompound())
+	public static int[] getDesign(ItemStack itemStack) {
+		if (itemStack == null || itemStack.getItem() != DustMod.getWornInscription() || !itemStack.hasTagCompound()) {
 			return null;
+		}
 		
-		NBTTagCompound tag = item.getTagCompound();
+		NBTTagCompound tag = itemStack.getTagCompound();
 		int[] design = tag.getIntArray("design");
 		
 		return design != null ? design.clone() : null;

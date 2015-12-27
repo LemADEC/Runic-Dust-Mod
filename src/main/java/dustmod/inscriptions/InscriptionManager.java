@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -16,11 +15,6 @@ import dustmod.DustMod;
 import dustmod.items.ItemInscription;
 
 public class InscriptionManager {
-	//
-	// public void regsterInscriptionEvent(InscriptionShape shape,
-	// InscriptionEvent event){
-	//
-	// }
 
 	public static ArrayList<InscriptionEvent> events = new ArrayList<InscriptionEvent>();
 	public static ArrayList<InscriptionEvent> eventsRemote = new ArrayList<InscriptionEvent>();
@@ -74,17 +68,17 @@ public class InscriptionManager {
 		eventsRemote = new ArrayList<InscriptionEvent>();
 	}
 
-	public static void tickInscription(EntityPlayer p, boolean[] buttons, ItemStack item) {
+	public static void tickInscription(EntityPlayer p, boolean[] buttons, ItemStack itemStack) {
 		if(p.worldObj.isRemote) return;
 		
-		if(item == null || item.getItemDamage() == ItemInscription.max){
+		if(itemStack == null || itemStack.getItemDamage() == ItemInscription.max){
 			return;
 		}
 		InscriptionEvent event = getEvent(p);
 		ItemStack last = lastArmor.get(p.getGameProfile().getId());
-		boolean equal = (item != null && last != null && item.getItem() == last.getItem() && item.getTagCompound().equals(last.getTagCompound()));
+		boolean equal = (last != null && itemStack.getItem() == last.getItem() && itemStack.getTagCompound().equals(last.getTagCompound()));
 		if(event != null && equal) {
-			event.onUpdate(p, item, buttons);
+			event.onUpdate(p, itemStack, buttons);
 		}
 	}
 	
@@ -125,51 +119,55 @@ public class InscriptionManager {
 	 * Get the event from this ItemWornInscription. If it is not
 	 * already identified, it will be identified by the design and 
 	 * then saved in the tag.
-	 * @param item
+	 * @param itemStack
 	 * @return
 	 */
-	public static InscriptionEvent getEvent(ItemStack item) {
-		if (item != null && item.hasTagCompound()) {
-			NBTTagCompound tag = item.getTagCompound();
-			if (tag.hasKey("eventID")) {
-				return getEvent(tag.getInteger("eventID"));
-			} else {
-				int[] ink;
-				ink = ItemInscription.getDesign(item);
-				if (ink == null) {
-					return null;
+	public static InscriptionEvent getEvent(ItemStack itemStack) {
+		if (itemStack == null || itemStack.getItem() != DustMod.getWornInscription() || !itemStack.hasTagCompound()) {
+			return null;
+		}
+		
+		NBTTagCompound tag = itemStack.getTagCompound();
+		if (tag.hasKey("eventID")) {
+			return getEvent(tag.getInteger("eventID"));
+		} else {
+			int[] ink;
+			ink = ItemInscription.getDesign(itemStack);
+			if (ink == null || ink.length != 16 * 16) {
+				DustMod.logger.debug("Invalid incription: " + itemStack);
+				return null;
+			}
+			InscriptionEvent eventFromItem = null;
+			for (InscriptionEvent eventFromRegistry : events) {
+				if (eventFromItem != null) {
+					break;
 				}
-				InscriptionEvent event = null;
-				for (InscriptionEvent ievt : events) {
-					if (event != null)
-						break;
-					int[] design = ievt.referenceDesign;
-					for (int ix = 0; ix < 16 - ievt.width && event == null; ix++) {
-						for (int iy = 0; iy < 16 - ievt.height; iy++) {
-							boolean found = true;
-							for (int dx = 0; dx < ievt.width && found; dx++) {
-								for (int dy = 0; dy < ievt.height; dy++) {
-									if (design[dx + dy * ievt.width] != ink[ix + iy * 16]) {
-										found = false;
-										break;
-									}
+				int[] design = eventFromRegistry.referenceDesign;
+				for (int itemX = 0; itemX < 16 - eventFromRegistry.width && eventFromItem == null; itemX++) {
+					for (int itemY = 0; itemY < 16 - eventFromRegistry.height; itemY++) {
+						boolean found = true;
+						for (int registryX = 0; registryX < eventFromRegistry.width && found; registryX++) {
+							for (int registryY = 0; registryY < eventFromRegistry.height; registryY++) {
+								if (design[registryX + registryY * eventFromRegistry.width] != ink[itemX + itemY * 16]) {
+									found = false;
+									break;
 								}
 							}
-							if (found) {
-								event = ievt;
-								break;
-							}
+						}
+						if (found) {
+							eventFromItem = eventFromRegistry;
+							break;
 						}
 					}
 				}
-
-				if (event != null) {
-					DustMod.logger.debug("Inscription Identified: " + event.idName);
-					tag = new NBTTagCompound();
-					item.setTagCompound(tag);
-					tag.setInteger("eventID", event.id);
-					return event;
-				}
+			}
+			
+			if (eventFromItem != null) {
+				DustMod.logger.debug("Inscription Identified: " + eventFromItem.idName);
+				tag = new NBTTagCompound();
+				itemStack.setTagCompound(tag);
+				tag.setInteger("eventID", eventFromItem.id);
+				return eventFromItem;
 			}
 		}
 		return null;
@@ -230,12 +228,10 @@ public class InscriptionManager {
 		event.onDamage(entity, item, source, damage);
 	}
 
-	public static int getPreventedDamage(EntityLivingBase entity, ItemStack item,
-			DamageSource source, int damage) {
+	public static int getPreventedDamage(EntityLivingBase entity, ItemStack item, DamageSource source, int damage) {
 		if(entity.worldObj.isRemote) return damage;
 
 		InscriptionEvent event = getEvent(item);
-//		System.out.println("Hey wtf " + event);
 		if (event == null)
 			return damage;
 		return event.getPreventedDamage(entity, item, source, damage);
