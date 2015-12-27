@@ -25,11 +25,11 @@ public class CommonMouseHandler {
 	}
 
 	public void tick() {
-		for (Object playerObj : MinecraftServer.getServer().getConfigurationManager().playerEntityList) {
-			if (playerObj instanceof EntityPlayer) {
-				EntityPlayer player = (EntityPlayer) playerObj;
-				boolean[] buttons = buttonsPressed.get(player.getGameProfile().getId());
-				DustMod.inscriptionManager.tick(player, buttons, player.getCurrentArmor(2));
+		for (Object objectPlayer : MinecraftServer.getServer().getConfigurationManager().playerEntityList) {
+			if (objectPlayer instanceof EntityPlayer) {
+				EntityPlayer entityPlayer = (EntityPlayer) objectPlayer;
+				boolean[] buttons = buttonsPressed.get(entityPlayer.getGameProfile().getId());
+				DustMod.inscriptionManager.tick(entityPlayer, buttons, entityPlayer.getCurrentArmor(2));
 			}
 		}
 	}
