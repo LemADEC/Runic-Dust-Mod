@@ -60,7 +60,7 @@ public class ItemPlaceScroll extends DustModItem {
 			if (entityPlayer.capabilities.isCreativeMode) {
 				runeShape.drawOnWorldWhole(world, x, y + 1, z, entityPlayer, rotation);
 			} else {
-				runeShape.drawOnWorldPart(world, x, y + 1, z, entityPlayer, rotation, entityPlayer.getItemInUseCount());
+				runeShape.drawOnWorldPart(world, x, y + 1, z, entityPlayer, rotation);
 			}
 		} catch (Exception exception) {
 			DustMod.logger.error("Unable to use scroll: " + exception.getMessage(), exception);

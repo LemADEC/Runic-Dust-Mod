@@ -628,7 +628,7 @@ public class RuneShape {
 		return true;
 	}
 	
-	public boolean drawOnWorldPart(World world, int x, int y, int z, EntityPlayer player, int rotation, int itemUseCount) {
+	public boolean drawOnWorldPart(World world, int x, int y, int z, EntityPlayer player, int rotation) {
 		if (world.isRemote) {
 			return false;
 		}
