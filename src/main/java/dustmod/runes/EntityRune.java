@@ -14,17 +14,11 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldSettings.GameType;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import cpw.mods.fml.relauncher.Side;
@@ -881,17 +875,8 @@ public class EntityRune extends Entity {
 		// check plugins protection
 		Block block = worldObj.getBlock(x, y, z);
 		int blockMetadata = worldObj.getBlockMetadata(x, y, z);
-		boolean canHarvestBlock = entityPlayer.canHarvestBlock(block);
-		boolean canPlayerEdit = entityPlayer.canPlayerEdit(x, y, z, 0, new ItemStack(Items.diamond_pickaxe));
 		BreakEvent breakEvent = new BlockEvent.BreakEvent(x, y, z, worldObj, block, blockMetadata, entityPlayer);
 		MinecraftForge.EVENT_BUS.post(breakEvent);
-		
-		DustMod.logger.info("canAlterBlock " + x + " " + y + " " + z
-				+ " canMineBlock " + worldObj.canMineBlock(entityPlayer, x, y, z)
-				+ " canHarvestBlock " + canHarvestBlock
-				+ " canPlayerEdit " + canPlayerEdit
-				+ " breakEvent " + !breakEvent.isCanceled()
-				+ " block " + block);
 		
 		if (breakEvent.isCanceled()) {
 			return false;

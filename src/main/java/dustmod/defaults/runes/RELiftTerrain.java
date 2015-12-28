@@ -140,9 +140,9 @@ public class RELiftTerrain extends RuneEvent
         }
 
         World world = entityRune.worldObj;
-        int x = (int) entityRune.getX();
-        int y = (int) entityRune.getY();
-        int z = (int) entityRune.getZ();
+        int x = entityRune.getX();
+        int y = entityRune.getY();
+        int z = entityRune.getZ();
         int height = entityRune.data[1];
 
         if (entityRune.ticksExisted % ticksperblock == 0 && entityRune.data[2] <= height)
@@ -187,7 +187,7 @@ public class RELiftTerrain extends RuneEvent
                         if (world.isAirBlock(x, y + c + 2, z) && block.getMaterial() != Material.air)
                         {
 //                            System.out.println("GOOOOOOO");
-                            List<Entity> ents = getEntities(entityRune.worldObj, (double) x + 0.5D, (double) y + (double)c + 1D, (double) z + 0.5D, 1D);
+                            List<Entity> ents = getEntities(entityRune.worldObj, x + 0.5D, (double) y + (double)c + 1D, z + 0.5D, 1D);
 
                             for (Entity ie : ents)
                             {
