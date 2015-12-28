@@ -7,7 +7,6 @@ package dustmod.defaults.runes;
 import java.util.List;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.player.EntityPlayer;
@@ -39,36 +38,36 @@ public class REPit extends RuneEvent {
 		int dustID = entityRune.dustID;
 		int dist = 1;
 		
+		ItemStack[] sacrifice;
 		switch (dustID) {
 		case 100:
+			sacrifice = new ItemStack[] { new ItemStack(Blocks.log, 1, -1) };
 			dist = 8;
 			break;
 		
 		case 200:
+			sacrifice = new ItemStack[] { new ItemStack(Blocks.log, 2, -1) };
 			dist = 16;
 			break;
 		
 		case 300:
-			dist = 20;
+			sacrifice = new ItemStack[] { new ItemStack(Items.coal, 1, -1) };
+			dist = 32;
 			break;
 		
 		case 400:
+			sacrifice = new ItemStack[] { new ItemStack(Items.coal, 2, -1) };
 			dist = 48;
 			break;
 		
 		default:
-			break;
+			entityRune.fizzle();
+			return;
 		}
 		
-		boolean advanced = (dustID > 2);
-		ItemStack[] sac;
-		if (!advanced)
-			sac = new ItemStack[] { new ItemStack(Blocks.log, 2, -1) };
-		else
-			sac = new ItemStack[] { new ItemStack(Items.coal, 2, -1) };
-		sac = this.sacrifice(entityRune, sac);
+		sacrifice = sacrifice(entityRune, sacrifice);
 		
-		if (!this.checkSacrifice(sac)) {
+		if (!checkSacrifice(sacrifice)) {
 			entityRune.fizzle();
 			return;
 		}
@@ -78,22 +77,25 @@ public class REPit extends RuneEvent {
 		int z = entityRune.getZ();
 		World world = entityRune.worldObj;
 		
+		// ensure there's an hole in the middle
 		if (!world.isAirBlock(x, y, z)) {
 			entityRune.fizzle();
 			return;
 		}
 		
+		world.addWeatherEffect(new EntityLightningBolt(world, x, y, z));
+		
 		for (int dy = 0; dy <= dist; dy++) {
 			Block block = world.getBlock(x, y - dy, z);
 			
-			if (block.getMaterial() != Material.air && block != Blocks.bedrock) {
+			if (entityRune.canBreakBlockAnd_AirOrLiquidOrNotReinforced(x, y - dy, z)) {
 				block.onBlockDestroyedByPlayer(world, x, y - dy, z, world.getBlockMetadata(x, y - dy, z));
 				block.dropBlockAsItem(world, x, y - dy, z, world.getBlockMetadata(x, y - dy, z), 0);
 				world.setBlockToAir(x, y - dy, z);
+			} else {// don't dig further
+				break;
 			}
 		}
-		
-		world.addWeatherEffect(new EntityLightningBolt(world, x, y, z));
 	}
 	
 	@Override
