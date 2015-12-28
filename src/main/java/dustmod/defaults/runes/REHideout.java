@@ -17,6 +17,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 import dustmod.blocks.TileEntityDust;
 import dustmod.runes.RuneEvent;
 import dustmod.runes.EntityRune;
@@ -96,31 +97,46 @@ public class REHideout extends RuneEvent {
 			return;
 		}
 		
-		if ( world.isAirBlock(x, y - thick - 1, z)
-		  && world.isAirBlock(x, y - thick - 2, z)
+		// Do not carve a cave if the hole is already there
+		if ( world.isAirBlock(x, y - height - thick + 1, z)
+		  && world.isAirBlock(x, y - height - thick + 2, z)
 		  && world.getBlock(x, y - height - thick, z) instanceof BlockTorch) {
-			if ( (!wallSafety)
-			  || ( !(world.getBlock(x, y - thick - 1, z) instanceof BlockLiquid)
-			    && !(world.getBlock(x, y - thick - 2, z) instanceof BlockLiquid) ) ) {
+			if ( (!groundSafety)
+			  || world.getBlock(x, y - height - thick - 1, z).isSideSolid(world, x, y, z, ForgeDirection.UP) ) {
 				updateDestination(entityRune);
-				System.out.println("skipping");
 				return;
 			}
 		}
+		
+		// Check if player can carve the cave
+		boolean canCarveCave = true;
 		for (int dx = -radius; dx <= radius; dx++) {
 			for (int dz = -radius; dz <= radius; dz++) {
-				// carve inner room
 				for (int dy = -thick - 1; dy >= -height - thick; dy--) {
-					if (entityRune.canBreakBlock(x + dx, y + dy, z + dz)) {
-						world.setBlockToAir(x + dx, y + dy, z + dz);
+					if (!entityRune.canBreakBlockAnd_AirOrLiquidOrNotReinforced(x + dx, y + dy, z + dz)) {
+						canCarveCave = false;
 					}
+				}
+			}
+		}
+		if (!canCarveCave) {
+			entityRune.fizzle();
+			return;
+		}
+		
+		// actually carve the cave
+		for (int dx = -radius; dx <= radius; dx++) {
+			for (int dz = -radius; dz <= radius; dz++) {
+				// carve inner room, do not drop items
+				for (int dy = -thick - 1; dy >= -height - thick; dy--) {
+					world.setBlockToAir(x + dx, y + dy, z + dz);
 				}
 				
 				// add safeties
 				if (roofSafety) {
 					int yRoof = y - thick;
 					Block roof = world.getBlock(x + dx, yRoof, z + dz);
-					if (roof != null && entityRune.canAlterBlock(x, y, z)) {
+					if (roof != null && entityRune.isPlayerAllowedToBreakBlock(x, y, z)) {
 						if (roof instanceof BlockSand) {
 							world.setBlock(x + dx, yRoof, z + dz, Blocks.sandstone, 0, 3);
 						} else if (roof instanceof BlockGravel) {
@@ -134,15 +150,11 @@ public class REHideout extends RuneEvent {
 				if (groundSafety) {
 					int yGround = y - thick - height - 1;
 					Block ground = world.getBlock(x + dx, yGround, z + dz);
-					if (ground == null || ground == Blocks.air) {
-						if (entityRune.canPlaceBlock(x + dx, yGround, z + dz)) {
+					if (entityRune.isPlayerAllowedToBreakBlock(x + dx, yGround, z + dz)) {
+						if (ground == null || ground.isAir(world, x + dx, yGround, z + dz)) {
 							world.setBlock(x + dx, yGround, z + dz, Blocks.cobblestone, 0, 3);
-						}
-					} else if (entityRune.canBreakBlock(x + dx, yGround, z + dz)) {
-						if (ground instanceof BlockLiquid) {
+						} else if (ground instanceof BlockLiquid) {
 							world.setBlock(x + dx, yGround, z + dz, Blocks.fence, 0, 3);
-						} else if (ground.isAir(world, x + dx, yGround, z + dz)) {
-							world.setBlock(x + dx, yGround, z + dz, Blocks.cobblestone, 0, 3);
 						}
 					}
 				}
@@ -156,8 +168,8 @@ public class REHideout extends RuneEvent {
 					}
 					for (int dy = -thick; dy >= -height - thick; dy--) {
 						Block wall = world.getBlock(x + dx, y + dy, z + dz);
-						if (wall == null || wall instanceof BlockLiquid) {
-							if (entityRune.canBreakBlock(x + dx, y + dy, z + dz)) {
+						if (wall instanceof BlockLiquid) {
+							if (entityRune.isPlayerAllowedToBreakBlock(x + dx, y + dy, z + dz)) {
 								world.setBlock(x + dx, y + dy, z + dz, Blocks.fence, 0, 3);
 							}
 						}
@@ -168,11 +180,10 @@ public class REHideout extends RuneEvent {
 		
 		// add a torch on the center for light and reference
 		Block block = world.getBlock(x, y - height - thick - 1, z);
-		if ( block != null && !(block instanceof BlockLiquid) && entityRune.canPlaceBlock(x, y - height - thick - 1, z)) {
+		if ( block != null && !(block instanceof BlockLiquid) && entityRune.isPlayerAllowedToBreakBlock(x, y - height - thick - 1, z) && block.isAir(world, x, y - height - thick - 1, z)) {
 			world.setBlock(x, y - height - thick - 1, z, Blocks.cobblestone, 0, 0);
 		}
-		block = world.getBlock(x, y - height - thick - 1, z);
-		if (block != null && block.isOpaqueCube() && entityRune.canPlaceBlock(x, y - height - thick, z)) {
+		if (Blocks.torch.canPlaceBlockAt(world, x, y - height - thick, z)) {
 			world.setBlock(x, y - height - thick, z, Blocks.torch, 0, 0);
 		}
 		

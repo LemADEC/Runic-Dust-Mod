@@ -14,10 +14,19 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldSettings.GameType;
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import dustmod.DustMod;
@@ -849,19 +858,42 @@ public class EntityRune extends Entity {
 	}
 	
 	/**
-	 * Checks if summoning player is allowed to modify blocks at that location
+	 * Checks if summoning player is allowed to break blocks at that location
+	 * This is will check for permissions from plugins
 	 * 
 	 * @param x
 	 * @param y
 	 * @param z
-	 * @return true if player can edit block, false otherwise
+	 * @return true if player can break block, false otherwise
 	 */
-	public boolean canAlterBlock(int x, int y, int z) {
+	public boolean isPlayerAllowedToBreakBlock(int x, int y, int z) {
 		if (y < 0 && y > worldObj.getHeight()) {
 			return false;
 		}
 		EntityPlayer entityPlayer = worldObj.func_152378_a(summonerUUID);
-		if (entityPlayer == null || !worldObj.canMineBlock(entityPlayer, x, y, z)) {
+		if (entityPlayer == null) {
+			return false;
+		}
+		// check spawn protection
+		if (!worldObj.canMineBlock(entityPlayer, x, y, z)) {
+			return false;
+		}
+		// check plugins protection
+		Block block = worldObj.getBlock(x, y, z);
+		int blockMetadata = worldObj.getBlockMetadata(x, y, z);
+		boolean canHarvestBlock = entityPlayer.canHarvestBlock(block);
+		boolean canPlayerEdit = entityPlayer.canPlayerEdit(x, y, z, 0, new ItemStack(Items.diamond_pickaxe));
+		BreakEvent breakEvent = new BlockEvent.BreakEvent(x, y, z, worldObj, block, blockMetadata, entityPlayer);
+		MinecraftForge.EVENT_BUS.post(breakEvent);
+		
+		DustMod.logger.info("canAlterBlock " + x + " " + y + " " + z
+				+ " canMineBlock " + worldObj.canMineBlock(entityPlayer, x, y, z)
+				+ " canHarvestBlock " + canHarvestBlock
+				+ " canPlayerEdit " + canPlayerEdit
+				+ " breakEvent " + !breakEvent.isCanceled()
+				+ " block " + block);
+		
+		if (breakEvent.isCanceled()) {
 			return false;
 		}
 		
@@ -870,7 +902,7 @@ public class EntityRune extends Entity {
 	
 	public boolean canPlaceBlock(int x, int y, int z) {
 		
-		if (!canAlterBlock(x, y, z)) {
+		if (!isPlayerAllowedToBreakBlock(x, y, z)) {
 			return false;
 		}
 		
@@ -881,15 +913,15 @@ public class EntityRune extends Entity {
 		return false;
 	}
 	
-	public boolean canBreakBlock(int x, int y, int z) {
+	public boolean canBreakBlockAnd_AirOrLiquidOrNotReinforced(int x, int y, int z) {
 		
-		if (!canAlterBlock(x, y, z)) {
+		if (!isPlayerAllowedToBreakBlock(x, y, z)) {
 			return false;
 		}
 		
 		Block block = worldObj.getBlock(x, y, z);
 		if (block.isAir(worldObj, x, y, z)) {
-			return false;
+			return true;
 		}
 		if (block instanceof BlockLiquid) {// (liquids can be harder than obsidian, so we test them first)
 			return true;
