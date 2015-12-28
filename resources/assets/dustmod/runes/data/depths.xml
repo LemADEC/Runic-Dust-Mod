@@ -5,11 +5,13 @@
 	<solid value="true"/>
 	<sacrifices>
 		Sacrifice
-		- 2x Log at Plant &amp; Gunpowder levels
-		- 2x Coal at Lapis &amp; Blaze levels
+		- 1x Log at Plant level
+		- 2x Log at Gunpowder level
+		- 1x Coal at Lapis level
+		- 2x Coal at Blaze level
 		
 		Notes
-		- Requires hole in the center.
+		- Requires an hole in the center.
 	</sacrifices>
 	<description>
 		Description
