@@ -76,51 +76,30 @@ public class REBait extends PoweredEvent {
 	@Override
 	public void onTick(EntityRune entityRune) {
 		super.onTick(entityRune);
-		List<Entity> bait = getEntitiesExcluding(entityRune, 16D);
+		List<Entity> entities = getEntitiesExcluding(entityRune, 16.0D);
 		
-		for (Entity k : bait) {
-			if (k instanceof EntityCreature && EntityList.getEntityID(k) == entityRune.data[0]) {
-				EntityCreature el = (EntityCreature)k;
-
-//                System.out.println("Found entity " + mod_DustMod.isAIEnabled(el));
-//                if (!DustModBouncer.isAIEnabled(el))
-//                {
-//                    el.posY += 1;
-//                    el.setPathToEntity(null);//e.worldObj.getPathToEntity(el, e, 16F));
-//                    el.setTarget(e);
-//                    el.setPathToEntity(e.worldObj.getEntityPathToXYZ(el, e.getX(), e.getY(), e.getZ(), 10F, true, false, false, true));
-//                    DustModBouncer.updateState(el);
-//                    el.motionY += 0.015;
-//                    EntityLookHelper elh = el.getLookHelper();//func_46008_aG();
-//                    elh.setLookPositionWithEntity(e, 0, 1);//func_46141_a(e, 1, 1);
-//                    el.setMoveForward(16F);
-//                    el.velocityChanged = true;
-//                    DustModBouncer.setEntityToAttack(el, e);
-//                    el.setHomeArea(e.getX(), e.getY(), e.getZ(), 0);
-//                    DustModBouncer.setEntityToAttack(el, e);
-//                    
-//
-//                    if(Math.random() < 0.2){
-//                    	DustMod.spawnParticles(el.worldObj, "smoke", el.posX, el.posY+el.height/2, el.posZ,
-//                    			0, Math.random() * 0.05, 0, (int)(Math.random()*20), 0.75, el.height/2, 0.75);
-//                    }
-//                    
-//                }
-//                else
-//                {
-
-				EntityAITasks tasks = el.tasks;
-				List taskList = tasks.taskEntries;
+		for (Entity entity : entities) {
+			if (entity instanceof EntityCreature && EntityList.getEntityID(entity) == entityRune.data[0]) {
+				EntityCreature entityCreature = (EntityCreature)entity;
+				
+				List<EntityAITasks.EntityAITaskEntry> taskEntries = entityCreature.tasks.taskEntries;
 				boolean hasTaskAlready = false;
-				for (Object object : taskList) {
-					EntityAIBase task = (EntityAIBase) object;
-					if (task.getClass() == EntityAIRuneFollowBaitRune.class) {
-						hasTaskAlready = true;
+				for (EntityAITasks.EntityAITaskEntry taskEntry : taskEntries) {
+					EntityAIBase task = taskEntry.action;
+					if (task instanceof EntityAIRuneFollowBaitRune) {
+						EntityRune taskRune = ((EntityAIRuneFollowBaitRune)task).entityRune;
+						if (taskRune != null) {
+							hasTaskAlready = true;
+						} else {
+							// Removing dead task
+							taskEntries.remove(taskEntry);
+						}
 						break;
 					}
 				}
 				if (!hasTaskAlready) {
-					tasks.addTask(-1, new EntityAIRuneFollowBaitRune(el, 0.22F));
+					// Adding AI task to entity
+					entityCreature.tasks.addTask(-1, new EntityAIRuneFollowBaitRune(entityRune, entityCreature, 0.8F));
 				}
 			}
 		}
@@ -161,6 +140,7 @@ public class REBait extends PoweredEvent {
 		//entdrops.put(new ItemStack(Items.ender_eye, 0, 0), 63);
 	}
 	
+	// TODO: fuel requirement
 	@Override
 	public int getStartFuel() {
 		return dayLength * 7;
@@ -172,12 +152,12 @@ public class REBait extends PoweredEvent {
 	}
 	
 	@Override
-	public int getStableFuelAmount(EntityRune e) {
+	public int getStableFuelAmount(EntityRune entityRune) {
 		return dayLength * 5;
 	}
 	
 	@Override
-	public boolean isPaused(EntityRune e) {
+	public boolean isPaused(EntityRune entityRune) {
 		return false;
 	}
 }

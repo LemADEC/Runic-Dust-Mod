@@ -11,6 +11,7 @@ import dustmod.defaults.inscriptions.ForesightInscription;
 import dustmod.defaults.inscriptions.RespawnInscription;
 import dustmod.defaults.inscriptions.RocketLaunch;
 import dustmod.defaults.inscriptions.VoidInscription;
+import dustmod.defaults.runes.REBait;
 import dustmod.defaults.runes.REBomb;
 import dustmod.defaults.runes.REBounce;
 import dustmod.defaults.runes.RECage;
@@ -85,6 +86,8 @@ public class DustModDefaults {
 	private static final String DATA_DIR = "assets/dustmod/runes/data/";
 
 	public void registerRunes() {
+		
+		XMLRuneShapeReader.readAndRegisterShape(DATA_DIR + "baiting.xml", new REBait());
 		
 		XMLRuneShapeReader.readAndRegisterShape(DATA_DIR + "torch.xml", new RESpawnTorch());
 		
