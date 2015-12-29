@@ -15,15 +15,15 @@ import net.minecraft.entity.ai.EntityAIBase;
  * @author billythegoat101
  */
 public class EntityAIRuneFollowBaitRune extends EntityAIBase {
-	private EntityCreature theEntity;
-	private EntityRune dust;
+	private EntityCreature entityCreature;
+	private EntityRune entityRune;
 	private double movePosX;
 	private double movePosY;
 	private double movePosZ;
 	private float speed;
 	
-	public EntityAIRuneFollowBaitRune(EntityCreature par1EntityCreature, float speed) {
-		theEntity = par1EntityCreature;
+	public EntityAIRuneFollowBaitRune(EntityCreature entityCreature, float speed) {
+		this.entityCreature = entityCreature;
 		this.speed = speed;
 		setMutexBits(1);
 	}
@@ -33,17 +33,17 @@ public class EntityAIRuneFollowBaitRune extends EntityAIBase {
 	 */
 	@Override
 	public boolean shouldExecute() {
-		Entity target = theEntity.getAttackTarget();
+		Entity target = entityCreature.getAttackTarget();
 		
 		if (target == null) {
 			return false;
 		}
 		
 		if (target instanceof EntityRune) {
-			dust = (EntityRune) target;
-			movePosX = dust.getX();
-			movePosY = dust.getY();
-			movePosZ = dust.getZ();
+			entityRune = (EntityRune) target;
+			movePosX = entityRune.getX();
+			movePosY = entityRune.getY();
+			movePosZ = entityRune.getZ();
 			return true;
 		}
 		
@@ -73,16 +73,19 @@ public class EntityAIRuneFollowBaitRune extends EntityAIBase {
 		super.updateTask();
 		
 		if (!continueExecuting()) {
-			theEntity.getNavigator().clearPathEntity();
-			theEntity.tasks.taskEntries.remove(this);
+			entityCreature.getNavigator().clearPathEntity();
+			entityCreature.tasks.taskEntries.remove(this);
 			return;
 		}
 		
-		theEntity.getNavigator().tryMoveToXYZ(movePosX, movePosY, movePosZ, speed);
+		entityCreature.getNavigator().tryMoveToXYZ(movePosX, movePosY, movePosZ, speed);
 		
 		if (Math.random() < 0.2) {
-			DustMod.spawnParticles(theEntity.worldObj, "smoke", theEntity.posX, theEntity.posY + theEntity.height / 2, theEntity.posZ, 0, Math.random() * 0.05, 0, (int) (Math.random() * 20), 0.75,
-					theEntity.height / 2, 0.75);
+			DustMod.spawnParticles(entityCreature.worldObj, "smoke",
+					entityCreature.posX, entityCreature.posY + entityCreature.height / 2, entityCreature.posZ,
+					0, Math.random() * 0.05, 0,
+					(int) (Math.random() * 20),
+					0.75, entityCreature.height / 2, 0.75);
 		}
 	}
 	
@@ -91,7 +94,7 @@ public class EntityAIRuneFollowBaitRune extends EntityAIBase {
 	 */
 	@Override
 	public boolean continueExecuting() {
-		return (dust != null && !dust.isDead);
+		return (entityRune != null && !entityRune.isDead);
 	}
 	
 	/**
@@ -99,7 +102,7 @@ public class EntityAIRuneFollowBaitRune extends EntityAIBase {
 	 */
 	@Override
 	public void resetTask() {
-		dust = null;
+		entityRune = null;
 	}
 	
 	/**
@@ -107,6 +110,6 @@ public class EntityAIRuneFollowBaitRune extends EntityAIBase {
 	 */
 	@Override
 	public void startExecuting() {
-		theEntity.getNavigator().tryMoveToXYZ(movePosX, movePosY, movePosZ, speed);
+		entityCreature.getNavigator().tryMoveToXYZ(movePosX, movePosY, movePosZ, speed);
 	}
 }

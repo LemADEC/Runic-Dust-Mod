@@ -885,19 +885,6 @@ public class EntityRune extends Entity {
 		return true;
 	}
 	
-	public boolean canPlaceBlock(int x, int y, int z) {
-		
-		if (!isPlayerAllowedToBreakBlock(x, y, z)) {
-			return false;
-		}
-		
-		Block block = worldObj.getBlock(x, y, z);
-		if (block.isAir(worldObj, x, y, z) || block instanceof BlockLiquid) {
-			return true;
-		}
-		return false;
-	}
-	
 	public boolean canBreakBlockAnd_AirOrLiquidOrNotReinforced(int x, int y, int z) {
 		
 		if (!isPlayerAllowedToBreakBlock(x, y, z)) {

@@ -35,41 +35,40 @@ public class REBait extends PoweredEvent {
 		entityRune.setRenderStar(true);
 		entityRune.setStarScale(1.005F);
 		entityRune.setColorStarOuter(255, 1, 1);
-		
 	}
 	
 	@Override
 	public void onInit(EntityRune entityRune) {
 		super.onInit(entityRune);
-		int entClass = -1;
+		int spawnEggMetadata = -1;
 		List<Entity> entities = getEntities(entityRune);
 		
 		for (Entity entity : entities) {
 			if (entity instanceof EntityItem) {
 				EntityItem entityItem = (EntityItem) entity;
-				ItemStack item = entityItem.getEntityItem();
+				ItemStack itemStack = entityItem.getEntityItem();
 				
-				if (item.getItem() == Items.spawn_egg) {
-					entClass = item.getItemDamage();
-					item.stackSize--;
+				if (itemStack.getItem() == Items.spawn_egg) {
+					spawnEggMetadata = itemStack.getItemDamage();
+					itemStack.stackSize--;
+					entityItem.setEntityItemStack(itemStack);
 					
-					if (item.stackSize <= 0) {
+					if (itemStack.stackSize <= 0) {
 						entityItem.setDead();
 					}
 				}
-				entityItem.setEntityItemStack(item);
 			}
 		}
 		
-		ItemStack[] req = new ItemStack[] { new ItemStack(Blocks.gold_block, 1) };
-		req = this.sacrifice(entityRune, req);
+		ItemStack[] requiredSacrifice = new ItemStack[] { new ItemStack(Blocks.gold_block, 1) };
+		requiredSacrifice = sacrifice(entityRune, requiredSacrifice);
 		
-		if (!checkSacrifice(req) || entClass == -1 || !takeXP(entityRune, 5)) {
+		if (!checkSacrifice(requiredSacrifice) || spawnEggMetadata == -1 || !takeXP(entityRune, 5)) {
 			entityRune.fizzle();
 			return;
 		}
 		
-		entityRune.data[0] = entClass;
+		entityRune.data[0] = spawnEggMetadata;
 		entityRune.setStarScale(1.005F);
 		entityRune.setColorStarOuter(255, 1, 1);
 	}
