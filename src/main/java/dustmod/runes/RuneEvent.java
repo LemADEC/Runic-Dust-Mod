@@ -320,17 +320,16 @@ public abstract class RuneEvent {
 	 * @return A List<EntityItem> of all nearby dropped items.
 	 */
 	public final List<EntityItem> getItems(EntityRune entityRune, double radius) {
-		ArrayList<EntityItem> itemstacks = new ArrayList<EntityItem>();
 		List<Entity> entities = getEntitiesExcluding(entityRune, entityRune.worldObj, entityRune.posX, entityRune.posY - entityRune.yOffset, entityRune.posZ, radius);
 		
+		ArrayList<EntityItem> entityItems = new ArrayList<EntityItem>();
 		for (Entity entity : entities) {
 			if (entity instanceof EntityItem) {
-				EntityItem entityItem = (EntityItem) entity;
-				itemstacks.add(entityItem);
+				entityItems.add((EntityItem) entity);
 			}
 		}
 		
-		return itemstacks;
+		return entityItems;
 	}
 	
 	/**
