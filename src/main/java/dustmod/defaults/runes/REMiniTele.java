@@ -158,7 +158,7 @@ public class REMiniTele extends RuneEvent
 //            e.setColorInner(255, 255, 255);
 //            e.setColorOuter(255, 255, 255);
 //        }
-        List<Entity> ents = this.getEntities(e, 10D);
+        List<Entity> ents = this.getEntitiesExcluding(e, 10D);
 
 //        System.out.println("DURR " + e.worldObj.worldProvider.worldType + " " + ents.size());
 //        if(e.ram > 1 && mod_DustMod.skipWarpTick > 0) {

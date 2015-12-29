@@ -51,7 +51,7 @@ public class REXPStore extends RuneEvent {
 	
 	@Override
 	public void onTick(EntityRune entityRune) {
-		List<Entity> entities = this.getEntities(entityRune);
+		List<Entity> entities = this.getEntitiesExcluding(entityRune, 1.0D);
 		
 		if (entityRune.bb != -1) {
 			entityRune.data[1] = entityRune.bb;
@@ -86,7 +86,7 @@ public class REXPStore extends RuneEvent {
 			}
 		}
 		
-		entities = this.getEntities(entityRune, 4D);
+		entities = this.getEntitiesExcluding(entityRune, 4D);
 		
 		for (Entity entity : entities) {
 			if (entity instanceof EntityXPOrb) {

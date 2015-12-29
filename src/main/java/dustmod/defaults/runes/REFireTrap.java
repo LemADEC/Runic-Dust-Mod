@@ -66,7 +66,7 @@ public class REFireTrap extends RETrap
                 break;
         }
 
-        List<Entity> kill = getEntities(e, rad);
+        List<Entity> kill = getEntitiesExcluding(e, rad);
 
         for (Entity k: kill)
         {

@@ -41,7 +41,7 @@ public class REBait extends PoweredEvent {
 	public void onInit(EntityRune entityRune) {
 		super.onInit(entityRune);
 		int spawnEggMetadata = -1;
-		List<Entity> entities = getEntities(entityRune);
+		List<Entity> entities = getEntitiesExcluding(entityRune, 1.0D);
 		
 		for (Entity entity : entities) {
 			if (entity instanceof EntityItem) {
@@ -76,7 +76,7 @@ public class REBait extends PoweredEvent {
 	@Override
 	public void onTick(EntityRune entityRune) {
 		super.onTick(entityRune);
-		List<Entity> bait = getEntities(entityRune, 16D);
+		List<Entity> bait = getEntitiesExcluding(entityRune, 16D);
 		
 		for (Entity k : bait) {
 			if (k instanceof EntityCreature && EntityList.getEntityID(k) == entityRune.data[0]) {

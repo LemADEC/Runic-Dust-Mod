@@ -88,7 +88,7 @@ public class REXP extends PoweredEvent
         int x = e.getX();
         int y = e.getY();
         int z = e.getZ();
-        List<Entity> omnom = getEntities(e, 3D);
+        List<Entity> omnom = getEntitiesExcluding(e, 3D);
 
         for (Entity et: omnom)
         {

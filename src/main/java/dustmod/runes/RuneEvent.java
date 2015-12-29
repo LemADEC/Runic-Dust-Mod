@@ -265,23 +265,8 @@ public abstract class RuneEvent {
 		return true;
 	}
 	
-	public List<Entity> getEntities(World world, double x, double y, double z) {
-		return getEntities(world, x, y, z, 1D);
-	}
-	
 	/**
-	 * Get all entities within 1 block of the given Entity's position
-	 * 
-	 * @param entity
-	 *            The entity to look around
-	 * @return A list of all entities within 1 block of the given entity's position (including the entity itself)
-	 */
-	public List<Entity> getEntities(Entity entity) {
-		return getEntities(entity.worldObj, entity.posX, entity.posY - entity.yOffset, entity.posZ, 1D);
-	}
-	
-	/**
-	 * Get all entities within a radius of the given Entity's position
+	 * Get all entities within a radius of the given Entity's position, except the entity itself
 	 * 
 	 * @param entity
 	 *            The entity to look around
@@ -289,13 +274,15 @@ public abstract class RuneEvent {
 	 *            The radius to look around
 	 * @return A list containing all entities within the radius of the given Entity's position (including the entity itself)
 	 */
-	public List<Entity> getEntities(Entity entity, double radius) {
-		return getEntities(entity.worldObj, entity.posX, entity.posY - entity.yOffset, entity.posZ, radius);
+	public List<Entity> getEntitiesExcluding(EntityRune entityRune, double radius) {
+		return getEntitiesExcluding(entityRune, entityRune.worldObj, entityRune.posX, entityRune.posY - entityRune.yOffset, entityRune.posZ, radius);
 	}
 	
 	/**
-	 * Get all entities within a given radius of the coordinates
+	 * Get all entities within a given radius of the coordinates, except the given entity
 	 * 
+	 * @param entityToExclude
+	 *            An entity to exclude from the list, or null
 	 * @param world
 	 *            The current world to check in
 	 * @param x
@@ -308,35 +295,19 @@ public abstract class RuneEvent {
 	 *            The radius around the location to check
 	 * @return A list containing all entities within the radius of the coordinates
 	 */
-	public List<Entity> getEntities(World world, double x, double y, double z, double radius) {
-		List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(null, AxisAlignedBB.getBoundingBox(x, y, z, x + 1.0D, y + 1.0D, z + 1.0D).expand(radius, radius, radius));
+	public List<Entity> getEntitiesExcluding(Entity entityToExclude, World world, double x, double y, double z, double radius) {
+		List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(entityToExclude, AxisAlignedBB.getBoundingBox(x, y, z, x + 1.0D, y + 1.0D, z + 1.0D).expand(radius, radius, radius));
 		return list;
 	}
 	
-	public <T extends Entity> List<? extends T> getEntities(World world, Class<T> entType, double x, double y, double z, double radius) {
-		List<? extends T> list = world.getEntitiesWithinAABB(entType, AxisAlignedBB.getBoundingBox(x, y, z, x + 1.0D, y + 1.0D, z + 1.0D).expand(radius, radius, radius));
+	public <T extends Entity> List<? extends T> getEntitiesByType(World world, Class<T> entityType, double x, double y, double z, double radius) {
+		List<? extends T> list = world.getEntitiesWithinAABB(entityType, AxisAlignedBB.getBoundingBox(x, y, z, x + 1.0D, y + 1.0D, z + 1.0D).expand(radius, radius, radius));
 		return list;
 	}
 	
-	public <T extends Entity> List<? extends T> getEntities(World world, Class<T> entType, double x, double y, double z, double radius, IEntitySelector selector) {
-		List<? extends T> list = world.selectEntitiesWithinAABB(entType, AxisAlignedBB.getBoundingBox(x, y, z, x + 1.0D, y + 1.0D, z + 1.0D).expand(radius, radius, radius), selector);
+	public <T extends Entity> List<? extends T> getEntitiesByType(World world, Class<T> entityType, double x, double y, double z, double radius, IEntitySelector selector) {
+		List<? extends T> list = world.selectEntitiesWithinAABB(entityType, AxisAlignedBB.getBoundingBox(x, y, z, x + 1.0D, y + 1.0D, z + 1.0D).expand(radius, radius, radius), selector);
 		return list;
-	}
-	
-	public List getEntitiesExcluding(World world, Entity e, double x, double y, double z, double radius) {
-		List list = world.getEntitiesWithinAABBExcludingEntity(e, AxisAlignedBB.getBoundingBox(x, y, z, x + 1.0D, y + 1.0D, z + 1.0D).expand(radius, radius, radius));
-		return list;
-	}
-	
-	/**
-	 * Get a list of all dropped items within a 1 block radius of the EntityDust
-	 * 
-	 * @param e
-	 *            The EntityDust instance
-	 * @return a List<EntityItem> of all nearby dropped items
-	 */
-	public final List<EntityItem> getItems(EntityRune entityRune) {
-		return getItems(entityRune, 1D);
 	}
 	
 	/**
@@ -350,7 +321,7 @@ public abstract class RuneEvent {
 	 */
 	public final List<EntityItem> getItems(EntityRune entityRune, double radius) {
 		ArrayList<EntityItem> itemstacks = new ArrayList<EntityItem>();
-		List<Entity> entities = getEntities(entityRune.worldObj, entityRune.posX, entityRune.posY - entityRune.yOffset, entityRune.posZ, radius);
+		List<Entity> entities = getEntitiesExcluding(entityRune, entityRune.worldObj, entityRune.posX, entityRune.posY - entityRune.yOffset, entityRune.posZ, radius);
 		
 		for (Entity entity : entities) {
 			if (entity instanceof EntityItem) {
@@ -372,7 +343,7 @@ public abstract class RuneEvent {
 	 * @return True if all items found and consumed
 	 */
 	public final boolean takeItems(EntityRune entityRune, ItemStack... itemStacks) {
-		List<EntityItem> sacrifice = getItems(entityRune);
+		List<EntityItem> sacrifice = getItems(entityRune, 1.0D);
 		
 		for (EntityItem entityItem : sacrifice) {
 			for (ItemStack item : itemStacks) {
@@ -407,7 +378,7 @@ public abstract class RuneEvent {
 	}
 	
 	public ItemStack[] sacrifice(EntityRune entityRune, ItemStack[] req) {
-		List<EntityItem> sacrifice = getItems(entityRune);
+		List<EntityItem> sacrifice = getItems(entityRune, 1.0D);
 		boolean negate = false;
 		
 		for (EntityItem entityItem : sacrifice) {
@@ -483,7 +454,7 @@ public abstract class RuneEvent {
 	}
 	
 	public Sacrifice[] sacrifice(EntityRune entityRune, ArrayList<Sacrifice> reqA) {
-		List<Entity> sacrifice = this.getEntities(entityRune, 3D);
+		List<Entity> sacrifice = this.getEntitiesExcluding(entityRune, 3D);
 		Sacrifice[] req = new Sacrifice[reqA.size()];
 		
 		for (int i = 0; i < reqA.size(); i++) {

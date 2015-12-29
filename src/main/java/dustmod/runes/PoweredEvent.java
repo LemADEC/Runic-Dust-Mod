@@ -81,7 +81,7 @@ public abstract class PoweredEvent extends RuneEvent
 
         if (consumeItems)
         {
-            List<Entity> ents = this.getEntities(e, 1.0D);
+            List<Entity> ents = this.getEntitiesExcluding(e, 1.0D);
 
             for (Entity i: ents)
             {

@@ -42,18 +42,18 @@ public class RESpawnerReprog extends RuneEvent
 		
     }
 
-    public void onInit(EntityRune e)
+    public void onInit(EntityRune entityRune)
     {
 //        int compare = mod_DustMod.compareDust(mod_DustMod.lapisDID, e.dustID);
 //        if(compare < 0){
 //            e.fizzle();
 //            return;
 //        }
-		e.setRenderStar(true);
-		e.setRenderBeam(true);
-        e.setStarScale(1.05F);
+		entityRune.setRenderStar(true);
+		entityRune.setRenderBeam(true);
+        entityRune.setStarScale(1.05F);
         int entClass = -1;
-        List l = getEntities(e);
+        List l = getEntitiesExcluding(entityRune, 1.0D);
 
         for (Object o: l)
         {
@@ -78,15 +78,15 @@ public class RESpawnerReprog extends RuneEvent
         }
 
         ItemStack[] req = new ItemStack[] {new ItemStack(Items.ender_pearl, 2)};
-        req = this.sacrifice(e, req);
+        req = this.sacrifice(entityRune, req);
 
-        if (!checkSacrifice(req) || entClass == -1 || !takeXP(e, 10))
+        if (!checkSacrifice(req) || entClass == -1 || !takeXP(entityRune, 10))
         {
-            e.fizzle();
+            entityRune.fizzle();
             return;
         }
 
-        e.data[0] = entClass;
+        entityRune.data[0] = entClass;
     }
 
     public void onTick(EntityRune e)

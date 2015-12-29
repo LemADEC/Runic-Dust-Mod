@@ -22,16 +22,16 @@ public class LaunchTestRune extends RuneEvent {
 	}
 	
 	@Override
-	protected void onTick(EntityRune e) {
-		super.onTick(e);
+	protected void onTick(EntityRune entityRune) {
+		super.onTick(entityRune);
 		
-		List<Entity> ents = this.getEntities(e);
-		if (e.ticksExisted % 3 == 0)
+		List<Entity> ents = this.getEntitiesExcluding(entityRune, 1.0D);
+		if (entityRune.ticksExisted % 3 == 0)
 			for (Entity i : ents) {
-				e.fallDistance = 0;
+				entityRune.fallDistance = 0;
 				if (i.onGround) {
-					i.setPosition(e.posX, Math.floor(e.posY) + 0.5, e.posZ);
-					launchToward(i, e.posX + 16, i.posY, 0);
+					i.setPosition(entityRune.posX, Math.floor(entityRune.posY) + 0.5, entityRune.posZ);
+					launchToward(i, entityRune.posX + 16, i.posY, 0);
 					
 				}
 			}

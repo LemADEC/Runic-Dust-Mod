@@ -44,25 +44,25 @@ public abstract class RETrap extends RuneEvent
 
 		e.setRenderStar(true);
     }
-    public void onTick(EntityRune e)
+    public void onTick(EntityRune entityRune)
     {
-		e.setRenderStar(true);
+		entityRune.setRenderStar(true);
 
-        if (e.ticksExisted < 80)
+        if (entityRune.ticksExisted < 80)
         {
-            e.setColorStarInner(140, 140, 140);
-            e.setColorStarOuter(140, 140, 140);
+            entityRune.setColorStarInner(140, 140, 140);
+            entityRune.setColorStarOuter(140, 140, 140);
             return;
         }
 
-        e.setColorStarInner(0, 0, 255);
-        e.setColorStarOuter(0, 0, 255);
-        List<Entity> entities = this.getEntitiesExcluding(e.worldObj, e, e.posX, e.posY, e.posZ, 2D);
+        entityRune.setColorStarInner(0, 0, 255);
+        entityRune.setColorStarOuter(0, 0, 255);
+        List<Entity> entities = getEntitiesExcluding(entityRune, entityRune.worldObj, entityRune.posX, entityRune.posY, entityRune.posZ, 2D);
 
         if (entities.size() > 0)
         {
-            trigger(e, e.dustID);
-            e.fade();
+            trigger(entityRune, entityRune.dustID);
+            entityRune.fade();
         }
     }
 

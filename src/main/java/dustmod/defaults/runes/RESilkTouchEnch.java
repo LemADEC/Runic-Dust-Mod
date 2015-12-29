@@ -37,7 +37,7 @@ public class RESilkTouchEnch extends RuneEvent {
 	
 	@Override
 	public void onInit(EntityRune entityRune) {
-		List<EntityItem> sacrifice = getItems(entityRune);
+		List<EntityItem> sacrifice = getItems(entityRune, 1.0D);
 		Item item = null;
 		
 		for (EntityItem i : sacrifice) {

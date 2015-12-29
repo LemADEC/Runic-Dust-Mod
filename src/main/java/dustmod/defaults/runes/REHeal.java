@@ -88,7 +88,7 @@ public class REHeal extends RuneEvent
                     break;
             }
 
-            List<Entity> ents = getEntities(e, 5D);
+            List<Entity> ents = getEntitiesExcluding(e, 5D);
 
             for (Entity i: ents)
             {

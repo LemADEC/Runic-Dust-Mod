@@ -34,13 +34,13 @@ public class REChargeInscription extends RuneEvent {
 	}
 	
 	@Override
-	protected void onTick(EntityRune e) {
-		super.onTick(e);
-        e.setStarScale(e.getStarScale() + 0.005F);
-        if (e.ticksExisted > 20)
+	protected void onTick(EntityRune entityRune) {
+		super.onTick(entityRune);
+        entityRune.setStarScale(entityRune.getStarScale() + 0.005F);
+        if (entityRune.ticksExisted > 20)
         {
         	ItemStack inscription;
-        	List<EntityItem> items = this.getItems(e);
+        	List<EntityItem> items = this.getItems(entityRune, 1.0D);
         	
         	for(EntityItem ei:items){
         		ItemStack i = ei.getEntityItem();
@@ -48,17 +48,17 @@ public class REChargeInscription extends RuneEvent {
         			InscriptionEvent evt = InscriptionManager.getEvent(i);
 //        			DustMod.log("Charge ins found", evt);
         			if(evt != null){
-        				boolean sucess = evt.callSacrifice(this,e, i);
+        				boolean sucess = evt.callSacrifice(this,entityRune, i);
 //        				DustMod.log("Charging:", sucess);
         				ei.setEntityItemStack(i);
         				if(sucess) {
-        					e.fade();
+        					entityRune.fade();
         					return;
         				}
         			}
         		}
         	}
-        	e.fizzle();
+        	entityRune.fizzle();
         	return;
         }
 	}

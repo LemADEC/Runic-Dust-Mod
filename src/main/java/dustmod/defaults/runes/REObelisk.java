@@ -37,59 +37,58 @@ public class REObelisk extends RuneEvent
 		
     }
 
-    public void onInit(EntityRune e)
+    public void onInit(EntityRune entityRune)
     {
     	
         ItemStack[] sacrifice = new ItemStack[1];
         sacrifice[0] = new ItemStack(Blocks.iron_ore, 1);
-        this.sacrifice(e, sacrifice);
+        this.sacrifice(entityRune, sacrifice);
 
         if (sacrifice[0].stackSize != 0)
         {
-            e.fizzle();
+            entityRune.fizzle();
             return;
         }
 
-        e.data[1] = 1;
+        entityRune.data[1] = 1;
     }
 
-    public void onTick(EntityRune e)
+    public void onTick(EntityRune entityRune)
     {
 
         int height = 16;
     	
-        if (e.ticksExisted < ticksperblock * 2)
+        if (entityRune.ticksExisted < ticksperblock * 2)
         {
             return;
         }
 
-        World world = e.worldObj;
-        int x = (int)e.getX();
-        int y = (int)e.getY();
-        int z = (int)e.getZ();
+        World world = entityRune.worldObj;
+        int x = entityRune.getX();
+        int y = entityRune.getY();
+        int z = entityRune.getZ();
 
-        if (e.ticksExisted % ticksperblock == 0 && (e.data[0] < height))
+        if (entityRune.ticksExisted % ticksperblock == 0 && (entityRune.data[0] < height))
         {
-            if (e.data[1] > 0)
+            if (entityRune.data[1] > 0)
             {
-                List<Entity> ents = getEntities(e.worldObj, (double)x + 0.5D, (double)y + (double)e.data[0] + 1D, (double)z + 0.5D, 1.5D);
+                List<Entity> entities = getEntitiesExcluding(entityRune, entityRune.worldObj, x + 0.5D, (double)y + (double)entityRune.data[0] + 1D, z + 0.5D, 1.5D);
 
-                for (Entity i: ents)
+                for (Entity entity : entities)
                 {
-                	if(i != e)
-                		i.setPosition((double)x + 0.5D, (double)y + (double)e.data[0] + 1D, (double)z + 0.5D);
+                	entity.setPosition(x + 0.5D, (double)y + (double)entityRune.data[0] + 1D, z + 0.5D);
                 }
             }
 
-            if (e.data[1] == 1)
+            if (entityRune.data[1] == 1)
             {
                 for (int t = -8; t < height; t++)
                 {
-                    int c = -t + e.data[0] - 1;
+                    int c = -t + entityRune.data[0] - 1;
 
                     if (y + c <= 0)
                     {
-                        e.fade();
+                        entityRune.fade();
                         return;
                     }
 
@@ -105,7 +104,7 @@ public class REObelisk extends RuneEvent
 
                     if ((B != null && B instanceof BlockContainer) && (nB != null && !(nB instanceof BlockContainer)))
                     {
-                        e.fade();
+                        entityRune.fade();
                         return;
                     }
 
@@ -117,44 +116,44 @@ public class REObelisk extends RuneEvent
             {
                 for (int t = height; t >= -9; t--)
                 {
-                    if (y - t + e.data[0] <= 0)
+                    if (y - t + entityRune.data[0] <= 0)
                     {
-                        e.fade();
+                        entityRune.fade();
                         return;
                     }
 
-                    Block B = world.getBlock(x, y - t + e.data[0], z);
-                    int m = world.getBlockMetadata(x, y - t + e.data[0], z);
-                    Block nB = world.getBlock(x, y - t + e.data[0] + e.data[1], z);
+                    Block B = world.getBlock(x, y - t + entityRune.data[0], z);
+                    int m = world.getBlockMetadata(x, y - t + entityRune.data[0], z);
+                    Block nB = world.getBlock(x, y - t + entityRune.data[0] + entityRune.data[1], z);
                     
                     if ((B != null && B instanceof BlockContainer) || (nB != null && nB instanceof BlockContainer))
                     {
-                        e.fade();
+                        entityRune.fade();
                         return;
                     }
 
-                    world.setBlock(x, y - t + e.data[0] + e.data[1], z, B, m,3);
-                    world.setBlockToAir(x, y - t + e.data[0], z);
+                    world.setBlock(x, y - t + entityRune.data[0] + entityRune.data[1], z, B, m,3);
+                    world.setBlockToAir(x, y - t + entityRune.data[0], z);
                 }
             }
 
-            e.data[0] += e.data[1];
+            entityRune.data[0] += entityRune.data[1];
         }
 
-        if (e.data[0] >= height && world.isAirBlock(x, y + height - 1, z))
+        if (entityRune.data[0] >= height && world.isAirBlock(x, y + height - 1, z))
         {
-            e.data[1] = -1;
-            e.data[0]--;
+            entityRune.data[1] = -1;
+            entityRune.data[0]--;
         }
 
-        if (e.data[0] < 0)
+        if (entityRune.data[0] < 0)
         {
-            e.fade();
+            entityRune.fade();
         }
 
-        if (e.ticksExisted - ticksperblock * (height + 2) > 36000 && e.data[1] > 0)
+        if (entityRune.ticksExisted - ticksperblock * (height + 2) > 36000 && entityRune.data[1] > 0)
         {
-            e.fade();
+            entityRune.fade();
         }
     }
 }

@@ -203,7 +203,7 @@ public class REHideout extends RuneEvent {
 			boolean isUpdated = false;
 			
 			// entering down
-			List<Entity> entities = getEntities(entityRune, 0.2D);
+			List<Entity> entities = getEntitiesExcluding(entityRune, 0.2D);
 			for (Entity entity : entities) {
 				if (entity instanceof EntityPlayer) {
 					entityRune.ram = 45;
@@ -222,7 +222,7 @@ public class REHideout extends RuneEvent {
 				isUpdated = true;
 				checkAndUpdateDestination(entityRune);
 			}
-			entities = getEntities(entityRune.worldObj, entityRune.getX(), entityRune.data[0] + 2, entityRune.getZ(), 0.5D);
+			entities = getEntitiesExcluding(entityRune, entityRune.worldObj, entityRune.getX(), entityRune.data[0] + 2, entityRune.getZ(), 0.5D);
 			for (Entity entity : entities) {
 				if (entity instanceof EntityPlayer && entity.isSneaking()) {
 					entityRune.ram = 45;

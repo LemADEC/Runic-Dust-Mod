@@ -65,7 +65,7 @@ public class RELoyaltySprite extends PoweredEvent
         if (e.data[0] == 0)
         {
             e.posY = e.getY() - 1 + MathHelper.sin((float)e.ticksExisted / 16F) * 0.5F;
-            List<Entity> ents = this.getEntities(e, 3.5D);
+            List<Entity> ents = this.getEntitiesExcluding(e, 3.5D);
 
             for (Entity i: ents)
             {
@@ -95,7 +95,7 @@ public class RELoyaltySprite extends PoweredEvent
             if (e.toFollow == null)
             {
                 e.posY -= 1;
-                List<Entity> ents = this.getEntities(e, 3D);
+                List<Entity> ents = this.getEntitiesExcluding(e, 3D);
 
                 for (Entity i: ents)
                 {
@@ -139,7 +139,7 @@ public class RELoyaltySprite extends PoweredEvent
                         && ((EntityCreature)slave).getEntityToAttack() != player);
             }
 
-            List<Entity> ents = this.getEntities(e, 5D);
+            List<Entity> ents = this.getEntitiesExcluding(e, 5D);
 
             if (!attacking)
                 for (Entity i: ents)

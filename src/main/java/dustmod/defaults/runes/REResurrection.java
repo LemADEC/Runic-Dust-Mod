@@ -45,7 +45,7 @@ public class REResurrection extends RuneEvent {
 		
 		//get sacrifice
 		ArrayList<EntityItem> entityItems = new ArrayList<EntityItem>();
-		List<Entity> entities = getEntities(entityRune);
+		List<Entity> entities = getEntitiesExcluding(entityRune, 1.0D);
 		
 		for (Entity entity : entities) {
 			if (entity instanceof EntityItem) {

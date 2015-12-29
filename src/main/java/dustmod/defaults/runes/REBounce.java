@@ -42,7 +42,7 @@ public class REBounce extends RuneEvent {
 	
 	@Override
 	public void onTick(EntityRune entityRune) {
-		List<Entity> entities = this.getEntities(entityRune, 0.35D);
+		List<Entity> entities = this.getEntitiesExcluding(entityRune, 0.35D);
 		for (Entity entity : entities) {
 			if (entity instanceof EntityLivingBase) {
 				EntityLivingBase entityLivingBase = (EntityLivingBase) entity;
@@ -62,7 +62,7 @@ public class REBounce extends RuneEvent {
 				}
 			}
 		}
-		entities = this.getEntities(entityRune, 3D);
+		entities = this.getEntitiesExcluding(entityRune, 3D);
 		
 		for (Entity i : entities) {
 			if (i instanceof EntityLivingBase) {

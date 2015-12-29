@@ -58,7 +58,7 @@ public class RECage extends RETrap {
 		
 		entityRune.setColorStarInner(0, 0, 255);
 		entityRune.setColorStarOuter(0, 0, 255);
-		List<Entity> entities = getEntities(entityRune, 2D);
+		List<Entity> entities = getEntitiesExcluding(entityRune, 2D);
 		
 		if (entities.size() > 0) {
 			trigger(entityRune, entityRune.dustID);
@@ -69,7 +69,7 @@ public class RECage extends RETrap {
 	@Override
 	public void trigger(EntityRune entityRune, int dustLevel) {
 		boolean found = false;
-		List<Entity> trap = getEntities(entityRune, 2D);
+		List<Entity> trap = getEntitiesExcluding(entityRune, 2D);
 		
 		for (Entity k : trap) {
 			if (k instanceof EntityLiving) {

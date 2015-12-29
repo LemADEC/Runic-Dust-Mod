@@ -63,7 +63,7 @@ public class REForcefield extends PoweredEvent
     	if(e.bb != 0) e.data[1] = e.bb;
         super.onTick(e);
         float rad = e.data[1] * 8F;
-        List<Entity> ents = this.getEntities(e, rad);
+        List<Entity> ents = this.getEntitiesExcluding(e, rad);
         double vel = 1.02D;
         double max = 24000 * 2;
 

@@ -65,7 +65,7 @@ public class REFireSprite extends PoweredEvent {
 		
 		e.setFire(0);
 		int rad = 3;
-		List<Entity> kill = getEntities(e, rad);
+		List<Entity> kill = getEntitiesExcluding(e, rad);
 		
 		for (Entity k : kill) {
 			if (k == player || k == e) {

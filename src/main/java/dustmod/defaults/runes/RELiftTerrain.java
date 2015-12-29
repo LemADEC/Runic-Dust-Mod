@@ -187,14 +187,10 @@ public class RELiftTerrain extends RuneEvent
                         if (world.isAirBlock(x, y + c + 2, z) && block.getMaterial() != Material.air)
                         {
 //                            System.out.println("GOOOOOOO");
-                            List<Entity> ents = getEntities(entityRune.worldObj, x + 0.5D, (double) y + (double)c + 1D, z + 0.5D, 1D);
+                            List<Entity> ents = getEntitiesExcluding(entityRune, entityRune.worldObj, x + 0.5D, (double) y + (double)c + 1D, z + 0.5D, 1D);
 
                             for (Entity ie : ents)
                             {
-                                if (ie == entityRune)
-                                {
-                                    continue;
-                                }
 
 //                                System.out.println("DICKS " + ie);
                                 //                        if(ie instanceof EntityItem) System.out.println("dicks, things have been dropped");;

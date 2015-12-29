@@ -106,7 +106,7 @@ public class REPain extends PoweredEvent //This is a Powered rune
             }
             
             //Get all entities within radius
-			List<Entity> entities = this.getEntities(entityRune, rad);
+			List<Entity> entities = this.getEntitiesExcluding(entityRune, rad);
             for(Entity entity : entities){
                 if(entity instanceof EntityPlayer){
                     //Check if it is the summoning player

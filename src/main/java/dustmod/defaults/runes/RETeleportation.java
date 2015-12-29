@@ -184,7 +184,7 @@ public class RETeleportation extends PoweredEvent {
 			entityRune.setColorStarOuter(255, 255, 255);
 		}
 		
-		List<Entity> ents = this.getEntities(entityRune, 10D);
+		List<Entity> ents = this.getEntitiesExcluding(entityRune, 10D);
 		
 		//        System.out.println("DURR " + e.worldObj.worldProvider.worldType + " " + ents.size());
 		if (entityRune.ram > 1 && VoidTeleManager.skipWarpTick > 0) {

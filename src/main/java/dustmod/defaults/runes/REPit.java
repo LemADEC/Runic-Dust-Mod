@@ -100,7 +100,7 @@ public class REPit extends RuneEvent {
 	
 	@Override
 	public void onTick(EntityRune entityRune) {
-		List<Entity> ents = this.getEntities(entityRune, 5D);
+		List<Entity> ents = this.getEntitiesExcluding(entityRune, 5D);
 		
 		for (Entity i : ents) {
 			if (i instanceof EntityPlayer) {

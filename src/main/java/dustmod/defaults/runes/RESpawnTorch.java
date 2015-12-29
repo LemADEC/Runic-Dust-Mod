@@ -67,26 +67,26 @@ public class RESpawnTorch extends RuneEvent
     }
 
     @Override
-    protected void onTick(EntityRune e)
+    protected void onTick(EntityRune entityRune)
     {
-        super.onTick(e);
-        if(e.data[0] == 0 && e.ticksExisted == 0){
-            World world = e.worldObj;
-            int x = e.getX();
-            int y = e.getY();
-            int z = e.getZ();
+        super.onTick(entityRune);
+        if(entityRune.data[0] == 0 && entityRune.ticksExisted == 0){
+            World world = entityRune.worldObj;
+            int x = entityRune.getX();
+            int y = entityRune.getY();
+            int z = entityRune.getZ();
             world.setBlockToAir(x, y, z);
             world.setBlock(x, y, z, Blocks.torch, 0,3);
         }
         
-        if(e.data[0] == 1 && e.ticksExisted%10 == 0){
-            List<EntityItem> items = this.getItems(e);
+        if(entityRune.data[0] == 1 && entityRune.ticksExisted % 10 == 0){
+            List<EntityItem> items = this.getItems(entityRune, 1.0D);
             for(EntityItem i:items){
                 ItemStack item = i.getEntityItem();
-                if(item.getItem() == Items.dye && e.data[1] != item.getItemDamage()){
-                    e.data[1] = item.getItemDamage();
+                if(item.getItem() == Items.dye && entityRune.data[1] != item.getItemDamage()){
+                    entityRune.data[1] = item.getItemDamage();
                     int[] color = this.getColor(item.getItemDamage());
-                    e.setColorBeam(color[0], color[1], color[2]);
+                    entityRune.setColorBeam(color[0], color[1], color[2]);
                     item.stackSize--;
                     if(item.stackSize <= 0){
                         i.setDead();
@@ -97,20 +97,20 @@ public class RESpawnTorch extends RuneEvent
                 }
             }
             
-            if(e.getRenderBeam() && e.isPowered()){
-            	e.setRenderBeam(false);
-            	e.updateDataWatcher();
-            }else if(!e.getRenderBeam() && !e.isPowered()){
-            	e.setRenderBeam(true);
-            	e.updateDataWatcher();
+            if(entityRune.getRenderBeam() && entityRune.isPowered()){
+            	entityRune.setRenderBeam(false);
+            	entityRune.updateDataWatcher();
+            }else if(!entityRune.getRenderBeam() && !entityRune.isPowered()){
+            	entityRune.setRenderBeam(true);
+            	entityRune.updateDataWatcher();
             }
         }
-        if (e.data[0] == 0)
+        if (entityRune.data[0] == 0)
         {
-            if (e.worldObj.getBlock(e.getX(), e.getY(), e.getZ()) != Blocks.torch)
+            if (entityRune.worldObj.getBlock(entityRune.getX(), entityRune.getY(), entityRune.getZ()) != Blocks.torch)
             {
-                e.fade();
-                e.kill();
+                entityRune.fade();
+                entityRune.kill();
             }
         }
     }

@@ -75,7 +75,7 @@ public class REFog extends PoweredEvent {
 //            System.out.println("Alpha" + alpha + " \tPercent" + percent + " \tStage" + stage);
 
 			if (entityRune.ticksExisted % cycle == 0 && !entityRune.worldObj.isRemote) {
-				List ents = this.getEntities(entityRune, radius);
+				List ents = this.getEntitiesExcluding(entityRune, radius);
 				EntityPlayer player = entityRune.worldObj.getClosestPlayerToEntity(entityRune, radius);
 				
 				for (Object o : ents) {

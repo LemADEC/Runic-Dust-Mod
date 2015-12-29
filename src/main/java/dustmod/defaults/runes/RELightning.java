@@ -37,7 +37,7 @@ public class RELightning extends RETrap {
 	
 	@Override
 	public void trigger(EntityRune entityRune, int level) {
-		List<Entity> entities = getEntities(entityRune, 2D * level / 100);
+		List<Entity> entities = getEntitiesExcluding(entityRune, 2D * level / 100);
 		
 		for (Entity entity : entities) {
 			if (entity instanceof EntityLiving && entityRune.getDistanceToEntity(entity) < 2D * level / 100) {

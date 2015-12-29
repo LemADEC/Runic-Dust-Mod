@@ -41,7 +41,7 @@ public class REVoid extends RuneEvent {
 		entityRune.setRenderStar(true);
 		entityRune.setColorStarInner(255, 0, 255);
 		entityRune.setColorStarOuter(255, 0, 255);
-		List<EntityItem> sacrifice = this.getItems(entityRune);
+		List<EntityItem> sacrifice = getItems(entityRune, 1.0D);
 		
 		if (sacrifice == null || sacrifice.isEmpty()) {
 			entityRune.setStarScale(1.02F);

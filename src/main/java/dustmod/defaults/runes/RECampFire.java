@@ -84,7 +84,7 @@ public class RECampFire extends PoweredEvent {
 			
 		}
 		
-		List<Entity> ents = this.getEntities(e, 0.85D);
+		List<Entity> ents = this.getEntitiesExcluding(e, 0.85D);
 		
 		for (Entity i : ents) {
 			if (!i.isDead && i instanceof EntityItem) {

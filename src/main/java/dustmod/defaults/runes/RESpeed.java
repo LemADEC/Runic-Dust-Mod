@@ -37,22 +37,22 @@ public class RESpeed extends RuneEvent
 		
     }
     
-    public void onInit(EntityRune e)
+    public void onInit(EntityRune entityRune)
     {
         ItemStack[] req = new ItemStack[]
         {
             new ItemStack(Items.sugar, 3, -1),
             new ItemStack(Items.blaze_powder, 1, -1),
         };
-        sacrifice(e, req);
+        sacrifice(entityRune, req);
 
         if (req[0].stackSize > 0 || req[1].stackSize > 0)
         {
-            e.fizzle();
+            entityRune.fizzle();
             return;
         }
 
-        int dustId = e.dusts[e.dusts.length - 1][e.dusts[0].length - 1];
+        int dustId = entityRune.dusts[entityRune.dusts.length - 1][entityRune.dusts[0].length - 1];
         int p = 0;
         int d = 0;
 
@@ -79,7 +79,7 @@ public class RESpeed extends RuneEvent
                 break;
         }
 
-        List<Entity> ents = this.getEntities(e, 3D);
+        List<Entity> ents = this.getEntitiesExcluding(entityRune, 3D);
 
         for (Entity i: ents)
         {
@@ -89,10 +89,10 @@ public class RESpeed extends RuneEvent
             }
         }
 
-        e.setStarScale(1.12F);
-        e.setColorStarOuter(0, 255, 0);
-        e.setRenderStar(true);
-        e.fade();
+        entityRune.setStarScale(1.12F);
+        entityRune.setColorStarOuter(0, 255, 0);
+        entityRune.setRenderStar(true);
+        entityRune.fade();
     }
 
     public void onTick(EntityRune e)
