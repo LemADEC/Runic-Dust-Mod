@@ -99,8 +99,8 @@ public class ItemPlaceScroll extends DustModItem {
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack item, EntityPlayer player, List list, boolean flag) {
-		super.addInformation(item, player, list, flag);
+	public void addInformation(ItemStack item, EntityPlayer player, List list, boolean advancedItemTooltips) {
+		super.addInformation(item, player, list, advancedItemTooltips);
 		RuneShape shape = RuneManager.getShapeFromID(item.getItemDamage());
 		if (shape == null) {
 			return;

@@ -88,10 +88,10 @@ public class ItemWornInscription extends ItemArmor implements ISpecialArmor {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack item, EntityPlayer par2EntityPlayer, List list, boolean par4) {
-		super.addInformation(item, par2EntityPlayer, list, par4);
-		if (item.hasTagCompound() && item.getTagCompound().hasKey("description")) {
-			String desc = item.getTagCompound().getString("description");
+	public void addInformation(ItemStack itemStack, EntityPlayer entityPlayer, List list, boolean advancedItemTooltips) {
+		super.addInformation(itemStack, entityPlayer, list, advancedItemTooltips);
+		if (itemStack.hasTagCompound() && itemStack.getTagCompound().hasKey("description")) {
+			String desc = itemStack.getTagCompound().getString("description");
 			for (String s : desc.split("\n")) {
 				list.add(s);
 			}

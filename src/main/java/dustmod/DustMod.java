@@ -239,7 +239,7 @@ public class DustMod {
 		wornInscription.setCreativeTab(creativeTab);
 		wornInscription.setUnlocalizedName("wornInscription");
 		
-		pouch = (ItemPouch) (new ItemPouch(dust)).setUnlocalizedName("dustPouch").setCreativeTab(creativeTab);
+		pouch = (ItemPouch) (new ItemPouch()).setUnlocalizedName("dustPouch").setCreativeTab(creativeTab);
 	}
 	
 	@EventHandler

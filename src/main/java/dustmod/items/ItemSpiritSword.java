@@ -78,8 +78,8 @@ public class ItemSpiritSword extends ItemSword {
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack item, EntityPlayer player, List list, boolean flag) {
-		super.addInformation(item, player, list, flag);
+	public void addInformation(ItemStack itemStack, EntityPlayer entityPlayer, List list, boolean advancedItemTooltips) {
+		super.addInformation(itemStack, entityPlayer, list, advancedItemTooltips);
 		list.add("Consume lapis dust to repair itself");
 	}
 }

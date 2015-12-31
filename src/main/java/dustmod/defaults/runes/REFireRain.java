@@ -29,34 +29,26 @@ public class REFireRain extends PoweredEvent {
 	
 	static {
 		// open access to EntityArrow.inGround
-		Class<?> classEntityArrow = null;
+		Class<?> classEntityArrow = EntityArrow.class;
 		try {
-			classEntityArrow = Class.forName("net.minecraft.entity.projectile.EntityArrow");
-		} catch (Exception exception) {
-			exception.printStackTrace();
-		}
-		
-		if (classEntityArrow != null) {
+			fieldInGround = classEntityArrow.getDeclaredField("inGround");
+		} catch (Exception exception1) {
 			try {
-				fieldInGround = classEntityArrow.getDeclaredField("inGround");
-			} catch (Exception exception1) {
-				try {
-					fieldInGround = classEntityArrow.getDeclaredField("field_70254_i");
-				} catch (Exception exception2) {
-					exception2.printStackTrace();
-					String map = "";
-					for(Field field : classEntityArrow.getDeclaredFields()) {
-						if (!map.isEmpty()) {
-							map += ", ";
-						}
-						map += field.getName();
+				fieldInGround = classEntityArrow.getDeclaredField("field_70254_i");
+			} catch (Exception exception2) {
+				exception2.printStackTrace();
+				String map = "";
+				for(Field field : classEntityArrow.getDeclaredFields()) {
+					if (!map.isEmpty()) {
+						map += ", ";
 					}
-					DustMod.logger.error("Unable to find inGround field in " + classEntityArrow + " class. Available fields are: " + map);
+					map += field.getName();
 				}
+				DustMod.logger.error("Unable to find inGround field in " + classEntityArrow + " class. Available fields are: " + map);
 			}
-			if (fieldInGround != null) {
-				fieldInGround.setAccessible(true);
-			}
+		}
+		if (fieldInGround != null) {
+			fieldInGround.setAccessible(true);
 		}
 	}
 	

@@ -22,72 +22,70 @@ public class ItemPouch extends DustModItem {
 	
 	public static final int max = 6400;
 	
-	private Block block;
 	private ItemStack container = null;
 	
 	private IIcon bagIIcon;
 	private IIcon mainIIcon;
 	private IIcon subIIcon;
 	
-	public ItemPouch(Block block) {
+	public ItemPouch() {
 		super();
-		this.block = block;
 		this.hasSubtypes = true;
 		this.setMaxStackSize(1);
 	}
 	
 	@Override
-	public boolean onItemUse(ItemStack item, EntityPlayer p, World world, int i, int j, int k, int face, float x, float y, float z) {
-		if (!world.canMineBlock(p, i, j, k))
+	public boolean onItemUse(ItemStack itemStack, EntityPlayer entityPlayer, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
+		if (!world.canMineBlock(entityPlayer, x, y, z))
 			return false;
 		
-		Block var11 = world.getBlock(i, j, k);
+		Block block = world.getBlock(x, y, z);
 		
-		if (var11 == Blocks.snow) {
-			face = 1;
-		} else if (var11 != Blocks.vine && var11 != Blocks.tallgrass && var11 != Blocks.deadbush) {
-			if (face == 0) {
-				--j;
+		if (block == Blocks.snow) {
+			side = 1;
+		} else if (block != Blocks.vine && block != Blocks.tallgrass && block != Blocks.deadbush) {
+			if (side == 0) {
+				--y;
 			}
 			
-			if (face == 1) {
-				++j;
+			if (side == 1) {
+				++y;
 			}
 			
-			if (face == 2) {
-				--k;
+			if (side == 2) {
+				--z;
 			}
 			
-			if (face == 3) {
-				++k;
+			if (side == 3) {
+				++z;
 			}
 			
-			if (face == 4) {
-				--i;
+			if (side == 4) {
+				--x;
 			}
 			
-			if (face == 5) {
-				++i;
+			if (side == 5) {
+				++x;
 			}
 		}
 		
-		if (!p.canPlayerEdit(i, j, k, 7, item)) {
+		if (!entityPlayer.canPlayerEdit(x, y, z, 7, itemStack)) {
 			return false;
-		} else if (getDustAmount(item) <= 0) {
+		} else if (getDustAmount(itemStack) <= 0) {
 			return false;
 		} else {
-			if (world.canPlaceEntityOnSide(block, i, j, k, false, face, (Entity) null, item)) {
-				int var13 = block.onBlockPlaced(world, i, j, k, face, x, y, z, 0);
+			if (world.canPlaceEntityOnSide(DustMod.dust, x, y, z, false, side, (Entity) null, itemStack)) {
+				int var13 = DustMod.dust.onBlockPlaced(world, x, y, z, side, hitX, hitY, hitZ, 0);
 				
-				if (world.setBlock(i, j, k, block, 0, 3)) {
-					if (world.getBlock(i, j, k) == block) {
-						block.onBlockPlacedBy(world, i, j, k, p, item);
-						block.onPostBlockPlaced(world, i, j, k, var13);
+				if (world.setBlock(x, y, z, DustMod.dust, 0, 3)) {
+					if (world.getBlock(x, y, z) == DustMod.dust) {
+						DustMod.dust.onBlockPlacedBy(world, x, y, z, entityPlayer, itemStack);
+						DustMod.dust.onPostBlockPlaced(world, x, y, z, var13);
 					}
-					DustMod.dust.onBlockActivated(world, i, j, k, p, face, x, y, z);
+					DustMod.dust.onBlockActivated(world, x, y, z, entityPlayer, side, hitX, hitY, hitZ);
 					
-					world.playSoundEffect(i + 0.5F, j + 0.5F, k + 0.5F, block.stepSound.getStepResourcePath(),
-							(block.stepSound.getVolume() + 1.0F) / 6.0F, block.stepSound.getPitch() * 0.99F);
+					world.playSoundEffect(x + 0.5F, y + 0.5F, z + 0.5F, DustMod.dust.stepSound.getStepResourcePath(),
+							(DustMod.dust.stepSound.getVolume() + 1.0F) / 6.0F, DustMod.dust.stepSound.getPitch() * 0.99F);
 					//                    if(!p.capabilities.isCreativeMode)subtractDust(item,1);
 				}
 			}
@@ -104,11 +102,11 @@ public class ItemPouch extends DustModItem {
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack item, EntityPlayer player, List list, boolean flag) {
-		super.addInformation(item, player, list, flag);
-		int amt = ItemPouch.getDustAmount(item);
-		if (amt != 0) {
-			list.add("Contains " + amt + " dust");
+	public void addInformation(ItemStack itemStack, EntityPlayer entityPlayer, List list, boolean advancedItemTooltips) {
+		super.addInformation(itemStack, entityPlayer, list, advancedItemTooltips);
+		int amount = ItemPouch.getDustAmount(itemStack);
+		if (amount != 0) {
+			list.add("Contains " + amount + " dust");
 		}
 	}
 	
@@ -180,22 +178,6 @@ public class ItemPouch extends DustModItem {
 	public ItemStack getContainerItem(ItemStack itemStack) {
 		// TODO Auto-generated method stub
 		return container;
-	}
-	
-	@SideOnly(Side.CLIENT)
-	/**
-	 * allows items to add custom lines of information to the mouseover description
-	 */
-	public void addInformation(ItemStack item, List info) {
-		if (item.hasTagCompound()) {
-			//            NBTTagCompound tag = item.getTagCompound();
-			//            NBTTagString author = (NBTTagString)tag.getTag("author");
-			int amt = getDustAmount(item);
-			//            if (author != null)
-			//            {
-			info.add("\u00a77 Holding " + amt + " piles.");//String.format(StatCollector.translateToLocalFormatted("book.byAuthor", new Object[] {author.data}), new Object[0]));
-			//            }
-		}
 	}
 	
 	public static int getDustAmount(ItemStack pouch) {
