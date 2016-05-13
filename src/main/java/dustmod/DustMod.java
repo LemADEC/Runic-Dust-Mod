@@ -408,9 +408,9 @@ public class DustMod {
 				"nuggetGold" ));
 		
 		// Blank inscription
-		GameRegistry.addRecipe(new ItemStack(inscription, 1), new Object[] { "s", "p", "p",
+		GameRegistry.addRecipe(new ItemStack(inscription, 1), "s", "p", "p",
 			's', new ItemStack(Items.string, 1),
-			'p', new ItemStack(runicPaper, 1) });
+			'p', new ItemStack(runicPaper, 1) );
 		
 		// Migration from old system
 		for (int i = 1; i < 5; i++) {

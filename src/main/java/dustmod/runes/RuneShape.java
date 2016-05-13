@@ -6,6 +6,7 @@ package dustmod.runes;
 
 import java.util.ArrayList;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import dustmod.DustMod;
 import dustmod.blocks.BlockDust;
 import dustmod.blocks.TileEntityDust;
@@ -425,7 +426,7 @@ public class RuneShape {
 	
 	public boolean drawOnWorldWhole(World world, int x, int y, int z, EntityPlayer player, int rotation) {
 		
-		if (world.isRemote)
+		if (FMLCommonHandler.instance().getEffectiveSide().isClient())
 			return false;
 		
 		int placementX = x;
@@ -629,7 +630,7 @@ public class RuneShape {
 	}
 	
 	public boolean drawOnWorldPart(World world, int x, int y, int z, EntityPlayer player, int rotation) {
-		if (world.isRemote) {
+		if (FMLCommonHandler.instance().getEffectiveSide().isClient()) {
 			return false;
 		}
 		
