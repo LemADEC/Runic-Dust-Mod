@@ -9,7 +9,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
@@ -122,58 +121,73 @@ public class BlockRut extends BlockContainer {
 			return false;
 		}
 		
-		ItemStack current = player.inventory.getCurrentItem();
+		ItemStack itemStackCurrent = player.inventory.getCurrentItem();
 		
-		TileEntityRut ter = (TileEntityRut) world.getTileEntity(x, y, z);
+		TileEntityRut tileEntityRut = (TileEntityRut) world.getTileEntity(x, y, z);
 		
-		if (ter.isBeingUsed || ter.maskBlock == null) {
+		if (tileEntityRut.isBeingUsed || tileEntityRut.maskBlock == null) {
 			return false;
 		}
 		
-		if (current != null) {
+		if (itemStackCurrent != null) {
 			
-			if (FluidContainerRegistry.isBucket(current)) {
+			if (FluidContainerRegistry.isBucket(itemStackCurrent)) {
 				
-				FluidStack fluid = FluidContainerRegistry.getFluidForFilledItem(current);
-				if (fluid.getFluid().canBePlacedInWorld()) {
-					ter.setFluid(fluid.getFluid().getBlock());
+				FluidStack fluid = FluidContainerRegistry.getFluidForFilledItem(itemStackCurrent);
+				if (fluid == null) {
+					if (!player.capabilities.isCreativeMode) {
+						ItemStack itemStackFilled = FluidContainerRegistry.fillFluidContainer(fluid, itemStackCurrent);
+						if (itemStackFilled != null) {
+							player.inventory.setInventorySlotContents(player.inventory.currentItem, itemStackFilled);
+						}
+					}
+					tileEntityRut.setFluid(null);
+					
+					return true;
+				} else if (fluid.getFluid().canBePlacedInWorld()) {
+					tileEntityRut.setFluid(fluid.getFluid().getBlock());
 					
 					if (!player.capabilities.isCreativeMode) {
-						player.inventory.setInventorySlotContents(player.inventory.currentItem, new ItemStack(Items.bucket));
+						player.inventory.setInventorySlotContents(player.inventory.currentItem,
+								FluidContainerRegistry.drainFluidContainer(itemStackCurrent));
 					}
 					
 					return true;
 				}
 				
-			} else if (ter.fluidBlock == null || ter.fluidIsFluid()) {
+			} else if (tileEntityRut.fluidBlock == null || tileEntityRut.fluidIsFluid()) {
 				
-				if (current.getItem() instanceof ItemBlock) {
-					Block block = Block.getBlockFromItem(current.getItem());
+				if (itemStackCurrent.getItem() instanceof ItemBlock) {
+					Block block = Block.getBlockFromItem(itemStackCurrent.getItem());
 					
-					if (block.renderAsNormalBlock() && block.isOpaqueCube() && (DustMod.Enable_Decorative_Ruts || block.getBlockHardness(world, x, y, z) <= TileEntityRut.hardnessStandard)) {
-						ter.setFluid(block);
+					if ( block.renderAsNormalBlock() && block.isOpaqueCube()
+					  && (DustMod.Enable_Decorative_Ruts || block.getBlockHardness(world, x, y, z) <= TileEntityRut.hardnessStandard)) {
+						tileEntityRut.setFluid(block);
 						
 						if (!player.capabilities.isCreativeMode) {
-							current.stackSize--;
+							itemStackCurrent.stackSize--;
 						}
 						
 						return true;
 					}
 				}
-			} else if (ter.fluidBlock != null && !ter.fluidIsFluid() && (ter.fluidBlock.getBlockHardness(world, x, y, z) <= TileEntityRut.hardnessStandard || DustMod.Enable_Decorative_Ruts)) {
-				if (current.getItem() instanceof ItemSpade) {
-					this.dropBlockAsItem(world, x, y + 1, z, new ItemStack(ter.fluidBlock, 1, 0));
-					ter.setFluid(Blocks.air);
+				
+			} else if ( tileEntityRut.fluidBlock != null && !tileEntityRut.fluidIsFluid() 
+					 && (tileEntityRut.fluidBlock.getBlockHardness(world, x, y, z) <= TileEntityRut.hardnessStandard || DustMod.Enable_Decorative_Ruts)) {
+				if (itemStackCurrent.getItem() instanceof ItemSpade) {
+					this.dropBlockAsItem(world, x, y + 1, z, new ItemStack(tileEntityRut.fluidBlock, 1, 0));
+					tileEntityRut.setFluid(Blocks.air);
 					return true;
 				}
 			}
 		}
 		
-		if (current == null || current.getItem() != DustMod.chisel) {
+		if ( itemStackCurrent == null
+		  || itemStackCurrent.getItem() != DustMod.chisel) {
 			return false;
 		}
 		
-		Block maskBlock = ter.maskBlock;
+		Block maskBlock = tileEntityRut.maskBlock;
 		world.playSoundEffect(x + 0.5F, y + 0.5F, z + 0.5F, maskBlock.stepSound.getStepResourcePath(), (maskBlock.stepSound.getVolume() + 1.0F) / 6.0F, maskBlock.stepSound.getPitch() * 0.99F);
 		
 		int bx, by, bz;
@@ -185,10 +199,10 @@ public class BlockRut extends BlockContainer {
 		by = Math.min(2, by);
 		bz = Math.min(2, bz);
 		
-		ter.toggleRut(player, bx, by, bz);
+		tileEntityRut.toggleRut(player, bx, by, bz);
 		
-		if (ter.isEmpty()) {
-			ter.resetBlock();
+		if (tileEntityRut.isEmpty()) {
+			tileEntityRut.resetBlock();
 		}
 		
 		return true;
