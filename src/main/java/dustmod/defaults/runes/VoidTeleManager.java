@@ -76,9 +76,16 @@ public class VoidTeleManager {
         return -1;
     }
 
-    public static int[] toWarp(EntityRune e)
-    {
-        return new int[] {e.getX(), e.dustPoints.get(0)[1], e.getZ(), e.data[0], e.worldObj.getBlockMetadata(e.getX(), e.dustPoints.get(0)[1] - 1, e.getZ()), (int)e.rotationYaw, e.worldObj.provider.dimensionId, DustMod.warpVer};
+    public static int[] toWarp(EntityRune entityRune) {
+        return new int[] {
+        		entityRune.getX(),
+        		entityRune.dustPoints.get(0)[1],
+        		entityRune.getZ(),
+        		entityRune.data[0],
+        		entityRune.worldObj.getBlockMetadata(entityRune.getX(), entityRune.dustPoints.get(0)[1] - 1, entityRune.getZ()), 
+        		(int)entityRune.rotationYaw,
+        		entityRune.worldObj.provider.dimensionId,
+        		DustMod.warpVer};
     }
     
     public static EntityRune getWarpEntity(int[] warp, World world)

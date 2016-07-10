@@ -9,7 +9,7 @@
 	</sacrifices>
 	<description>
 		Description
-		Teleports you to a teleporation network rune location.
+		Teleports you to a teleportation network rune location.
 		The teleportation network frequency on which to send you depends on the block beneath the blaze square in the rune design.
 	</description>
 	<design width="10" height="4" ox="1" oy="0" cx="3" cy="0">
