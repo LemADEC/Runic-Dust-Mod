@@ -1,5 +1,7 @@
 package dustmod.items;
 
+import java.util.List;
+
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -40,7 +42,7 @@ public class ItemInscription extends DustModItem {
 	}
 	
 	public static int[] getDesign(ItemStack itemStack) {
-		if (itemStack == null || itemStack.getItem() != DustMod.getWornInscription() || !itemStack.hasTagCompound()) {
+		if (itemStack == null || itemStack.getItem() == DustMod.getWornInscription() || !itemStack.hasTagCompound()) {
 			return null;
 		}
 		
@@ -60,18 +62,21 @@ public class ItemInscription extends DustModItem {
 	}
 	
 	public static boolean isDesignEmpty(ItemStack item) {
-		if (item == null || !item.hasTagCompound())
-			return false;
+		if (item == null || !item.hasTagCompound()) {
+			return true;
+		}
 		
 		NBTTagCompound tag = item.getTagCompound();
 		int[] design = tag.getIntArray("design");
 		
-		if (design == null)
+		if (design == null) {
 			return true;
+		}
 		
 		for (int i = 0; i < design.length; i++) {
-			if (design[i] != 0)
+			if (design[i] != 0) {
 				return false;
+			}
 		}
 		
 		return true;
@@ -87,6 +92,7 @@ public class ItemInscription extends DustModItem {
 		if (metadata > 0) {
 			if (isDesignEmpty(itemStack)) {
 				itemStack.setItemDamage(0);
+				
 			} else {
 				int amount = 3;
 				int x = (int) entity.posX;
@@ -98,8 +104,9 @@ public class ItemInscription extends DustModItem {
 				if (world.getBiomeGenForCoords(x, z).temperature > 1.0F) {
 					amount = 6;
 				}
-				if (!DustMod.debug)
+				if (!DustMod.debug) {
 					itemStack.setItemDamage(metadata + amount);
+				}
 			}
 		}
 		if (metadata >= max) {
@@ -108,7 +115,8 @@ public class ItemInscription extends DustModItem {
 			if (event != null) {
 				InscriptionManager.onCreate((EntityPlayer) entity, itemStack);
 				itemStack.func_150996_a(DustMod.getWornInscription());
-				itemStack.setItemDamage(ItemInscription.max);
+				itemStack.setItemDamage(ItemWornInscription.max);
+				
 			} else {
 				setDried(itemStack);
 			}
@@ -178,5 +186,54 @@ public class ItemInscription extends DustModItem {
 		this.blankIIcon = IIconRegister.registerIcon(DustMod.spritePath + "blankInscription");
 		this.dryingIIcon = IIconRegister.registerIcon(DustMod.spritePath + "dryingInscription");
 		this.driedIIcon = IIconRegister.registerIcon(DustMod.spritePath + "driedInscription");
+	}
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean advancedItemTooltips) {
+		super.addInformation(itemStack, player, list, advancedItemTooltips);
+		
+		String tooltip = "";
+		
+		if (isDesignEmpty(itemStack)) {
+			tooltip += "Blank inscription.\n§bRight click§7 to draw a design using Runic inks from your hotbar.";
+			
+		} else {
+			InscriptionEvent inscriptionEvent = InscriptionManager.getEvent(itemStack);
+			if (inscriptionEvent == null) {
+				tooltip += "§f§c" + "Invalid inscription design";
+			} else {
+				tooltip += "§f§l" + inscriptionEvent.getInscriptionName()
+						+ "§7\n" + inscriptionEvent.getDescription().replace("Description\n", "")
+						+ "\n\n§bWait§7 for it to dry out"
+						+ "\nThen §bUse Inscription Enchant rune§7 to fuel it";
+			}
+			/*
+			NBTTagCompound tag = itemStack.getTagCompound();
+			if (tag.hasKey("eventID")) {
+				tooltip += "\neventID is " + tag.getInteger("eventID");
+			} else {
+				tooltip += "\nNo eventID defined";
+			}
+			/**/
+		}
+		tooltip = tooltip.replace("§", "" + (char)167);
+		
+		String[] split = tooltip.split("\n");
+		for (String line : split) {
+			String lineRemaining = line;
+			while (lineRemaining.length() > 38) {
+				int index = lineRemaining.substring(0, 38).lastIndexOf(' ');
+				if (index == -1) {
+					list.add(lineRemaining);
+					lineRemaining = "";
+				} else {
+					list.add(lineRemaining.substring(0, index));
+					lineRemaining = lineRemaining.substring(index + 1);
+				}
+			}
+			
+			list.add(lineRemaining);
+		}
 	}
 }

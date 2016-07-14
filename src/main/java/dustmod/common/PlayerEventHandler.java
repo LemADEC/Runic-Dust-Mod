@@ -108,16 +108,15 @@ public class PlayerEventHandler {
 	
 	
 	@SubscribeEvent
-	public void onLivingUpdate(LivingUpdateEvent evt){
-
-		Entity ent = evt.entityLiving;
-    	if(ent instanceof EntityPlayer){
-    		EntityPlayer p = (EntityPlayer) ent;
-    		ItemStack item = p.inventory.getStackInSlot(38);
+	public void onLivingUpdate(LivingUpdateEvent event) {
+		Entity entity = event.entityLiving;
+    	if (entity instanceof EntityPlayer) {
+    		EntityPlayer entityPlayer = (EntityPlayer) entity;
+    		ItemStack item = entityPlayer.inventory.getStackInSlot(38);
 
     		if(item != null && item.getItem() == DustMod.wornInscription) {
-    			boolean[] buttons = DustMod.keyHandler.getButtons(p.getGameProfile().getId()); 
-    			InscriptionManager.tickInscription(p, buttons, p.inventory.getStackInSlot(38));
+    			boolean[] buttons = DustMod.keyHandler.getButtons(entityPlayer.getGameProfile().getId()); 
+    			InscriptionManager.tickInscription(entityPlayer, buttons, entityPlayer.inventory.getStackInSlot(38));
     		}
     	}
 	}

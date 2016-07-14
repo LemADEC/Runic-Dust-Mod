@@ -9,36 +9,35 @@ import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import dustmod.DustMod;
 
 public class SetInscriptionHandler implements IMessageHandler<SetInscriptionMessage, IMessage> {
-
+	
 	@Override
-	public IMessage onMessage(SetInscriptionMessage message, MessageContext ctx) {
-
-		int[] design = message.getDesign();
-
-		EntityPlayerMP ep = ctx.getServerHandler().playerEntity;
-		ItemStack stack = ep.inventory.getCurrentItem();
-		DustMod.logger.info("SetInscription");
+	public IMessage onMessage(SetInscriptionMessage message, MessageContext messageContext) {
 		
-		if (stack != null && stack.getItem() == DustMod.inscription) {
-			DustMod.logger.info("SetInscription 1");
-			if (stack.getItemDamage() == 0)
-				stack.setItemDamage(1);
-			
-			NBTTagCompound tag = stack.getTagCompound();
-			if (tag == null) {
-				tag = new NBTTagCompound();
-				stack.setTagCompound(tag);
+		int[] design = message.getDesign();
+		
+		EntityPlayerMP entityPlayer = messageContext.getServerHandler().playerEntity;
+		ItemStack itemStack = entityPlayer.inventory.getCurrentItem();
+		
+		if (itemStack != null && itemStack.getItem() == DustMod.inscription) {
+			// starts drying
+			if (itemStack.getItemDamage() == 0) {
+				itemStack.setItemDamage(1);
 			}
 			
+			// save design
+			NBTTagCompound tag = itemStack.getTagCompound();
+			if (tag == null) {
+				tag = new NBTTagCompound();
+				itemStack.setTagCompound(tag);
+			}
 			tag.setIntArray("design", design);
-
-			ep.inventory.setInventorySlotContents(ep.inventory.currentItem, stack);
-			ep.inventory.markDirty();
-			//ep.inventoryContainer.
-			ep.sendContainerToPlayer(ep.inventoryContainer);
+			
+			// update player inventory
+			entityPlayer.inventory.setInventorySlotContents(entityPlayer.inventory.currentItem, itemStack);
+			entityPlayer.inventory.markDirty();
+			entityPlayer.sendContainerToPlayer(entityPlayer.inventoryContainer);
 		}
-
+		
 		return null;
 	}
-
 }
