@@ -35,9 +35,9 @@ public class VoidInscription extends InscriptionEvent {
 		return true;
 	}
 
+	/* TODO: reimplement void storage
 	@Override
-	public ItemStack onItemPickup(EntityLivingBase wearer, ItemStack insc,
-			ItemStack pickedup) {
+	public ItemStack onItemPickup(EntityLivingBase wearer, ItemStack insc, ItemStack pickedup) {
 		VoidStorageManager.addItemToVoidInventory(
 				((EntityPlayer) wearer).getGameProfile().getId(), pickedup);
 		ItemStack rtn = pickedup.copy();
@@ -45,5 +45,6 @@ public class VoidInscription extends InscriptionEvent {
 		rtn.stackSize = 0;
 		return rtn;
 	}
+		/**/
 
 }
