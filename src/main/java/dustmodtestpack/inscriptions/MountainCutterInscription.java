@@ -58,7 +58,9 @@ public class MountainCutterInscription extends InscriptionEvent {
 					for (int i = -r; i <= r; i++) {
 						for (int j = -r; j <= r; j++) {
 							for (int k = -r; k <= r; k++) {
-								entityPlayer.worldObj.setBlockToAir(x + i, y + j, z + k);
+								if (isPlayerAllowedToBreakBlock(entityPlayer, x + i, y + j, z + k)) {
+									entityPlayer.worldObj.setBlockToAir(x + i, y + j, z + k);
+								}
 							}
 						}
 					}

@@ -5,11 +5,15 @@ import dustmod.items.ItemInscription;
 import dustmod.items.ItemWornInscription;
 import dustmod.runes.RuneEvent;
 import dustmod.runes.EntityRune;
+import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.DamageSource;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 
 public class InscriptionEvent {
 
@@ -170,6 +174,38 @@ public class InscriptionEvent {
 			item.setItemDamage(ItemInscription.max);
 //			ent.inventory.armorInventory[2] = null;
 		}
+	}
+	
+	public static boolean isPlayerAllowedToBreakBlock(EntityPlayer entityPlayer, final int x, final int y, final int z) {
+		if (entityPlayer == null) {
+			return false;
+		}
+		if (y < 0 && y > entityPlayer.worldObj.getHeight()) {
+			return false;
+		}
+		// check spawn protection
+		if (!entityPlayer.worldObj.canMineBlock(entityPlayer, x, y, z)) {
+			return false;
+		}
+		// check hardness
+		Block block = entityPlayer.worldObj.getBlock(x, y, z);
+		int blockMetadata = entityPlayer.worldObj.getBlockMetadata(x, y, z);
+		if (block.getBlockHardness(entityPlayer.worldObj, x, y, z) > 3.0F) {
+			return false;
+		}
+		// skip tile entities
+		if (entityPlayer.worldObj.getTileEntity(x, y, z) != null) {
+			return false;
+		}
+		// check plugins protection
+		BreakEvent breakEvent = new BlockEvent.BreakEvent(x, y, z, entityPlayer.worldObj, block, blockMetadata, entityPlayer);
+		MinecraftForge.EVENT_BUS.post(breakEvent);
+		
+		if (breakEvent.isCanceled()) {
+			return false;
+		}
+		
+		return true;
 	}
 	
 	@Override

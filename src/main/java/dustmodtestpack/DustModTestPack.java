@@ -81,7 +81,7 @@ public class DustModTestPack {
 
 		design = new int[][] { { 0, P, P, 0 }, { P, G, G, P }, { P, G, G, P },
 				{ 0, P, P, 0 } };
-		evt = new MountainCutterInscription(design, "cut", "Moutain Cutter", 100);
+		evt = new MountainCutterInscription(design, "cut", "Mountain Cutter", 100);
 		evt.setAuthor("billythegoat101 -TestPack");
 		InscriptionManager.registerInscriptionEvent(evt);
 
