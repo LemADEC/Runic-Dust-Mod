@@ -382,7 +382,7 @@ public class TileEntityDust extends TileEntity implements IInventory {
 	@Override
 	public ItemStack getStackInSlot(int loc) {
 		int y = loc % SIZE;
-		int x = (loc - SIZE) / SIZE;
+		int x = (loc - y) / SIZE;
 		
 		if (getDust(x, y) == 0) {
 			return null;
@@ -394,7 +394,7 @@ public class TileEntityDust extends TileEntity implements IInventory {
 	@Override
 	public ItemStack decrStackSize(int loc, int amt) {
 		int y = loc % SIZE;
-		int x = (loc - SIZE) / SIZE;
+		int x = (loc - y) / SIZE;
 		//        if(amt > 0){
 		pattern[x + y * SIZE] = 0;
 		return null;
@@ -418,7 +418,7 @@ public class TileEntityDust extends TileEntity implements IInventory {
 	@Override
 	public void setInventorySlotContents(int loc, ItemStack item) {
 		int y = loc % SIZE;
-		int x = (loc - SIZE) / SIZE;
+		int x = (loc - y) / SIZE;
 		int size = item.stackSize;
 		int meta = item.getItemDamage();
 		
